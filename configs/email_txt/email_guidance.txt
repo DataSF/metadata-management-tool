@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+  <!-- The character set should be utf-8 -->
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="viewport" content="width=device-width"/>
+ 
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+ 
+    <meta name="HandheldFriendly" content="True">
+    <meta name="MobileOptimized" content="320">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+ 
+    <title>DataSF - Office of the Chief Data Officer | City and County of San Francisco</title>
+    <meta name="description" content="Our mission is to empower use of the City and County of San Francisco's data. Our core product is SF OpenData, the official open data portal.">
+    
+    <style>
+        body{ font-family:"Alegreya","Helvetica Neue",Helvetica,Arial,sans-serif;color:#333333;font-size:18px;margin-top:50px;}
+        table, th, td {border: 1px solid #D3D3D3; border-collapse: collapse; padding: 5px; }
+        th { background-color:#D3D3D3;  font-weight: bold; text-align: left; padding-left:10px; padding-right:10px;}
+        table tr:nth-child(even) { background-color: #FAFAFA;}
+        #maintbl{ padding-left:30px; padding-top:10px; padding-bottom:10px}
+        td.count { text-align:right;}
+        #closing_name{ padding-top:5px;}
+    </style>
+    </head>
+    <body>
+        <H2>
+            Hello %s,
+        </H2>
+        <p>
+            You are getting this email because you’re listed as one of the stewards of a dataset or datasets on the <a href="https://data.sfgov.org/">open data portal.</a>
+        </p>
+        <p>
+            We are cleaning up field documentation and need your help verifying and filling in missing documentation for the datasets you manage. 
+        </p>
+        <p>
+            Don’t worry, this shouldn’t take long, you only have <b> %s </b> fields to document across the following datasets: 
+        </p>
+        <p> 
+            <div id="maintbl">
+            <table id="maintbl">
+                <tr>
+                    <th> 
+                        Table Name 
+                    </th> 
+                    <th> 
+                        Number of Fields 
+                    </th>
+                </tr>
+                %s
+            </table>
+            </div>
+        <p> 
+            <b> Here’s how you complete the documentation: </b>
+        </p>
+            <ol>
+                <li> 
+                    Open up the attached field documentation template (%s)
+                </li>
+                <li> 
+                    There will be a tab for each dataset listed above 
+                </li>
+                <li>At a minimum, enter or edit the field definition for each field listed in each sheet (review Field Definition Guidance.docx for guidance on writing descriptive definitions)
+                    <ol type="a">
+                        <li> Optionally, enter a field alias if the field name could benefit from something more human readable </li>
+                        <li> Optionally, if a field is categorical or unique, select the appropriate option under field type flag</li>
+                    </ol>
+                </li>
+                <li> 
+                    When complete, save and upload your file at this online submission form
+                </li>
+            </ol>
+        <p>
+            That’s it! We’re centralizing all of this documentation so we have a more sustainable way of maintaining documentation and making it available to data users. We really appreciate your help!
+        </p>
+        <p>
+            Best, </br>
+            Jason
+        </p>
+    
+</body>
+</html>

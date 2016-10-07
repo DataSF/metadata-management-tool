@@ -1,0 +1,10 @@
+server_addr: smtp.gmail.com
+server_port: 587
+sender_addr: your_email_addr@gmail.com
+sender_password: your_passwords
+email_situations:
+    email_txt_dir: /home/ubuntu/workspace/configs/email_txt/
+    review_steward:
+        text_file: email_guidance.txt
+        subject_line: "[datasf] Please Verify and Fill in Missing Documentation for the Datasets You Manage"
+        string_order: steward_name, number_of_fields_to_document, datasets_to_review, worksheet_filename

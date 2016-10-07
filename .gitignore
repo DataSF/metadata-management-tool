@@ -1,0 +1,12 @@
+logs/
+output_wkbks/
+pickled/
+pydev/notebooks/
+pydev/socrata_stuff/
+pydev/screendoorstuff
+setup/
+configs/email_config.yaml
+configs/email_configs_servers
+configs/fieldConfig.yaml
+configs/metadata-mgmt-tool-31c31a0f34b6.json
+pydev/.ipynb_checkpoints/

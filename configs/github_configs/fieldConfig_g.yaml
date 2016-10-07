@@ -1,0 +1,42 @@
+client_key: /home/ubuntu/workspace/configs/your_google_app_key.json
+wkbk_key_master: your_google_spreadsheet_wkbk_key
+
+config_dir: /home/ubuntu/workspace/configs/
+email_config_file: email_config.yaml
+
+
+pickle_dir: /home/ubuntu/workspace/pickled/
+
+wkbk_output_dir: /home/ubuntu/workspace/output_wkbks/
+wkbk_output_json: workbooks_info.json
+
+
+datadict: 
+    sht_name: VIEW_master_fields
+    pickle_name: data_dict
+    
+stewards: 
+     sht_name: import_data_coordinators
+     pickle_name: stewards
+     
+     
+field_types: 
+    sht_name: field_types
+    pickle_name: field_types
+
+log_dir: /home/ubuntu/workspace/logs/
+email_config_fname: email_config.yaml
+exception_logfile: exception_log.txt
+
+
+update_info:
+    wkbk_key: your_google_spreadsheet_wkbk_key
+    updt_sht_name: field_definitions
+    field_positions:
+        status: G
+        date_last_changed: I
+    
+    statuses:
+        for_review_steward: For Review by Steward
+        submitted_steward: Submitted by Steward 
+        complete: complete
