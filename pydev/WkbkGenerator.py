@@ -11,8 +11,6 @@ import inflection
 class WkbkGenerator:
     """class to generate data dictionaries"""
     def __init__(self,  configItems, cells_dataDict=None, cells_stewards=None):
-        #self.sheet_keys =  ["columnID", "Dataset Name", "Open Data Portal URL", "Field Name", "Field Type", "Field Definition", "Field Alias", "Field Type Flag"]
-        #self.steward_keys = ["Email", "Department", "First Name", "Last Name", "Dept Code"]
         self.sheet_keys = configItems['sheet_keys']
         self.steward_keys = configItems['steward_keys']
         self._df_master = self.set_master_df(cells_dataDict)
@@ -30,7 +28,7 @@ class WkbkGenerator:
         '''returns all rows where Do Not Process == False '''
         if cells:
             df = pd.DataFrame(cells)
-            return df[  (df["Do Not Process"] == "FALSE" ) & (df['datasetID'] != '#N/A') & ( df['status'] != "Submitted by Steward") & ( df['status'] != "Complete")   ]
+            return df[  (df["Do Not Process"] == "FALSE" ) & (df['datasetID'] != '#N/A') & ( df['Status'] != "Complete")   ]
         
     @property
     def df_stewards(self):

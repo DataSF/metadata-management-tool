@@ -18,7 +18,7 @@ import base64
 import inflection
 import csv, codecs, cStringIO
 from ConfigUtils import *
-
+from Utils import *
 
 
 
@@ -29,7 +29,7 @@ class Emailer():
     def __init__(self, configItems):
         self.config_dir =  configItems['config_dir']
         self.email_config_file = configItems['email_config_file']
-        self.emailConfigs = self.setEmailerConfig()
+        self.emailConfigs = myUtils.setConfigs(self._config_dir, self.email_config_file)
         self.server = None 
         self.server_port = None 
         self.sender = None 
@@ -39,15 +39,6 @@ class Emailer():
     def getEmailerConfigs(self):
         return self.emailConfigs
         
-        
-    def setEmailerConfig(self):
-        with open( self.config_dir + self.email_config_file ,  'r') as stream:
-            try:
-                email_items = yaml.load(stream)
-                return email_items
-            except yaml.YAMLError as exc:
-                print(exc)
-        return 0
     
     def setConfigs(self):
         self.server = self.emailConfigs['server_addr']

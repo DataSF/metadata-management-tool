@@ -1,0 +1,6 @@
+projectid: yor_screendoor_projectid
+api_key: your_screen_door_api_key
+responses_url: https://screendoor.dobt.co/api/projects/%s/responses?v=0&api_key=%s
+wkbk_uploads_dir: /home/ubuntu/workspace/wkbk_uploads/
+attachment_url: https://screendoor.dobt.co/attachments/%s/download
+wkbk_uploads_json_fn: screendoor_downloads.json

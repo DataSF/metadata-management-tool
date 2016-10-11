@@ -72,7 +72,15 @@ class myUtils:
     def filterDictList( dictList, keysToKeep):
         return  [ {key: x[key] for key in keysToKeep if key in x.keys() } for x in dictList]
     
-    
+    @staticmethod
+    def setConfigs(config_dir, config_file):
+        with open( config_dir + config_file ,  'r') as stream:
+            try:
+                config_items = yaml.load(stream)
+                return config_items
+            except yaml.YAMLError as exc:
+                print(exc)
+        return 0
     
 if __name__ == "__main__":
     main()

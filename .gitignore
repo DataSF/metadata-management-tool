@@ -11,4 +11,5 @@ configs/fieldConfig.yaml
 configs/metadata-mgmt-tool-31c31a0f34b6.json
 pydev/.ipynb_checkpoints/
 pydev/.~c9_*
-
+configs/screendoor_configs.yaml
+wkbk_uploads/

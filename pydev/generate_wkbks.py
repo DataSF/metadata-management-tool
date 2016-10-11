@@ -1,6 +1,6 @@
 # coding: utf-8
 
-from ConfigUtils import *
+from Utils import *
 from Generate_DataDicts import *
 from Gpread_Stuff import *
 from optparse import OptionParser
@@ -44,8 +44,7 @@ elif options.configDir is None:
 fieldConfigFile = options.configFn
 config_inputdir = options.configDir
 
-cI =  ConfigItems(config_inputdir, fieldConfigFile  )
-configItems = cI.getConfigs()
+configItems = myUtils.setConfigs(config_inputdir, fieldConfigFile )
 
 #instantiate classes
 emailer =  Emailer(configItems)
@@ -79,7 +78,7 @@ wkbk_generator = WkbkGenerator(configItems, cells_dataDict,cells_stewards)
  
  
 wkbks_json = wkbk_generator.build_Wkbks(wkbk_writer)
-json_obj = wkbk_json.write_json_object(wkbks_json)
+json_obj = wkbk_json.write_json_object_wkbks(wkbks_json)
 if json_obj:
     print "successfully output wkbks"
 

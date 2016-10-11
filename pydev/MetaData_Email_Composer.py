@@ -33,8 +33,8 @@ class ForReviewBySteward(MetaData_Email_Composer):
         self._situation = 'review_steward'
         self._subject_line = self._email_situations[self._situation]['subject_line']
     
-  
-    def get_subject_line(self):
+    @property
+    def subject_line(self):
         return self._subject_line
     
     def msgBodyFill(self, wkbk):
@@ -72,7 +72,7 @@ class ForReviewBySteward(MetaData_Email_Composer):
                 msgBody =  self.msgBodyFill(wkbk)
                 #receipient = wkbk[ "data_cordinator"]['Email']
                 receipient = "janine.heiser@sfgov.org"
-                subject_line = self.get_subject_line()
+                subject_line = self.subject_line()
                 attachment_fullpath = wkbk["path_to_wkbk"]
                 attachment = self.wkbk_file_name(wkbk["path_to_wkbk"])
                 try:
