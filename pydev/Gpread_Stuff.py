@@ -1,5 +1,5 @@
 # coding: utf-8
-
+#https://github.com/burnash/gspread
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
@@ -36,6 +36,18 @@ class gSpread_Stuff:
     def get_all_cells(sht):
         return sht.get_all_records()
     
+    @staticmethod
+    def findCell(sht, regex):
+        regex = re.compile(r'%s' % regex)
+        cell = sht.find(regex)
+        return cell
+    
+    @staticmethod
+    def findRow(sht, regex):
+        regex = re.compile(r'%s' % regex)
+        cell = sht.find(regex)
+        return cell.row
+        
     @staticmethod
     def findCells(sht, regex_str):
         # Find all cells with regexp
@@ -112,6 +124,6 @@ class gSpread_Stuff:
         self.pickle_cells(cells, pickle_name)
     
 
-        #https://github.com/burnash/gspread
+        
 if __name__ == "__main__":
     main()

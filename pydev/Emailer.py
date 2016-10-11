@@ -27,29 +27,28 @@ class Emailer():
     util class to email stuff to people.
     '''
     def __init__(self, configItems):
-        self.config_dir =  configItems['config_dir']
-        self.email_config_file = configItems['email_config_file']
-        self.emailConfigs = myUtils.setConfigs(self._config_dir, self.email_config_file)
-        self.server = None 
-        self.server_port = None 
-        self.sender = None 
-        self.password = None 
+        self._config_dir =  configItems['config_dir']
+        self._email_config_file = configItems['email_config_file']
+        self._emailConfigs = myUtils.setConfigs(self._config_dir, self._email_config_file)
+        self._server = None 
+        self._server_port = None 
+        self._sender = None 
+        self._password = None 
         self.setConfigs()
     
-    def getEmailerConfigs(self):
-        return self.emailConfigs
+   
         
     
     def setConfigs(self):
-        self.server = self.emailConfigs['server_addr']
-        self.server_port = self.emailConfigs['server_port']
-        self.sender =  self.emailConfigs['sender_addr']
-        if (self.emailConfigs['sender_password']):
-            self.password = base64.b64decode(self.emailConfigs['sender_password'])
+        self._server = self._emailConfigs['server_addr']
+        self._server_port = self._emailConfigs['server_port']
+        self._sender =  self._emailConfigs['sender_addr']
+        if (self._emailConfigs['sender_password']):
+            self._password = base64.b64decode(self._emailConfigs['sender_password'])
        
     
     def sendEmails(self, recipients, subject_line, msgBody, fname_attachment=None, fname_attachment_fullpath=None):
-        fromaddr = self.sender
+        fromaddr = self._sender
         toaddr =  recipients
         msg = MIMEMultipart()
         msg['From'] = fromaddr
@@ -69,9 +68,9 @@ class Emailer():
             msg.attach(part)
         
         #normal emails, no attachment
-        server = smtplib.SMTP(self.server, self.server_port)
+        server = smtplib.SMTP(self._server, self._server_port)
         server.starttls()
-        server.login(fromaddr, self.password)
+        server.login(fromaddr, self._password)
         text = msg.as_string()
         server.sendmail(fromaddr, toaddr, text)
         server.quit()

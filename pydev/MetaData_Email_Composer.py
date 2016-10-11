@@ -9,7 +9,7 @@ class MetaData_Email_Composer(object):
     def __init__(self, configItems, emailer):
         self._configItems =  configItems
         self._emailer = emailer
-        self._emailer_configs = emailer.getEmailerConfigs()
+        self._emailer_configs = emailer._emailConfigs
         self._email_txt_dir = self._emailer_configs['email_situations']['email_txt_dir']
         self._email_situations = self._emailer_configs['email_situations']
         
@@ -32,10 +32,6 @@ class ForReviewBySteward(MetaData_Email_Composer):
         MetaData_Email_Composer.__init__(self,configItems, emailer)
         self._situation = 'review_steward'
         self._subject_line = self._email_situations[self._situation]['subject_line']
-    
-    @property
-    def subject_line(self):
-        return self._subject_line
     
     def msgBodyFill(self, wkbk):
         msgBody = self.getMsgText(self._situation)
@@ -63,16 +59,19 @@ class ForReviewBySteward(MetaData_Email_Composer):
         return "<tr><td>" + dataset["Dataset Name"] + '</td><td class="count">' + str(dataset["count"]) + "</td></tr>"
     
     
-    def generate_All_Emails(self, wkbks, wkbk_cells_updted):
+    def generate_All_Emails(self, wkbks, wkbk_cells_updated=None):
         '''generates and sends wkbks to recipients'''
-        successfully_updated = wkbk_cells_updted.keys()
+        if wkbk_cells_updated:
+            successfully_updated = wkbk_cells_updted.keys()
+        else:
+            successfully_updated = [wkbk[ "data_cordinator"]['Email'] for wkbk in wkbks]
         wkbks_sent_out = []
         for wkbk in wkbks:
             if wkbk[ "data_cordinator"]['Email'] in successfully_updated:
                 msgBody =  self.msgBodyFill(wkbk)
                 #receipient = wkbk[ "data_cordinator"]['Email']
                 receipient = "janine.heiser@sfgov.org"
-                subject_line = self.subject_line()
+                subject_line = self._subject_line
                 attachment_fullpath = wkbk["path_to_wkbk"]
                 attachment = self.wkbk_file_name(wkbk["path_to_wkbk"])
                 try:

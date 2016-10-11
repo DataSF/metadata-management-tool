@@ -41,21 +41,25 @@ config_inputdir = options.configDir
 
 configItems = myUtils.setConfigs(config_inputdir, fieldConfigFile )
 
-screendoor_stuff = ScreenDoorStuff(configItems)
-downloaded_files = screendoor_stuff.get_attachments()
+#screendoor_stuff = ScreenDoorStuff(configItems)
+#downloaded_files = screendoor_stuff.get_attachments()
 
-downloaded_files_json = WkbkJson.write_json_object(downloaded_files, screendoor_stuff._wkbk_uploads_dir,  screendoor_stuff._current_date + screendoor_stuff._wkbk_uploads_json_fn)
+#downloaded_files_json = WkbkJson.write_json_object(downloaded_files, screendoor_stuff._wkbk_uploads_dir,  screendoor_stuff._current_date + screendoor_stuff._wkbk_uploads_json_fn)
 
-fileList =  myUtils.getFileListForDir(screendoor_stuff._wkbk_uploads_dir + "*.xlsx")
+#fileList =  myUtils.getFileListForDir(screendoor_stuff._wkbk_uploads_dir + "*.xlsx")
 
 wkbk_parser = WkbkParser(configItems)
 
-updt_metadata_fields_json = wkbk_parser.get_metadata_updt_fields_from_shts(fileList)
-if updt_metadata_fields_json:
-    print "successfully grabbed metadata fields to update from worksheets"
-else:
-    print False
+#updt_metadata_fields_json = wkbk_parser.get_metadata_updt_fields_from_shts(fileList)
+#if updt_metadata_fields_json:
+ #   print "successfully grabbed metadata fields to update from worksheets"
+#else:
+#    print False
 updt_fieldList = wkbk_parser.updt_fields()
-print updt_fieldList
+#print updt_fieldList
 
-#gspread_stuff = gSpread_Stuff(configItems)
+gspread_stuff = gSpread_Stuff(configItems)
+update_metadata_fields =  UpdateMetadataFields(configItems, gspread_stuff)
+for field_dict in updt_fieldList[0:2]:
+    row = update_metadata_fields.updateField(field_dict)
+    print row

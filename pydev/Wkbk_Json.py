@@ -9,7 +9,7 @@ class WkbkJson:
         #self._json_item = {"data_cordinator": None , "path_to_wkbk":None , "datasets":None ,"timestamp":None}
         self._wkbk_output_json = configItems['wkbk_output_json']
         self._wkbk_output_dir = configItems["wkbk_output_dir"]
-        self.self._wkbk_uploads_dir = configItems['wkbk_uploads_dir']
+        self._wkbk_uploads_dir = configItems['wkbk_uploads_dir']
         self._json_obj = self.loadJsonObject()
         self._wkbks = self.setWkbks()
     

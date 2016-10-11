@@ -59,7 +59,12 @@ class UpdateMetadataFields(UpdateMetadata):
     def __init__(self, configItems, gSpread_Stuff):
         UpdateMetadata.__init__(self, configItems, gSpread_Stuff)
         
+    def updateField(self, field_dict):
+        #find cell on columnid
+        row_num = self._gSpread_Stuff.findRow(self._updt_sht, field_dict['A'])
+        print row_num
     
+    #def build_fieldUpdate_Dict(row_num, field_dict)   
    
     
 
