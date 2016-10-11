@@ -41,5 +41,7 @@ configItems = myUtils.setConfigs(config_inputdir, fieldConfigFile )
 screendoor_stuff = ScreenDoorStuff(configItems)
 downloaded_files = screendoor_stuff.get_attachments()
 
-jsonfile = WkbkJson.write_json_object(downloaded_files, screendoor_stuff._wkbk_uploads_dir, screendoor_stuff._wkbk_uploads_json_fn)
-print jsonfile
+downloaded_files_json = WkbkJson.write_json_object(downloaded_files, screendoor_stuff._wkbk_uploads_dir, screendoor_stuff._wkbk_uploads_json_fn)
+
+fileList =  myUtils.getFileListForDir(screendoor_stuff._wkbk_uploads_dir + "*.xlsx")
+print fileList

@@ -44,3 +44,4 @@ update_info:
 
 sheet_keys: ["columnID", "Dataset Name", "Open Data Portal URL", "Field Name", "Field Type", "Field Definition", "Field Alias", "Field Type Flag"]
 steward_keys: ["Email", "Department", "First Name", "Last Name", "Dept Code"]
+screendoor_config_file: screendoor_configs.yaml

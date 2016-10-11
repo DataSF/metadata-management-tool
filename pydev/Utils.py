@@ -10,8 +10,7 @@ import itertools
 import base64
 import inflection
 import csv, codecs, cStringIO
-from ConfigUtils import *
-
+import glob
 
 class pyLogger:
     def __init__(self, configItems):
@@ -74,6 +73,7 @@ class myUtils:
     
     @staticmethod
     def setConfigs(config_dir, config_file):
+        '''returns contents of yaml config file'''
         with open( config_dir + config_file ,  'r') as stream:
             try:
                 config_items = yaml.load(stream)
@@ -82,5 +82,12 @@ class myUtils:
                 print(exc)
         return 0
     
+    @staticmethod
+    def getFileListForDir(filepath_str_to_search):
+        '''gets file list in a directory based on some path string to search- ie: /home/adam/*.txt'''
+        return glob.glob(filepath_str_to_search)
+        
+        
+
 if __name__ == "__main__":
     main()
