@@ -33,8 +33,17 @@ update_info:
     wkbk_key: your_google_spreadsheet_wkbk_key
     updt_sht_name: field_definitions
     field_positions:
-        status: G
-        date_last_changed: I
+        columnID: A
+        field_alias: E
+        field_definition: F
+        field_type_flag: G
+        status: H
+        date_last_changed: J
+    field_name_mappings:
+        columnID: columnID
+        field_alias: Field Alias
+        field_definition: Field Definition
+        field_type_flag: Field Type Flag
     
     statuses:
         for_review_steward: For Review by Steward
@@ -45,3 +54,7 @@ update_info:
 sheet_keys: ["columnID", "Dataset Name", "Open Data Portal URL", "Field Name", "Field Type", "Field Definition", "Field Alias", "Field Type Flag"]
 steward_keys: ["Email", "Department", "First Name", "Last Name", "Dept Code"]
 screendoor_config_file: screendoor_configs.yaml
+
+
+updt_fields_json_fn: metadata_fields.json
+wkbk_uploads_dir: /home/ubuntu/workspace/wkbk_uploads/

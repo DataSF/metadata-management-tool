@@ -1,6 +1,7 @@
 # coding: utf-8
 import datetime
-import pandas as pd
+from Utils import *
+from Wkbk_Json import *
 
 class UpdateMetadata(object):
     '''Class to Update Metadata google spreadsheet '''
@@ -14,7 +15,7 @@ class UpdateMetadata(object):
         self._field_positions = configItems['update_info']['field_positions']
         self._current_date = datetime.datetime.now().strftime("%m/%d/%Y")
         self._updt_statuses = configItems['update_info']['statuses']
-       
+
     @staticmethod
     def getDatasetsList(wkbk):
         return [elem['Dataset Name'].strip() for elem in wkbk['datasets'] if 'Dataset Name' in elem]
@@ -53,26 +54,14 @@ class UpdateMetadataStatus(UpdateMetadata):
         return self.checkUpdateStatus(wkbk_cells_updted_dict), wkbk_cells_updted_dict
     
 
-class UpdateMetadataFieldDefinitions(UpdateMetadata):
+class UpdateMetadataFields(UpdateMetadata):
     '''class updates google spreadsheet after generating wkbks'''
     def __init__(self, configItems, gSpread_Stuff):
         UpdateMetadata.__init__(self, configItems, gSpread_Stuff)
-        self.keys_to_keep = ['columnID', 'Field Type', 'Field Definition', 'Field Alias', 'Field Type Flag']
         
-    @staticmethod
-    def getWkbk(fn)
-        wkbk = pd.ExcelFile(fn)
-        return wkbk
     
-    @staticmethod
-    def get_shts(wkbk)
-        return wkbk.sheet_names
+   
     
-    @staticmethod
-    def parse_sht(wkbk, sht_name)
-        return wkbk.parse(sht_name)
-    
-     
 
 if __name__ == "__main__":
     main()

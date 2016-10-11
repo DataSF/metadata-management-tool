@@ -5,6 +5,7 @@ from Utils import *
 import pycurl
 from io import BytesIO
 import json
+import datetime
 
 
 class ScreenDoorStuff:
@@ -21,7 +22,7 @@ class ScreenDoorStuff:
         self._wkbk_uploads_dir = self._screendoor_configs['wkbk_uploads_dir']
         self._files_to_download = self.set_FileInfo()
         self._wkbk_uploads_json_fn = self._screendoor_configs['wkbk_uploads_json_fn']
-        
+        self._current_date = datetime.datetime.now().strftime("%Y_%m_%d_")
   
     def set_responsesUrl(self):
         responses_url = self._screendoor_configs['responses_url']

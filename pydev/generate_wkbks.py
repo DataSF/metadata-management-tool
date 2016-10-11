@@ -7,7 +7,7 @@ from optparse import OptionParser
 from Emailer import *
 from MetaData_Email_Composer import *
 from WkBk_Writer import *
-from WkbkGenerator import *
+from Wkbk_Generator import *
 from Wkbk_Json import *
 from UpdateMetadata import *
 

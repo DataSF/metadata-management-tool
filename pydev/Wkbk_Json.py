@@ -24,6 +24,13 @@ class WkbkJson:
             json_obj =  json.loads(json_data)
         return json_obj
     
+    @staticmethod
+    def loadJsonFile(path_to_file, json_fn):
+        if os.path.isfile( path_to_file + json_fn):
+            json_data = open(path_to_file + json_fn).read()
+            json_obj =  json.loads(json_data)
+        return json_obj
+    
     @property
     def wkbks(self):
        return self._wkbks
