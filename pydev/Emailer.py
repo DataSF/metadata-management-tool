@@ -17,7 +17,6 @@ import itertools
 import base64
 import inflection
 import csv, codecs, cStringIO
-from ConfigUtils import *
 from Utils import *
 
 
