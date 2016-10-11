@@ -1,7 +1,6 @@
 # coding: utf-8
 
 from Utils import *
-from Generate_DataDicts import *
 from Gpread_Stuff import *
 from optparse import OptionParser
 from Emailer import *
@@ -63,38 +62,38 @@ pickle_name_fieldtypes  = configItems['field_types']['pickle_name']
 
 
 print "********getting metadata fields from google spreadsheets***********"
-#gspread_stuff.getMetaDataset(wkbk_key, sht_name_datadict, pickle_name_datadict)
-#gspread_stuff.getMetaDataset(wkbk_key, sht_name_stewards,pickle_name_stewards )
-#gspread_stuff.getMetaDataset(wkbk_key, sht_name_field_types, pickle_name_fieldtypes)
+gspread_stuff.getMetaDataset(wkbk_key, sht_name_datadict, pickle_name_datadict)
+gspread_stuff.getMetaDataset(wkbk_key, sht_name_stewards,pickle_name_stewards )
+gspread_stuff.getMetaDataset(wkbk_key, sht_name_field_types, pickle_name_fieldtypes)
 
-#cells_dataDict = gspread_stuff.unpickle_cells(pickle_name_datadict)
-#cells_stewards = gspread_stuff.unpickle_cells(pickle_name_stewards)
-#fieldtype_cells = gspread_stuff.unpickle_cells(pickle_name_fieldtypes)
+cells_dataDict = gspread_stuff.unpickle_cells(pickle_name_datadict)
+cells_stewards = gspread_stuff.unpickle_cells(pickle_name_stewards)
+fieldtype_cells = gspread_stuff.unpickle_cells(pickle_name_fieldtypes)
 
-#wkbk_writer = WkBkWriter(configItems,fieldtype_cells)
+wkbk_writer = WkBkWriter(configItems,fieldtype_cells)
 print
 print "********generating workbooks**************************"
-#wkbk_generator = WkbkGenerator(configItems, cells_dataDict,cells_stewards)
+wkbk_generator = WkbkGenerator(configItems, cells_dataDict,cells_stewards)
  
  
-#wkbks_json = wkbk_generator.build_Wkbks(wkbk_writer)
-#json_obj = wkbk_json.write_json_object_wkbks(wkbks_json)
-#if json_obj:
-#    print "successfully output wkbks"
+wkbks_json = wkbk_generator.build_Wkbks(wkbk_writer)
+json_obj = wkbk_json.write_json_object_wkbks(wkbks_json)
+if json_obj:
+    print "successfully output wkbks"
 
 print "********updating google spreadsheets**************** "
 
 wkbks = wkbk_json._wkbks
 wkbk_cells_updted = None
-#update_metadata_status = UpdateMetadataStatus(configItems, gspread_stuff)
+update_metadata_status = UpdateMetadataStatus(configItems, gspread_stuff)
 
-#update_successful, wkbk_cells_updted = update_metadata_status.updatewkbk_info(wkbks)
+update_successful, wkbk_cells_updted = update_metadata_status.updatewkbk_info(wkbks)
 
-#if update_successful:
- #   print "Success- Cells were successfully updated"
-#else:
-#   print "FAILED- Something went wrong-cells where not successfully updated"
-#
+if update_successful:
+    print "Success- Cells were successfully updated"
+else:
+   print "FAILED- Something went wrong-cells where not successfully updated"
+
 print "*************Sendng out emails ******"
 emailer_review_steward = ForReviewBySteward(configItems, emailer)
 wkbks_sent_out = emailer_review_steward.generate_All_Emails(wkbks, wkbk_cells_updted)
