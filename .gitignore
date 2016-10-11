@@ -10,3 +10,5 @@ configs/email_configs_servers
 configs/fieldConfig.yaml
 configs/metadata-mgmt-tool-31c31a0f34b6.json
 pydev/.ipynb_checkpoints/
+pydev/.~c9_*
+

@@ -28,7 +28,7 @@ class MetaData_Email_Composer(object):
         
 class ForReviewBySteward(MetaData_Email_Composer):
     """emailer class for the For Review By Data Steward Step"""
-    def __init__(self,configItems, emailer):
+    def __init__(self, configItems, emailer):
         MetaData_Email_Composer.__init__(self,configItems, emailer)
         self._situation = 'review_steward'
         self._subject_line = self._email_situations[self._situation]['subject_line']
@@ -63,16 +63,24 @@ class ForReviewBySteward(MetaData_Email_Composer):
         return "<tr><td>" + dataset["Dataset Name"] + '</td><td class="count">' + str(dataset["count"]) + "</td></tr>"
     
     
-    def generate_All_Emails(self, afterCreateDataDicts):
-        for wkbk in afterCreateDataDicts._wkbks:
-            msgBody =  self.msgBodyFill(wkbk)
-            #receipient = wkbk[ "data_cordinator"]['Email']
-            receipient = "janine.heiser@sfgov.org"
-            subject_line = self.get_subject_line()
-            attachment_fullpath = wkbk["path_to_wkbk"]
-            attachment = self.wkbk_file_name(wkbk["path_to_wkbk"])
-            self.email_msg(receipient, subject_line, msgBody, attachment, attachment_fullpath )
-            
+    def generate_All_Emails(self, wkbks, wkbk_cells_updted):
+        '''generates and sends wkbks to recipients'''
+        successfully_updated = wkbk_cells_updted.keys()
+        wkbks_sent_out = []
+        for wkbk in wkbks:
+            if wkbk[ "data_cordinator"]['Email'] in successfully_updated:
+                msgBody =  self.msgBodyFill(wkbk)
+                #receipient = wkbk[ "data_cordinator"]['Email']
+                receipient = "janine.heiser@sfgov.org"
+                subject_line = self.get_subject_line()
+                attachment_fullpath = wkbk["path_to_wkbk"]
+                attachment = self.wkbk_file_name(wkbk["path_to_wkbk"])
+                try:
+                    self.email_msg(receipient, subject_line, msgBody, attachment, attachment_fullpath )
+                    wkbks_sent_out.append(wkbk)
+                except Exception, e:
+                    print e
+        return wkbks_sent_out
   
     
     

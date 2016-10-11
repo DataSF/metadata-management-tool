@@ -30,13 +30,13 @@
             Hello %s,
         </H2>
         <p>
-            You are getting this email because you’re listed as one of the stewards of a dataset or datasets on the <a href="https://data.sfgov.org/">open data portal.</a>
+            You are getting this email because youre listed as one of the stewards of a dataset or datasets on the <a href="https://data.sfgov.org/">open data portal.</a>
         </p>
         <p>
             We are cleaning up field documentation and need your help verifying and filling in missing documentation for the datasets you manage. 
         </p>
         <p>
-            Don’t worry, this shouldn’t take long, you only have <b> %s </b> fields to document across the following datasets: 
+            Don’t worry, this shouldnt take long, you only have <b> %s </b> fields to document across the following datasets: 
         </p>
         <p> 
             <div id="maintbl">
@@ -69,7 +69,7 @@
                     </ol>
                 </li>
                 <li> 
-                    When complete, save and upload your file at this online submission form
+                    When complete, save and upload your file at <a href="https://sfgov.forms.fm/data-dictionary-submission/responses/new"> this online submission form </a>
                 </li>
             </ol>
         <p>

@@ -40,3 +40,7 @@ update_info:
         for_review_steward: For Review by Steward
         submitted_steward: Submitted by Steward 
         complete: complete
+
+
+sheet_keys: ["columnID", "Dataset Name", "Open Data Portal URL", "Field Name", "Field Type", "Field Definition", "Field Alias", "Field Type Flag"]
+steward_keys: ["Email", "Department", "First Name", "Last Name", "Dept Code"]
