@@ -101,8 +101,8 @@ class ForReviewBySteward(MetaData_Email_Composer):
     
     def generate_All_Emails(self, wkbks):
         '''generates and sends wkbks to recipients'''
+        wkbks_sent_out = []
         for wkbk in wkbks:
-            wkbks_sent_out = []
             #if wkbk[ "data_cordinator"]['Email'] in successfully_updated:
             msgBody =  self.msgBodyFill(wkbk)
             #receipient = wkbk[ "data_cordinator"]['Email']
