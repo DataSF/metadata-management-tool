@@ -1,0 +1,9 @@
+ <p>
+            You are getting this email because youre listed as one of the stewards of a dataset or datasets on the <a href="https://data.sfgov.org/">open data portal.</a>
+        </p>
+        <p>
+            We are cleaning up field documentation and need your help verifying and filling in missing documentation for the datasets you manage. 
+</p>
+<p>
+ Don&#39;t worry, this shouldnt take long, you only have <b> %s </b> fields to document across the following datasets:
+</p>

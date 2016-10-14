@@ -26,6 +26,7 @@ class WkbkJson:
     
     @staticmethod
     def loadJsonFile(path_to_file, json_fn):
+        json_obj = {}
         if os.path.isfile( path_to_file + json_fn):
             json_data = open(path_to_file + json_fn).read()
             json_obj =  json.loads(json_data)

@@ -92,12 +92,21 @@ class myUtils:
     @staticmethod
     def is_nan(x):
         return isinstance(x, float) and math.isnan(x)
-    
+    @staticmethod
+    def is_blank(x):
+        blank = False
+        if( (x == "") or (x == " ") or (x is None)):
+            blank = True
+        return blank
+        
     @staticmethod
     def filterDictOnNans(some_dict):
         '''excludes all k,v in a dict with v = NaN'''
         return {k: v for k, v in some_dict.items() if not(myUtils.is_nan(v))}
-        
+    
+    @staticmethod
+    def filterDictOnBlanks(some_dict):
+        return {k: v for k, v in some_dict.items() if not(myUtils.is_blank(v))}
        
     @staticmethod
     def setConfigs(config_dir, config_file):

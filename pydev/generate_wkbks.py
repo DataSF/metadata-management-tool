@@ -84,17 +84,17 @@ if json_obj:
 print "********updating google spreadsheets**************** "
 
 wkbks = wkbk_json._wkbks
-wkbk_cells_updted = None
-update_metadata_status = UpdateMetadataStatus(configItems, gspread_stuff)
 
-update_successful, wkbk_cells_updted = update_metadata_status.updatewkbk_info(wkbks)
+#update_metadata_status = UpdateMetadataStatus(configItems, gspread_stuff)
 
-if update_successful:
-    print "Success- Cells were successfully updated"
-else:
-   print "FAILED- Something went wrong-cells where not successfully updated"
+#update_successful = update_metadata_status.updatewkbk_info(wkbks)
+
+#if update_successful:
+#    print "Success- Cells were successfully updated"
+#else:
+#   print "FAILED- Something went wrong-cells where not successfully updated"
 
 print "*************Sendng out emails ******"
 emailer_review_steward = ForReviewBySteward(configItems, emailer)
-wkbks_sent_out = emailer_review_steward.generate_All_Emails(wkbks, wkbk_cells_updted)
+wkbks_sent_out = emailer_review_steward.generate_All_Emails(wkbks)
 print wkbks_sent_out

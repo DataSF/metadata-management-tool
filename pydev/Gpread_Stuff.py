@@ -66,27 +66,52 @@ class gSpread_Stuff:
          return sht.findall(regex_str)
     
     @staticmethod
-    def batchUpdateCellRange(sht, cell_range, valToSet):
-        updt_success = False
+    def batchUpdateCellRange(sht, cell_range, valToSet, valsToNotOverride=[], cellRowsToNotOverride=[]):
+        do_not_override = []
         # Select a range
         cell_list = sht.range(cell_range)
         #set the cell value
         for cell in cell_list:
-            cell.value = valToSet
+            print cell.value
+            if (cell.value not in valsToNotOverride) or (cell.row not in cellRowsToNotOverride):
+                cell.value = valToSet
+            else:
+                print cell.row
+                do_not_override.append(cell.row)
         # Update in batch
-        try:
-            sht.update_cells(cell_list)
-            updt_success = True
-        except:
-            print "ERORR: Could not update cells"
-        return cell_range, updt_success
+        sht.update_cells(cell_list)
+        print do_not_override
+        return  do_not_override 
     
-    def batchUpdateCellRanges( self, sht, cell_ranges, valToSet):
+    def batchUpdateCellRanges( self, sht, cell_ranges, valToSet, valsToNotOverride=[], cellRowsToNotOverride=[]):
         updt_log = {}
+        all_cellrows_do_not_override = [] 
         for cell_range in cell_ranges:
-            cell_range, updt_success  =  self.batchUpdateCellRange(sht, cell_range, valToSet) 
-            updt_log[cell_range] = updt_success
-        return updt_log
+            try:
+                do_not_override   =  self.batchUpdateCellRange(sht, cell_range, valToSet, valsToNotOverride, cellRowsToNotOverride) 
+                print do_not_override
+                updt_log[cell_range] = True
+            except Exception, e:
+                print "Batch errorCell ranges Error"
+                print str(e)
+                updt_log[cell_range] = False
+            all_cellrows_do_not_override = all_cellrows_do_not_override + do_not_override
+        print all_cellrows_do_not_override
+        return updt_log, all_cellrows_do_not_override
+    
+    @staticmethod
+    def update_cell_addr(sht, row, col, cell_val ):  
+        updated = False
+        try:
+            sht.update_cell(row, col, cell_val)
+            updated = True
+        except Exception, e:
+            print str(e)
+        return updated
+    
+    @staticmethod
+    def update_cell_addr_str(sht, cell_addr_str, cell_val):  
+        return sht.update_acell(cell_addr_str, cell_val)    
         
     @staticmethod   
     def getCellRange(column,rows):

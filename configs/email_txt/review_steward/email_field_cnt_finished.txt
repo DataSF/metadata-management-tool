@@ -1,0 +1,18 @@
+<p>
+Thanks so much for helping us clean up the field documentation for datasets on the <a href="https://data.sfgov.org/">open data portal</a>.
+<p>
+
+
+<p>
+   So far, you&#39;ve taken time to to document <b>%s</b> fields!
+</p>
+
+<p>
+Congrats!! You&#39;re <b>%s</b> done with documenting the datasets you manage! 
+But don't stop there! We need your help to verify and fill in the missing documentation! 
+</p>
+
+
+<p>
+Filling out the remaining fields shouldn take long, you only have <b> %s </b> fields to document across the following datasets: 
+</p>

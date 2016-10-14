@@ -11,6 +11,7 @@ class WkBkWriter:
         self.wkbk_output_dir = configItems['wkbk_output_dir']
         self.current_date = datetime.datetime.now().strftime("%Y_%m_%d")
         self._fieldTypes = self.set_fieldTypes(fieldtype_cells)
+        self._fieldType_Flag = configItems['fieldType_flag']
     
     @property
     def fieldTypes(self):
@@ -53,7 +54,7 @@ class WkBkWriter:
             worksheet.data_validation('E2:E'+str(sheet_len), {'validate': 'list',
                                   'source': self._fieldTypes })
         worksheet.data_validation('H2:H'+str(sheet_len), {'validate': 'list',
-                                 'source': ["primary_id", "category"] })
+                                 'source': self._fieldType_Flag })
         return worksheet
         
     def format_wkbk_shts(self, sheets, writer):

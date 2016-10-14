@@ -23,21 +23,14 @@
         #maintbl{ padding-left:30px; padding-top:10px; padding-bottom:10px}
         td.count { text-align:right;}
         #closing_name{ padding-top:5px;}
+        .finshed_field_cnt{font-size:20px}
     </style>
     </head>
     <body>
         <H2>
             Hello %s,
         </H2>
-        <p>
-            You are getting this email because youre listed as one of the stewards of a dataset or datasets on the <a href="https://data.sfgov.org/">open data portal.</a>
-        </p>
-        <p>
-            We are cleaning up field documentation and need your help verifying and filling in missing documentation for the datasets you manage. 
-        </p>
-        <p>
-            Don’t worry, this shouldnt take long, you only have <b> %s </b> fields to document across the following datasets: 
-        </p>
+           %s
         <p> 
             <div id="maintbl">
             <table id="maintbl">
@@ -53,7 +46,7 @@
             </table>
             </div>
         <p> 
-            <b> Here’s how you complete the documentation: </b>
+            <b> Here&#39;s how you complete the documentation: </b>
         </p>
             <ol>
                 <li> 
@@ -73,7 +66,7 @@
                 </li>
             </ol>
         <p>
-            That’s it! We’re centralizing all of this documentation so we have a more sustainable way of maintaining documentation and making it available to data users. We really appreciate your help!
+            That’s it! We&#39;re centralizing all of this documentation so we have a more sustainable way of maintaining documentation and making it available to data users. We really appreciate your help!
         </p>
         <p>
             Best, </br>
