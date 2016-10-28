@@ -13,7 +13,7 @@ class MetaData_Email_Composer(object):
         self._emailer_configs = emailer._emailConfigs
         self._email_txt_basedir = self._emailer_configs['email_situations']['email_txt_basedir']
         self._email_situations = self._emailer_configs['email_situations']
-       
+
     @staticmethod
     def getMsgText(email_txt_basedir, situation, filename):
         msgBody = None
@@ -21,20 +21,20 @@ class MetaData_Email_Composer(object):
         with open(fn, 'r') as myfile:
             msgBody=myfile.read().replace('\n', '')
         return msgBody
-    
+
     def email_msg(self, receipient, subject_line, msgBody, attachment=None, attachment_fullpath=None ):
         if os.path.isfile(attachment_fullpath):
             self._emailer.sendEmails( receipient, subject_line, msgBody, attachment, attachment_fullpath)
         else:
             self._emailer.sendEmails( receipient, subject_line, msgBody)
-    
+
     @staticmethod
     def get_msgparts(email_txt_basedir, situation, text_file_subparts):
         msg_subpart_dict = {}
         for txt_file in text_file_subparts:
             msg_subpart_dict[txt_file] = MetaData_Email_Composer.getMsgText(email_txt_basedir, situation, txt_file )
         return  msg_subpart_dict
-        
+
 class ForReviewBySteward(MetaData_Email_Composer):
     """emailer class for the For Review By Data Steward Step"""
     def __init__(self, configItems, emailer):
@@ -43,13 +43,13 @@ class ForReviewBySteward(MetaData_Email_Composer):
         self._subject_line = self._email_situations[self._situation]['subject_line']
         self._text_file_subparts =  self._email_situations[self._situation]['text_file_subparts']
         self.main_msg_file = self._email_situations[self._situation]['text_file_main']
-        
+
     def getMsgBodyText(self):
         msg_parts = {}
         msg_parts = self.get_msgparts(self._email_txt_basedir, self._situation, self._text_file_subparts)
         msg_parts['main_msg'] = self.getMsgText(self._email_txt_basedir, self._situation, self.main_msg_file )
         return msg_parts
-    
+
     @staticmethod
     def buildFinishedFieldsMsgBody(msgParts, wkbk):
         submsg = msgParts["email_field_cnt_finished.txt"]
@@ -59,7 +59,7 @@ class ForReviewBySteward(MetaData_Email_Composer):
         to_do_fields_cnt = wkbk['submittedFields']['fields_to_do_cnt']
         submsg = submsg % (submitted_field_cnt, percent_done, to_do_fields_cnt )
         return submsg
-    
+
     @staticmethod
     def buildUnfinishedFieldsMsgBody(msgParts, wkbk):
         submsg = msgParts["email_field_cnt_unfinished.txt"]
@@ -67,7 +67,7 @@ class ForReviewBySteward(MetaData_Email_Composer):
         to_do_fields_cnt = wkbk['submittedFields']['fields_to_do_cnt']
         submsg = submsg % (  to_do_fields_cnt )
         return submsg
- 
+
     def msgBodyFill(self, wkbk):
         msgParts = self.getMsgBodyText()
         steward_name = wkbk[ "data_cordinator"]["First Name"]
@@ -81,27 +81,28 @@ class ForReviewBySteward(MetaData_Email_Composer):
             submsg =  self.buildUnfinishedFieldsMsgBody(msgParts, wkbk)
         msgBody = msgParts['main_msg'] % (steward_name, submsg, datasets_to_review, worksheet_filename )
         return msgBody.encode('ascii', 'ignore')
-    
+
     @staticmethod
     def wkbk_file_name(wkbk_path):
         wkbk_path_list = wkbk_path.split("/")
         return wkbk_path_list[-1]
-        
+
     def dataset_Name_and_Cnts(self, wkbk):
         dataset_html = ''
         keysToKeep = ['count', 'Dataset Name']
         datasets = myUtils.filterDictList(wkbk['datasets'], keysToKeep)
         dataset_html = " ".join([ self.makeDatasetHtml(dataset) for dataset in datasets])
         return dataset_html
-        
+
     @staticmethod
     def makeDatasetHtml(dataset):
         return "<tr><td>" + dataset["Dataset Name"] + '</td><td class="count">' + str(dataset["count"]) + "</td></tr>"
-    
-    
+
+
     def generate_All_Emails(self, wkbks):
         '''generates and sends wkbks to recipients'''
         wkbks_sent_out = []
+        print "in here- emailing"
         for wkbk in wkbks:
             #if wkbk[ "data_cordinator"]['Email'] in successfully_updated:
             msgBody =  self.msgBodyFill(wkbk)
@@ -116,10 +117,10 @@ class ForReviewBySteward(MetaData_Email_Composer):
             except Exception, e:
                 print e
         return wkbks_sent_out
-  
-    
-    
-    
+
+
+
+
 if __name__ == "__main__":
     main()
 

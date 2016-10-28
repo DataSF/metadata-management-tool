@@ -23,12 +23,12 @@ class ScreenDoorStuff:
         self._files_to_download = self.set_FileInfo()
         self._wkbk_uploads_json_fn = self._screendoor_configs['wkbk_uploads_json_fn']
         self._current_date = datetime.datetime.now().strftime("%Y_%m_%d_")
-  
+
     def set_responsesUrl(self):
         responses_url = self._screendoor_configs['responses_url']
         responses_url =  responses_url % (self._projectid,self._api_key)
         return responses_url
-        
+
     def set_reponses(self):
         responses = ""
         try:
@@ -54,11 +54,11 @@ class ScreenDoorStuff:
                 response_id = response['responses'][item]
                 for item in response['responses'][item]['files']:
                     files_to_download.append(item)
-        return files_to_download 
-    
+        return files_to_download
+
     def setDownloadUrl(self, fileId):
         return self._attachment_url % (fileId)
-        
+
     def getAttachment(self, fileId, filename):
         '''downloads an attachment from screen door using the fileid and filename'''
         #equivelent to: curl -L "https://screendoor.dobt.co/attachments/s5wflD750Nxhai9MfNmxes4TR-0xoDyw/download" > whateverFilename.csv
@@ -77,16 +77,18 @@ class ScreenDoorStuff:
                 downloaded = True
         except Exception, e:
             print str(e)
-        return downloaded 
-    
+        return downloaded
+
+
+
     def get_attachments(self):
         '''downloads a list of files'''
         downloaded_files = { "uploaded_workbooks": []}
         for file in self._files_to_download:
             downloaded_files[ "uploaded_workbooks"].append( { file['filename']: self.getAttachment(file['id'], file['filename'])})
         return downloaded_files
-        
-        
-    
+
+
+
 if __name__ == "__main__":
     main()
