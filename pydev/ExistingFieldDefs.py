@@ -6,6 +6,10 @@ import json
 import inflection
 from Utils import *
 import re
+import requests
+#import pycurl
+#from GSpread_Stuff import *
+import shutil
 
 ##
 class ExistingFieldDefs:
@@ -55,6 +59,16 @@ class ExistingFieldDefs:
       sht_names = ShtUtils.get_sht_names(wkbk)
       return {'wkbk': wkbk, 'shts': sht_names}
 
+    @staticmethod
+    def getShtDf(wkbk_stuff):
+      dfSht = False
+      df = wkbk_stuff['wkbk'].parse('DataDictionary', header=4)
+      dfCols = list(df.columns)
+      if len(dfCols) > 3:
+        return df
+      return dfSht
+
+
     def buildDocumentedFields(self):
       dowloaded = False
       for dataset in self._datasetsToLoadList[0:10]:
@@ -63,14 +77,20 @@ class ExistingFieldDefs:
         print "******"
         #get the main dataset
         dataset_df = self.get_dfDatasetToLoad(dataset['datasetID'])
+        
         fName = self.make_fnName(dataset)
         if(fName):
-          if(myUtils.getAttachmentFullPath( self._documented_fields_dir, fName , dataset['Attachment URL'])):
-            print "success!!"
+          if(myUtils.getFiles(self._documented_fields_dir, fName , dataset['Attachment URL'])) :
+          #if(myUtils.getAttachmentFullPath( self._documented_fields_dir, fName , dataset['Attachment URL'])):
             wkbk_stuff = self.get_shts(self._documented_fields_dir+fName)
-            print wkbk_stuff
-          else:
-            print "failed"
+            wkbkSht = self.getShtDf(wkbk_stuff)
+            if wkbkSht.any:
+              print wkbkSht.columns
+              df_all = pd.merge(dataset_df, wkbkSht, how='left', on='Field Name')
+              #print df_all.to_dict('records')  
+              print list(df_all.columns)       
+        else:
+          print "failed"
 
 
 

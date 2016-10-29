@@ -12,9 +12,11 @@ import inflection
 import csv, codecs, cStringIO
 import glob
 import math
-import pycurl
+#import pycurl
 from io import BytesIO
 import pandas as pd
+import requests
+import shutil
 
 class pyLogger:
     def __init__(self, configItems):
@@ -150,6 +152,15 @@ class myUtils:
                 downloaded = True
         except Exception, e:
             print str(e)
+        return downloaded
+
+    @staticmethod
+    def getFiles(output_dir, output_fn, download_url ):
+        dowloaded = False
+        r = requests.get(download_url, stream=True)
+        with open(output_dir+output_fn, 'wb') as f:
+            shutil.copyfileobj(r.raw, f)
+            downloaded = True
         return downloaded
 
 

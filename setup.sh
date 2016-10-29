@@ -3,7 +3,7 @@
 #sets up initial directory structure for repo.
 mkdir logs
 mkdir output_wkbks
-mkdir wkbk_upoads
+mkdir wkbk_uploads
 mkdir pickled
 
 #installs dependencies
@@ -13,3 +13,4 @@ pip install openpyxl
 pip install pycurl
 pip install xlrd
 pip install xlsxwriter
+pip install inflection
