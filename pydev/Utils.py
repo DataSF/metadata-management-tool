@@ -12,11 +12,22 @@ import inflection
 import csv, codecs, cStringIO
 import glob
 import math
-#import pycurl
+import pycurl
 from io import BytesIO
 import pandas as pd
 import requests
 import shutil
+from csv import DictWriter
+from cStringIO import StringIO
+
+from pdfminer.converter import LTChar, TextConverter
+from pdfminer.layout import LAParams
+from pdfminer.pdfparser import *
+
+from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
+from pdfminer.pdfpage import PDFPage
+from pdfminer.converter import TextConverter
+from pdfminer.layout import LAParams
 
 class pyLogger:
     def __init__(self, configItems):
@@ -164,7 +175,78 @@ class myUtils:
         return downloaded
 
 
+    @staticmethod
+    def write_wkbk_csv(fn, dictList, headerCols):
+        wrote_wkbk = False
+        with open(fn, 'w') as csvfile:
+            try:
+                fieldnames = headerCols
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                writer.writeheader()
+                for data in dictList:
+                    try:
+                        writer.writerow({ s:str(v).encode("ascii",  'ignore') for s, v in data.iteritems()  } )
+                    except:
+                        print "could not write row"
+                wrote_wkbk = True
+            except Exception, e:
+                print str(e)
+        return wrote_wkbk
+
+    @staticmethod
+    def pdf_to_csv(pdfname):
+
+        class CsvConverter(TextConverter):
+            def __init__(self, *args, **kwargs):
+                TextConverter.__init__(self, *args, **kwargs)
+
+            def end_page(self, i):
+                from collections import defaultdict
+                lines = defaultdict(lambda : {})
+                for child in self.cur_item._objs:                #<-- changed
+                    if isinstance(child, LTChar):
+                        (_,_,x,y) = child.bbox
+                        line = lines[int(-y)]
+                        line[x] = child._text.encode(self.codec) #<-- changed
+
+                for y in sorted(lines.keys()):
+                    line = lines[y]
+                    self.outfp.write("".join(line[x] for x in sorted(line.keys())))
+                    self.outfp.write("\n")
+
+        # PDFMiner boilerplate
+        rsrcmgr = PDFResourceManager()
+        sio = StringIO()
+        codec = 'utf-8'
+        laparams = LAParams()
+        #device = CsvConverter(rsrcmgr, sio, codec="utf-8", laparams=LAParams())
+        device = TextConverter(rsrcmgr, sio, codec=codec, laparams=laparams)
+        interpreter = PDFPageInterpreter(rsrcmgr, device)
+
+        # Extract text
+        fp = file(pdfname, 'rb')
+        for i, page in enumerate(PDFPage.get_pages(fp)):
+            print page
+            sio.write("START PAGE %d\n" % i)
+            if page is not None:
+                interpreter.process_page(page)
+            sio.write("END PAGE %d\n" % i)
+        fp.close()
+
+        # Get text from StringIO
+        text = sio.getvalue()
+
+        # Cleanup
+        device.close()
+        sio.close()
+
+        return text
+
+
+
+
 class ShtUtils:
+    '''class for common wksht util functions'''
 
     @staticmethod
     def getWkbk(fn):
@@ -176,7 +258,13 @@ class ShtUtils:
         shts =  wkbk.sheet_names
         return [ sht for sht in shts if sht != 'Dataset Summary']
 
+class PandasUtils:
+    '''class for common pandas utility functions'''
 
+    @staticmethod
+    def renameCols(df, colMappingDict):
+        df = df.rename(columns=colMappingDict)
+        return df
 
 
 

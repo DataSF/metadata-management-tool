@@ -28,7 +28,7 @@ class WkbkGenerator:
         '''returns all rows where Do Not Process == False '''
         if cells:
             df = pd.DataFrame(cells)
-            return df[  (df["Do Not Process"] == "FALSE" ) & (df['datasetID'] != '#N/A') ]
+            return df[  (df["Do Not Process"] == "FALSE" ) & (df['datasetID'] != '#N/A') & (df['Global Field'] == 'FALSE') ]
 
     @property
     def df_stewards(self):
