@@ -78,9 +78,9 @@ class WkbkGenerator:
 
     def set_Datasets(self, stwd):
         '''gets the datasets associatiated with a steward'''
-        df_datasets = pd.DataFrame({'count' : self._df_master[ (self._df_master["Data Steward"] == stwd) & (self._df_master['Status'] != "Submitted by Steward")].groupby(["inventoryID", "datasetID", "Dataset Name", "Open Data Portal URL"]).size()}).reset_index()
+        df_datasets = pd.DataFrame({'count' : self._df_master[ ( self._df_master["Data Steward"] == stwd) & (self._df_master['Status'] != "Submitted by Steward") & (self._df_master['Status'] != "Complete") & (self._df_master['Status'] != "Do Not Process") & (self._df_master['Status'] != "Submitted by Coordinator")].groupby(["inventoryID", "datasetID", "Dataset Name", "Open Data Portal URL"]).size()}).reset_index()
         #get the dates of datsets with submitted fields
-        df_datasetsSubmitted =  pd.DataFrame({'count' : self._df_master[ (self._df_master["Data Steward"] == stwd) & (self._df_master['Status'] == "Submitted by Steward")].groupby(["Date Last Changed"]).size()}).reset_index()
+        df_datasetsSubmitted =  pd.DataFrame({'count' : self._df_master[ ((self._df_master["Data Steward"] == stwd) & ( (self._df_master['Status'] == "Submitted by Steward") | (self._df_master['Status'] == "Complete") | (self._df_master['Status'] == "Do Not Process") | (self._df_master['Status'] == "Submitted by Coordinator"))) ].groupby(["Date Last Changed"]).size()}).reset_index()
         df_datasetsList = list(df_datasets['datasetID'])
         datasetsSubmittedCnt = sum(list(df_datasetsSubmitted['count']))
         df_datasetsDict = df_datasets.T.to_dict().values()
@@ -131,7 +131,8 @@ class WkbkGenerator:
 
     def build_Wkbks(self, wkbk_writer):
         '''builds and writes wkbks for datastewards'''
-        for stwd in  self._stewardsList:
+        #sprint self._stewardsList[0:3]
+        for stwd in self._stewardsList[2:3]:
             stwd_info  = self.steward_info(stwd)
             df_datasets, df_datasetsList, df_datasetsDict, datasetsSubmittedCnt, datasetToDoCount = self.set_Datasets(stwd)
             submittedFields = self.checkIfSubmittedFields(datasetsSubmittedCnt, datasetToDoCount)

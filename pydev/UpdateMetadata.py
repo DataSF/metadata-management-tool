@@ -1,5 +1,7 @@
 # coding: utf-8
-import datetime
+
+from datetime import datetime, timedelta
+
 from Utils import *
 from Wkbk_Json import *
 
@@ -20,8 +22,11 @@ class UpdateMetadata(object):
         except Exception, e:
             print str(e)
         self._field_positions = configItems['update_info']['field_positions']
-        self._current_date = datetime.datetime.now().strftime("%m/%d/%Y")
+        self._current_date = datetime.datetime.now() - timedelta(days=10)
+        self._current_date = self._current_date.strftime("%m/%d/%Y")
+        #self._current_date = datetime.datetime.now().strftime("%m/%d/%Y")
         self._updt_statuses = configItems['update_info']['statuses']
+        self._valsToNotOverride = configItems['valsToNotOverride']
 
     @staticmethod
     def getDatasetsList(wkbk):
@@ -40,11 +45,18 @@ class UpdateMetadataStatus(UpdateMetadata):
             cells_updated = True
         return cells_updated
 
+    def get_overrride_cells(self):
+        return self._gSpread_Stuff.getCellRows(self._updt_sht, self._valsToNotOverride)
+
 
     def updatewkbk_info(self, wkbks):
         '''method that does the heavy lifting/updating-uses info in the json wkbk object'''
         wkbk_cells_updted_dict = {}
-        for wkbk in wkbks:
+        #get a list where the status in the list
+        doNotOverrideList = self.get_overrride_cells()
+        print doNotOverrideList
+
+        for wkbk in wkbks['workbooks']:
             print wkbk
             cells_updated = False
             try:
@@ -52,21 +64,19 @@ class UpdateMetadataStatus(UpdateMetadata):
                 datasetsList =  self.getDatasetsList(wkbk)
                 #get the cell ranges
                 all_rows = self._gSpread_Stuff.getCellRows(self._updt_sht, datasetsList)
-                cell_ranges_dt_changed = self._gSpread_Stuff.getCellRanges(all_rows, self._field_positions['date_last_changed'])
-                cell_ranges_status =  self._gSpread_Stuff.getCellRanges(all_rows, self._field_positions['status'])
-                valsToNotOverride = ['Complete', "Do Not Process", "Submitted by Steward"]
-
+                all_rows = [ row for row in all_rows if row not in doNotOverrideList ]
+                print all_rows
+                cell_ranges_dt_changed = self._gSpread_Stuff.generateCellLocations(all_rows, self._field_positions['date_last_changed'])
+                print cell_ranges_dt_changed
+                cell_ranges_status =  self._gSpread_Stuff.generateCellLocations(all_rows, self._field_positions['status'])
+                print cell_ranges_status
                 #update the statuses
                 print "***updating statuses**"
-                updt_statuses,  all_cellrows_do_not_override  = self._gSpread_Stuff.batchUpdateCellRanges( self._updt_sht, cell_ranges_status,  self._updt_statuses['for_review_steward'], valsToNotOverride )
-                print all_cellrows_do_not_override
+                updt_status = self._gSpread_Stuff.update_many_cells_by_addr_str(self._updt_sht, cell_ranges_dt_changed, self._current_date)
                 print "***updating dates****"
-                #update the dates
-                updt_dt_changed, all_cellrows_do_not_override  = self._gSpread_Stuff.batchUpdateCellRanges( self._updt_sht , cell_ranges_dt_changed,  self._current_date, [], all_cellrows_do_not_override )
-
+                updt_dt_changed = self._gSpread_Stuff.update_many_cells_by_addr_str(self._updt_sht, cell_ranges_status, self._updt_statuses['for_review_steward'])
+                print updt_status
                 #check to make sure that stuff actually updated correctly
-                if self.checkUpdateStatus(updt_statuses) and self.checkUpdateStatus(updt_dt_changed):
-                    cells_updated = True
                 wkbk_cells_updted_dict[wkbk["data_cordinator"]["Email"]] = cells_updated
             except Exception, e:
                 print str(e)
