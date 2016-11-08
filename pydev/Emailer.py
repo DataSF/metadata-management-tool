@@ -33,6 +33,7 @@ class Emailer():
         self._server_port = None 
         self._sender = None 
         self._password = None 
+        self._bcc = None 
         self.setConfigs()
     
    
@@ -42,6 +43,7 @@ class Emailer():
         self._server = self._emailConfigs['server_addr']
         self._server_port = self._emailConfigs['server_port']
         self._sender =  self._emailConfigs['sender_addr']
+        self._bcc = self._emailConfigs['bcc']
         if (self._emailConfigs['sender_password']):
             self._password = base64.b64decode(self._emailConfigs['sender_password'])
        
@@ -53,6 +55,7 @@ class Emailer():
         msg['From'] = fromaddr
         msg['To'] = recipients
         msg['Subject'] = subject_line
+        msg['Bcc'] = self._bcc
         body = msgBody
         msg.attach(MIMEText(body, 'html'))
           

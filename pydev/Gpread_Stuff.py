@@ -95,7 +95,7 @@ class gSpread_Stuff:
         for cell_range in cell_ranges:
             try:
                 do_not_override   =  self.batchUpdateCellRange(sht, cell_range, valToSet, valsToNotOverride, cellRowsToNotOverride)
-                print do_not_override
+                #print do_not_override
                 updt_log[cell_range] = True
             except Exception, e:
                 print "Batch errorCell ranges Error"
@@ -122,9 +122,13 @@ class gSpread_Stuff:
 
     def update_many_cells_by_addr_str(self, sht, cell_addr_list, cell_val):
         '''updates a list of cells with the same value'''
-        print cell_val
-        return [ self.update_cell_addr_str(sht, cell_addr_str, cell_val) for cell_addr_str in cell_addr_list]
-
+        #print "updating lists vals"
+        if len(cell_addr_list)> 1:
+            updated = [ self.update_cell_addr_str(sht, cell_addr_str, cell_val) for cell_addr_str in cell_addr_list]
+            return True
+        return False
+        
+        
     @staticmethod
     def getCellRange(column,rows):
         rows =  sorted(rows)

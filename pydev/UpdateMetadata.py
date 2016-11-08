@@ -13,7 +13,7 @@ class UpdateMetadata(object):
         self._updt_sht_name = configItems['update_info']['updt_sht_name']
         self._updt_wkbk_key = configItems['update_info']['wkbk_key']
         self._wkbk_uploads_dir = configItems['wkbk_uploads_dir']
-        json_wksht_status_update_fname = configItems['json_wksht_status_update_fname']
+        self._json_wksht_status_update_fname = configItems['json_wksht_status_update_fname']
         try:
             self._updt_wkbk = gSpread_Stuff.get_wkbk(self._updt_wkbk_key)
         except Exception, e:
@@ -31,7 +31,7 @@ class UpdateMetadata(object):
 
     @staticmethod
     def getDatasetsList(wkbk):
-        return [elem['Dataset Name'].strip() for elem in wkbk['datasets'] if 'Dataset Name' in elem]
+        return [elem['datasetID'].strip() for elem in wkbk['datasets'] if 'datasetID' in elem]
 
 
 class UpdateMetadataStatus(UpdateMetadata):
@@ -65,24 +65,27 @@ class UpdateMetadataStatus(UpdateMetadata):
                 #get the cell ranges
                 all_rows = self._gSpread_Stuff.getCellRows(self._updt_sht, datasetsList)
                 all_rows = [ row for row in all_rows if row not in doNotOverrideList ]
-                print all_rows
+                #all_rows = all_rows[0:5]
                 cell_ranges_dt_changed = self._gSpread_Stuff.generateCellLocations(all_rows, self._field_positions['date_last_changed'])
-                print cell_ranges_dt_changed
+                #print cell_ranges_dt_changed
+               
                 cell_ranges_status =  self._gSpread_Stuff.generateCellLocations(all_rows, self._field_positions['status'])
                 #print cell_ranges_status
+                
                 #update the statuses
-                print "***updating dates**"
+                #print "***updating dates**"
                 updt_dt_changed = self._gSpread_Stuff.update_many_cells_by_addr_str(self._updt_sht, cell_ranges_dt_changed, self._current_date)
-                print "***updating statuses****"
+                #print "***updating statuses****"
                 updt_status = self._gSpread_Stuff.update_many_cells_by_addr_str(self._updt_sht, cell_ranges_status, self._updt_statuses['for_review_steward'])
-                print updt_status
+                #print updt_status
                 #check to make sure that stuff actually updated correctly
-                wkbk_cells_updted_dict[wkbk["data_cordinator"]["Email"]] = True
+                #wkbk_cells_updted_dict[wkbk["data_cordinator"]["Email"]] = True
             except Exception, e:
                 print str(e)
-                wkbk_cells_updted_dict[wkbk["data_cordinator"]["Email"]] = False
-        #write the results to json file
-        wroteFile = WkbkJson.write_json_object({"updated":wkbk_cells_updted_dict}, self._wkbk_uploads_dir, json_wksht_status_update_fname )
+                #wkbk_cells_updted_dict[wkbk["data_cordinator"]["Email"]] = False
+            #write the results to json file
+            wkbk_cells_updted_dict[wkbk["data_cordinator"]["Email"]] = True
+        wroteFile = WkbkJson.write_json_object({"updated":wkbk_cells_updted_dict}, self._wkbk_uploads_dir, self._json_wksht_status_update_fname )
         return wroteFile
 
 
@@ -95,7 +98,7 @@ class UpdateMetadataFields(UpdateMetadata):
     def findUpdtRow( self, field_dict):
         #find cell on columnid
         row_num = self._gSpread_Stuff.findRow(self._updt_sht, str(field_dict['1']))
-        print row_num
+        #print row_num
         return row_num
 
 

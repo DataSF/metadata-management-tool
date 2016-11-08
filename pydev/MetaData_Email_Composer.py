@@ -76,7 +76,7 @@ class ForReviewBySteward(MetaData_Email_Composer):
         datasets_to_review = self.dataset_Name_and_Cnts(wkbk)
         if submitted_fields:
             submsg = self.buildFinishedFieldsMsgBody(msgParts, wkbk)
-            print submsg
+            #print submsg
         else:
             submsg =  self.buildUnfinishedFieldsMsgBody(msgParts, wkbk)
         msgBody = msgParts['main_msg'] % (steward_name, submsg, datasets_to_review, worksheet_filename )
@@ -100,7 +100,6 @@ class ForReviewBySteward(MetaData_Email_Composer):
 
 
     def generate_All_Emails(self, wkbks, updated_list_json):
-        print updated_list_json
         '''generates and sends wkbks to recipients'''
         wkbks_sent_out = []
         for wkbk in wkbks['workbooks']:
@@ -112,7 +111,7 @@ class ForReviewBySteward(MetaData_Email_Composer):
                 attachment_fullpath = wkbk["path_to_wkbk"]
                 attachment = self.wkbk_file_name(wkbk["path_to_wkbk"])
                 try:
-                    print "sending email"
+                    #print "sending email"
                     self.email_msg(receipient, subject_line, msgBody, attachment, attachment_fullpath )
                     wkbks_sent_out.append(wkbk)
                 except Exception, e:
