@@ -33,7 +33,7 @@
 
             <!-- This is where the text with # of fields the cordinator has
         completed goes: see email_field-cnt_finished.tx and email_field_cnt_unfinished.tx -->
-
+g
            %s
 
         <p>
@@ -41,7 +41,10 @@
             <table id="maintbl">
                 <tr>
                     <th>
-                        Table Name
+                       Dataset ID
+                    </th>
+                    <th>
+                        Dataset Name
                     </th>
                     <th>
                         Number of Fields
