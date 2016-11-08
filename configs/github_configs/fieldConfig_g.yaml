@@ -60,3 +60,5 @@ updt_fields_json_fn: metadata_fields.json
 wkbk_uploads_dir: /home/ubuntu/workspace/wkbk_uploads/
 
 documented_fields_dir: /home/ubuntu/workspace/documented_fields
+valsToNotOverride: ['Complete', "Do Not Process", "Submitted by Coordinator" , "Submitted by Steward"]
+fieldType_flag: ["Category", "Unique"]

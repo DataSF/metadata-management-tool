@@ -1,8 +1,8 @@
  <p>
-            You are getting this email because youre listed as one of the stewards of a dataset or datasets on the <a href="https://data.sfgov.org/">open data portal.</a>
+            You are getting this email because you&#39;re listed as one of the stewards of a dataset or datasets on the <a href="https://data.sfgov.org/">open data portal.</a>
         </p>
         <p>
-            We are cleaning up field documentation and need your help verifying and filling in missing documentation for the datasets you manage. 
+            We are cleaning up field documentation and need your help verifying and filling in missing documentation for the datasets you manage. <a href="https://datasf.org/blog/show-me-the-data-dictionary/">You can read more about why we&#39;re doing this on the DataSF blog.</a>
 </p>
 <p>
  Don&#39;t worry, this shouldnt take long, you only have <b> %s </b> fields to document across the following datasets:

@@ -96,26 +96,27 @@ class ForReviewBySteward(MetaData_Email_Composer):
 
     @staticmethod
     def makeDatasetHtml(dataset):
-        return "<tr><td>" + dataset["datasetID"] + '</td><td>" + dataset["Dataset Name"] + '</td><td class="count">' + str(dataset["count"]) + "</td></tr>"
+        return "<tr><td>" + dataset["datasetID"] + "</td><td>" + dataset["Dataset Name"] + '</td><td class="count">' + str(dataset["count"]) + "</td></tr>"
 
 
-    def generate_All_Emails(self, wkbks):
+    def generate_All_Emails(self, wkbks, updated_list_json):
+        print updated_list_json
         '''generates and sends wkbks to recipients'''
         wkbks_sent_out = []
-        print "in here- emailing"
-        for wkbk in wkbks:
-            #if wkbk[ "data_cordinator"]['Email'] in successfully_updated:
-            msgBody =  self.msgBodyFill(wkbk)
-            #receipient = wkbk[ "data_cordinator"]['Email']
-            receipient = "janine.heiser@sfgov.org"
-            subject_line = self._subject_line
-            attachment_fullpath = wkbk["path_to_wkbk"]
-            attachment = self.wkbk_file_name(wkbk["path_to_wkbk"])
-            try:
-                self.email_msg(receipient, subject_line, msgBody, attachment, attachment_fullpath )
-                wkbks_sent_out.append(wkbk)
-            except Exception, e:
-                print e
+        for wkbk in wkbks['workbooks']:
+            if updated_list_json['updated'][wkbk[ "data_cordinator"]['Email']]:
+                msgBody =  self.msgBodyFill(wkbk)
+                #receipient = wkbk[ "data_cordinator"]['Email']
+                receipient = "janine.heiser@sfgov.org"
+                subject_line = self._subject_line
+                attachment_fullpath = wkbk["path_to_wkbk"]
+                attachment = self.wkbk_file_name(wkbk["path_to_wkbk"])
+                try:
+                    print "sending email"
+                    self.email_msg(receipient, subject_line, msgBody, attachment, attachment_fullpath )
+                    wkbks_sent_out.append(wkbk)
+                except Exception, e:
+                    print str(e)
         return wkbks_sent_out
 
 

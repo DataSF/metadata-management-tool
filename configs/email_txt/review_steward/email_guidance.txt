@@ -32,8 +32,7 @@
         </H2>
 
             <!-- This is where the text with # of fields the cordinator has
-        completed goes: see email_field-cnt_finished.tx and email_field_cnt_unfinished.tx -->
-g
+        completed goes: see email_field-cnt_finished.tx and email_field_cnt_unfinished.tx !-->
            %s
 
         <p>
@@ -61,16 +60,17 @@ g
                     Open up the attached field documentation template (%s)
                 </li>
                 <li>
-                    There will be a tab for each dataset listed above
+                    There will be a tab for each dataset listed above. The spreadhseet tabs are labeled by their dataset IDs.
                 </li>
-                <li>At a minimum, enter or edit the field definition for each field listed in each sheet (review Field Definition Guidance.docx for guidance on writing descriptive definitions)
+                <li><a href="https://docs.google.com/document/d/1SQFmwsx9cxUYSPVcHc933-gcz_AOzeOoOwDifAt23zI/export?format=doc">Download and review the guidance on completing the definitions</a></li>
+                <li>At a minimum, enter or edit the field definition for each field listed in each sheet
                     <ol type="a">
                         <li> Optionally, enter a field alias if the field name could benefit from something more human readable </li>
                         <li> Optionally, if a field is categorical or unique, select the appropriate option under field type flag</li>
                     </ol>
                 </li>
                 <li>
-                    When complete, save and upload your file at <a href="https://sfgov.forms.fm/data-dictionary-submission/responses/new"> this online submission form </a>
+                    When complete, save and upload your file at <a href="https://sfgov.forms.fm/data-dictionary-submission/responses/new">this online submission form</a>
                 </li>
             </ol>
         <p>

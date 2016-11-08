@@ -14,5 +14,5 @@ But don't stop there! We need your help to verify and fill in the missing docume
 
 
 <p>
-Filling out the remaining fields shouldn take long, you only have <b> %s </b> fields to document across the following datasets: 
+Filling out the remaining fields shouldn&#39;t take long, you only have <b> %s </b> fields to document across the following datasets: 
 </p>

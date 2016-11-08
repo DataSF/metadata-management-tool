@@ -63,26 +63,26 @@ pickle_name_fieldtypes  = configItems['field_types']['pickle_name']
 
 
 print "********getting metadata fields from google spreadsheets***********"
-#gspread_stuff.getMetaDataset(wkbk_key, sht_name_datadict, pickle_name_datadict)
-#gspread_stuff.getMetaDataset(wkbk_key, sht_name_stewards,pickle_name_stewards )
-#gspread_stuff.getMetaDataset(wkbk_key, sht_name_field_types, pickle_name_fieldtypes)
+gspread_stuff.getMetaDataset(wkbk_key, sht_name_datadict, pickle_name_datadict)
+gspread_stuff.getMetaDataset(wkbk_key, sht_name_stewards,pickle_name_stewards )
+gspread_stuff.getMetaDataset(wkbk_key, sht_name_field_types, pickle_name_fieldtypes)
 
-#cells_dataDict = gspread_stuff.unpickle_cells(pickle_name_datadict)
-#cells_stewards = gspread_stuff.unpickle_cells(pickle_name_stewards)
-#fieldtype_cells = gspread_stuff.unpickle_cells(pickle_name_fieldtypes)
+cells_dataDict = gspread_stuff.unpickle_cells(pickle_name_datadict)
+cells_stewards = gspread_stuff.unpickle_cells(pickle_name_stewards)
+fieldtype_cells = gspread_stuff.unpickle_cells(pickle_name_fieldtypes)
 
-#wkbk_writer = WkBkWriter(configItems,fieldtype_cells)
-#print
-#print "********generating workbooks**************************"
-#wkbk_generator = WkbkGenerator(configItems, cells_dataDict,cells_stewards)
+wkbk_writer = WkBkWriter(configItems,fieldtype_cells)
+print
+print "********generating workbooks**************************"
+wkbk_generator = WkbkGenerator(configItems, cells_dataDict,cells_stewards)
 
 
-#wkbks_json = wkbk_generator.build_Wkbks(wkbk_writer)
-#json_obj = wkbk_json.write_json_object_wkbks(wkbks_json)
-#if json_obj:
-#    print "successfully output wkbks"
+wkbks_json = wkbk_generator.build_Wkbks(wkbk_writer)
+json_obj = wkbk_json.write_json_object_wkbks(wkbks_json)
+if json_obj:
+    print "successfully output wkbks"
 
-#print "********updating google spreadsheets**************** "
+print "********updating google spreadsheets**************** "
 
 
 wkbks = wkbk_json.loadJsonFile(configItems['wkbk_output_dir'], configItems['wkbk_output_json'])
@@ -95,9 +95,13 @@ update_successful = update_metadata_status.updatewkbk_info(wkbks)
 if update_successful:
     print "Success- Cells were successfully updated"
 else:
-   print "FAILED- Something went wrong-cells where not successfully updated"
+  print "FAILED- Something went wrong-cells where not successfully updated"
 
-#print "*************Sendng out emails ******"
-#emailer_review_steward = ForReviewBySteward(configItems, emailer)
-#wkbks_sent_out = emailer_review_steward.generate_All_Emails(wkbks)
-#print wkbks_sent_out
+print "*************Sendng out emails ******"
+
+
+#get list of Stewards where the shts have been updated
+json_updt_file =  wkbk_json.loadJsonFile(configItems['wkbk_uploads_dir'], configItems['json_wksht_status_update_fname'])
+emailer_review_steward = ForReviewBySteward(configItems, emailer)
+wkbks_sent_out = emailer_review_steward.generate_All_Emails(wkbks, json_updt_file )
+print wkbks_sent_out
