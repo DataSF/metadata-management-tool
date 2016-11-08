@@ -89,14 +89,14 @@ class ForReviewBySteward(MetaData_Email_Composer):
 
     def dataset_Name_and_Cnts(self, wkbk):
         dataset_html = ''
-        keysToKeep = ['count', 'Dataset Name']
+        keysToKeep = ['count', 'Dataset Name', 'datasetID']
         datasets = myUtils.filterDictList(wkbk['datasets'], keysToKeep)
         dataset_html = " ".join([ self.makeDatasetHtml(dataset) for dataset in datasets])
         return dataset_html
 
     @staticmethod
     def makeDatasetHtml(dataset):
-        return "<tr><td>" + dataset["Dataset Name"] + '</td><td class="count">' + str(dataset["count"]) + "</td></tr>"
+        return "<tr><td>" + dataset["datasetID"] + '</td><td>" + dataset["Dataset Name"] + '</td><td class="count">' + str(dataset["count"]) + "</td></tr>"
 
 
     def generate_All_Emails(self, wkbks):
