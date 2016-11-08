@@ -4,17 +4,17 @@
   <!-- The character set should be utf-8 -->
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width"/>
- 
+
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
- 
+
     <meta name="HandheldFriendly" content="True">
     <meta name="MobileOptimized" content="320">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
- 
+
     <title>DataSF - Office of the Chief Data Officer | City and County of San Francisco</title>
     <meta name="description" content="Our mission is to empower use of the City and County of San Francisco's data. Our core product is SF OpenData, the official open data portal.">
-    
+
     <style>
         body{ font-family:"Alegreya","Helvetica Neue",Helvetica,Arial,sans-serif;color:#333333;font-size:18px;margin-top:50px;}
         table, th, td {border: 1px solid #D3D3D3; border-collapse: collapse; padding: 5px; }
@@ -30,30 +30,35 @@
         <H2>
             Hello %s,
         </H2>
+
+            <!-- This is where the text with # of fields the cordinator has
+        completed goes: see email_field-cnt_finished.tx and email_field_cnt_unfinished.tx -->
+
            %s
-        <p> 
+
+        <p>
             <div id="maintbl">
             <table id="maintbl">
                 <tr>
-                    <th> 
-                        Table Name 
-                    </th> 
-                    <th> 
-                        Number of Fields 
+                    <th>
+                        Table Name
+                    </th>
+                    <th>
+                        Number of Fields
                     </th>
                 </tr>
                 %s
             </table>
             </div>
-        <p> 
+        <p>
             <b> Here&#39;s how you complete the documentation: </b>
         </p>
             <ol>
-                <li> 
+                <li>
                     Open up the attached field documentation template (%s)
                 </li>
-                <li> 
-                    There will be a tab for each dataset listed above 
+                <li>
+                    There will be a tab for each dataset listed above
                 </li>
                 <li>At a minimum, enter or edit the field definition for each field listed in each sheet (review Field Definition Guidance.docx for guidance on writing descriptive definitions)
                     <ol type="a">
@@ -61,7 +66,7 @@
                         <li> Optionally, if a field is categorical or unique, select the appropriate option under field type flag</li>
                     </ol>
                 </li>
-                <li> 
+                <li>
                     When complete, save and upload your file at <a href="https://sfgov.forms.fm/data-dictionary-submission/responses/new"> this online submission form </a>
                 </li>
             </ol>
@@ -72,6 +77,6 @@
             Best, </br>
             Jason
         </p>
-    
+
 </body>
 </html>
