@@ -13,3 +13,5 @@ pydev/.ipynb_checkpoints/
 pydev/.~c9_*
 configs/screendoor_configs.yaml
 wkbk_uploads/
+*.pyc
+documented_fields/

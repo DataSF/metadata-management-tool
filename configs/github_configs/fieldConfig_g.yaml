@@ -11,16 +11,16 @@ wkbk_output_dir: /home/ubuntu/workspace/output_wkbks/
 wkbk_output_json: workbooks_info.json
 
 
-datadict: 
+datadict:
     sht_name: VIEW_master_fields
     pickle_name: data_dict
-    
-stewards: 
+
+stewards:
      sht_name: import_data_coordinators
      pickle_name: stewards
-     
-     
-field_types: 
+
+
+field_types:
     sht_name: field_types
     pickle_name: field_types
 
@@ -44,10 +44,10 @@ update_info:
         field_alias: Field Alias
         field_definition: Field Definition
         field_type_flag: Field Type Flag
-    
+
     statuses:
         for_review_steward: For Review by Steward
-        submitted_steward: Submitted by Steward 
+        submitted_steward: Submitted by Steward
         complete: complete
 
 
@@ -58,3 +58,5 @@ screendoor_config_file: screendoor_configs.yaml
 
 updt_fields_json_fn: metadata_fields.json
 wkbk_uploads_dir: /home/ubuntu/workspace/wkbk_uploads/
+
+documented_fields_dir: /home/ubuntu/workspace/documented_fields
