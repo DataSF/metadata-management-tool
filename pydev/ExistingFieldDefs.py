@@ -21,6 +21,7 @@ class ExistingFieldDefs:
         self._datasetsToLoadList = self.set_datasetsToLoadList()
         self._documented_fields_name_mapping = { 'datasetID': 'systemID', 'columnID': 'columnID', 'Dataset Name': 'dataset_name', 'Field Name': 'field_name', 'Field Alias': 'field_alias', 'Definition': 'field_definition', 'Field Type Flag':'field_type_flag','Status': 'status', 'date_last_changed': 'date_last_changed'  }
         self._documented_fields_list = [ 'columnID',  'systemID', 'dataset_name',  'field_name',  'field_alias',  'field_definition', 'field_type_flag','date_last_changed' ]
+        self._pdf_others_fields_list = ['datasetID', 'Dataset Name', 'Field count', 'Attachment URL']
         self._wkbk_formats = configItems['wkbk_formats']
         self._current_date = datetime.datetime.now().strftime("%m/%d/%Y")
         self._document_fields_outputfile_fn = configItems['document_fields_outputfile_fn']
@@ -37,7 +38,7 @@ class ExistingFieldDefs:
 
     def set_datasetsToLoadList(self):
       '''gets the datasets with download urls'''
-      datasets_df =  pd.DataFrame({'count' : self._df_master[ (self._df_master["Data Dictionary Attached"] == "TRUE")].groupby(["inventoryID", "datasetID", "Dataset Name", "Attachment URL"]).size()}).reset_index()
+      datasets_df =  pd.DataFrame({'Field count' : self._df_master[ (self._df_master["Data Dictionary Attached"] == "TRUE")].groupby(["datasetID", "Dataset Name", "Attachment URL"]).size()}).reset_index()
       return datasets_df.to_dict(orient='records')
 
     def get_datasetsToLoadList(self):
@@ -94,7 +95,9 @@ class ExistingFieldDefs:
 
 
     def buildDocumentedFields(self):
-      allFields = []
+      allBlanks = []
+      allDefs = []
+      allPdfs = []
       dowloaded = False
       for dataset in self._datasetsToLoadList[0:10]:
         #get the main dataset
@@ -103,8 +106,8 @@ class ExistingFieldDefs:
         fName = self.make_fnNameXlxs(dataset)
         if(fName):
           #if(myUtils.getFiles(self._documented_fields_dir, fName , dataset['Attachment URL'])) :
-          if(myUtils.getAttachmentFullPath( self._documented_fields_dir, fName , dataset['Attachment URL'])):
-            wkbk_stuff = self.get_shts(self._documented_fields_dir+fName)
+          if(myUtils.getAttachmentFullPath( self._documented_fields_dir + "xlsx", fName , dataset['Attachment URL'])):
+            wkbk_stuff = self.get_shts(self._documented_fields_dir+"xlsx/"+fName)
             wkbkName = self._wkbk_formats['format1']['wksht_name']
             skipRows = self._wkbk_formats['format1']['skip_rows']
             try:
@@ -118,23 +121,21 @@ class ExistingFieldDefs:
               df_all = self.addStatusFields(df_all)
               df_all = df_all[self._documented_fields_list]
               df_all = df_all.fillna('')
-              df_allList =  df_all.to_dict('records')
-              allFields  = allFields  + df_allList
+              df_blanks = df_all[df_all['field_definition'] == '']
+              df_defs = df_all[df_all['field_definition'] != '']
+              blanksList =  df_blanks.to_dict('records')
+              defList = df_defs.to_dict('records')
+              allBlanks  = allBlanks  +  blanksList
+              allDefs = allDefs + defList
         else:
           fName = self.make_fnNamePdf(dataset)
           if(fName):
             print "***pdf****"
-            if(myUtils.getAttachmentFullPath( self._documented_fields_dir, fName , dataset['Attachment URL'])):
-              print "cool!"
+            if(myUtils.getAttachmentFullPath( self._documented_fields_dir+"pdf/", fName , dataset['Attachment URL'])):
               try:
-                print fName
-                df = read_pdf_table(self._documented_fields_dir+fName, area=[0, 0, 612, 792])
-                #print df.columns
-                #mycsv = myUtils.pdf_to_csv(self._documented_fields_dir+fName)
-                #print mycsv
-                #print mycsv.split("\n")
+                print "in here"
+                allPdfs.append(dataset)
 
-                #subprocess.call("pdf2htmlEX", '--zoom', '1.3', self._documented_fields_dir+fName, shell=True)
               except Exception, e:
                 print str(e)
           else:
@@ -144,10 +145,13 @@ class ExistingFieldDefs:
             print dataset
             print "********************"
       #print allFields
-      wroteFile = myUtils.write_wkbk_csv(self._documented_fields_dir + self._document_fields_outputfile_fn, allFields, self._documented_fields_list)
-      print
-      print wroteFile
+      wroteFileDefs = myUtils.write_wkbk_csv(self._documented_fields_dir +"output/" + self._document_fields_outputfile_fn, allDefs, self._documented_fields_list)
+      wroteFileBlanks =  myUtils.write_wkbk_csv(self._documented_fields_dir + "output/"+ "blank_fields.csv", allBlanks, self._documented_fields_list)
+      wrotePdfDatasets = myUtils.write_wkbk_csv(self._documented_fields_dir + "output/"+ "pdf_datasets.csv", allPdfs,self._pdf_others)
 
+      print wroteFileDefs
+      print wroteFileBlanks
+      print wrotePdfDatasets
 
 
 
