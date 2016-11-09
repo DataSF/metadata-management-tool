@@ -117,7 +117,14 @@ class gSpread_Stuff:
 
     @staticmethod
     def update_cell_addr_str(sht, cell_addr_str, cell_val):
-        return sht.update_acell(cell_addr_str, cell_val)
+        try:
+            return sht.update_acell(cell_addr_str, cell_val)
+        except Exception, e:
+            print "****error updating*****"
+            print str(e)
+            print cell_addr_str
+            print cell_val
+            print "*********"
 
 
     def update_many_cells_by_addr_str(self, sht, cell_addr_list, cell_val):
@@ -132,8 +139,6 @@ class gSpread_Stuff:
                 print cell_val
                 print "*********"
         return True
-
-        
         
     @staticmethod
     def getCellRange(column,rows):

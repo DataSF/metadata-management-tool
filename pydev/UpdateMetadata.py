@@ -59,29 +59,29 @@ class UpdateMetadataStatus(UpdateMetadata):
         for wkbk in wkbks['workbooks']:
             #print wkbk
             #cells_updated = False
-            try:
-                all_cellrows_do_not_override = []
-                datasetsList =  self.getDatasetsList(wkbk)
+            all_cellrows_do_not_override = []
+            datasetsList =  self.getDatasetsList(wkbk)
                 #get the cell ranges
-                all_rows = self._gSpread_Stuff.getCellRows(self._updt_sht, datasetsList)
-                all_rows = [ row for row in all_rows if row not in doNotOverrideList ]
+            all_rows = self._gSpread_Stuff.getCellRows(self._updt_sht, datasetsList)
+            all_rows = [ row for row in all_rows if row not in doNotOverrideList ]
                 #all_rows = all_rows[0:5]
-                cell_ranges_dt_changed = self._gSpread_Stuff.generateCellLocations(all_rows, self._field_positions['date_last_changed'])
+            cell_ranges_dt_changed = self._gSpread_Stuff.generateCellLocations(all_rows, self._field_positions['date_last_changed'])
                 #print cell_ranges_dt_changed
                
-                cell_ranges_status =  self._gSpread_Stuff.generateCellLocations(all_rows, self._field_positions['status'])
+            cell_ranges_status =  self._gSpread_Stuff.generateCellLocations(all_rows, self._field_positions['status'])
                 #print cell_ranges_status
                 
                 #update the statuses
                 #print "***updating dates**"
-                updt_dt_changed = self._gSpread_Stuff.update_many_cells_by_addr_str(self._updt_sht, cell_ranges_dt_changed, self._current_date)
-                #print "***updating statuses****"
-                updt_status = self._gSpread_Stuff.update_many_cells_by_addr_str(self._updt_sht, cell_ranges_status, self._updt_statuses['for_review_steward'])
+                     #print "***updating statuses****"
+            updt_status = self._gSpread_Stuff.update_many_cells_by_addr_str(self._updt_sht, cell_ranges_status, self._updt_statuses['for_review_steward'])
+            updt_dt_changed = self._gSpread_Stuff.update_many_cells_by_addr_str(self._updt_sht, cell_ranges_dt_changed, self._current_date)
+     
                 #print updt_status
                 #check to make sure that stuff actually updated correctly
                 #wkbk_cells_updted_dict[wkbk["data_cordinator"]["Email"]] = True
-            except Exception, e:
-                print str(e)
+            #except Exception, e:
+            #print str(e)
                 #wkbk_cells_updted_dict[wkbk["data_cordinator"]["Email"]] = False
             #write the results to json file
             wkbk_cells_updted_dict[wkbk["data_cordinator"]["Email"]] = True

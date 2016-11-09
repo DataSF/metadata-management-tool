@@ -132,7 +132,7 @@ class WkbkGenerator:
     def build_Wkbks(self, wkbk_writer):
         '''builds and writes wkbks for datastewards'''
         #sprint self._stewardsList[0:3]
-        for stwd in self._stewardsList:
+        for stwd in self._stewardsList[4:5]:
             stwd_info  = self.steward_info(stwd)
             df_datasets, df_datasetsList, df_datasetsDict, datasetsSubmittedCnt, datasetToDoCount = self.set_Datasets(stwd)
             submittedFields = self.checkIfSubmittedFields(datasetsSubmittedCnt, datasetToDoCount)
