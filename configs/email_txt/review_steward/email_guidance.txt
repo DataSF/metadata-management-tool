@@ -73,6 +73,7 @@
                     When complete, save and upload your file at <a href="https://sfgov.forms.fm/data-dictionary-submission/responses/new">this online submission form</a>
                 </li>
             </ol>
+        <p><b>Please submit your definitions by the end of this month.</b></p>
         <p>
             That’s it! We&#39;re centralizing all of this documentation so we have a more sustainable way of maintaining documentation and making it available to data users. We really appreciate your help!
         </p>

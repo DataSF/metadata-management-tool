@@ -57,7 +57,7 @@ class UpdateMetadataStatus(UpdateMetadata):
         doNotOverrideList = self.get_overrride_cells()
         #print doNotOverrideList
         for wkbk in wkbks['workbooks']:
-            print wkbk
+            #print wkbk
             #cells_updated = False
             try:
                 all_cellrows_do_not_override = []

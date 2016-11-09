@@ -122,11 +122,17 @@ class gSpread_Stuff:
 
     def update_many_cells_by_addr_str(self, sht, cell_addr_list, cell_val):
         '''updates a list of cells with the same value'''
-        #print "updating lists vals"
-        if len(cell_addr_list)> 1:
-            updated = [ self.update_cell_addr_str(sht, cell_addr_str, cell_val) for cell_addr_str in cell_addr_list]
-            return True
-        return False
+        for cell_addr_str in cell_addr_list:
+            try:
+                self.update_cell_addr_str(sht, cell_addr_str, cell_val)
+            except Exception, e:
+                print "*********"
+                print str(e)
+                print cell_addr_str
+                print cell_val
+                print "*********"
+        return True
+
         
         
     @staticmethod
