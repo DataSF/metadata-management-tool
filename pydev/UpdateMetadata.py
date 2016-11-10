@@ -31,8 +31,17 @@ class UpdateMetadata(object):
 
     @staticmethod
     def getDatasetsList(wkbk):
-        return [elem['datasetID'].strip() for elem in wkbk['datasets'] if 'datasetID' in elem]
-
+        return [elem['Dataset Name'].strip() for elem in wkbk['datasets'] if 'Dataset Name' in elem]
+    
+    def get_overrride_cells(self):
+        excludeRowsEmpty = []
+        #"****vals do not override ***"
+        excludeRows = self._gSpread_Stuff.getCellRows(self._updt_sht, self._valsToNotOverride)
+        print len(excludeRows)
+        #if len( excludeRows > 1 ):
+        #     excludeRows = excludeRows.sort()
+        #    return excludeRows
+        return excludeRows
 
 class UpdateMetadataStatus(UpdateMetadata):
     '''class updates google spreadsheet after generating wkbks'''
@@ -46,42 +55,46 @@ class UpdateMetadataStatus(UpdateMetadata):
             cells_updated = True
         return cells_updated
 
-    def get_overrride_cells(self):
-        return self._gSpread_Stuff.getCellRows(self._updt_sht, self._valsToNotOverride)
-
-
+   
     def updatewkbk_info(self, wkbks):
         '''method that does the heavy lifting/updating-uses info in the json wkbk object'''
         wkbk_cells_updted_dict = {}
         #get a list where the status in the list
         doNotOverrideList = self.get_overrride_cells()
-        #print doNotOverrideList
+        print "****vals do not override ***"
+        #doNotOverrideList = [4657, 6799, 7185, 4653, 4654, 4656, 4651, 4652, 4655, 7186]
         for wkbk in wkbks['workbooks']:
-            #print wkbk
-            #cells_updated = False
-            all_cellrows_do_not_override = []
-            datasetsList =  self.getDatasetsList(wkbk)
+            print wkbk
+            try:
+                datasetsList =  self.getDatasetsList(wkbk)
+                print "*****"
+                print datasetsList
                 #get the cell ranges
-            all_rows = self._gSpread_Stuff.getCellRows(self._updt_sht, datasetsList)
-            all_rows = [ row for row in all_rows if row not in doNotOverrideList ]
-                #all_rows = all_rows[0:5]
-            cell_ranges_dt_changed = self._gSpread_Stuff.generateCellLocations(all_rows, self._field_positions['date_last_changed'])
+                datasets_rows = self._gSpread_Stuff.getCellRows(self._updt_sht, datasetsList)
+                datasets_rows = list(set(datasets_rows).difference(set(doNotOverrideList)))
+           
+                if len(datasets_rows) > 1:
+                    datasets_rows = [str(row) for row in datasets_rows ]
+                    print datasets_rows 
+                #cell_ranges_dt_changed = self._gSpread_Stuff.generateCellLocations(all_rows, self._field_positions['date_last_changed'])
                 #print cell_ranges_dt_changed
                
-            cell_ranges_status =  self._gSpread_Stuff.generateCellLocations(all_rows, self._field_positions['status'])
-                #print cell_ranges_status
-                
-                #update the statuses
-                #print "***updating dates**"
-                     #print "***updating statuses****"
-            updt_status = self._gSpread_Stuff.update_many_cells_by_addr_str(self._updt_sht, cell_ranges_status, self._updt_statuses['for_review_steward'])
-            updt_dt_changed = self._gSpread_Stuff.update_many_cells_by_addr_str(self._updt_sht, cell_ranges_dt_changed, self._current_date)
+                #cell_ranges_status =  self._gSpread_Stuff.generateCellLocations(all_rows, self._field_positions['status'])
+                    print "updating status"
+                    updt_status = self._gSpread_Stuff.update_many_cells_by_addr(self._updt_sht, datasets_rows, "8",  self._updt_statuses['for_review_steward'])
+                    updt_status
+                    print "updating date"
+                    updt_dt_changed = self._gSpread_Stuff.update_many_cells_by_addr(self._updt_sht,  datasets_rows, "10", self._current_date)
+                    updt_dt_changed
+                    #wkbk_cells_updted_dict[wkbk["data_cordinator"]["Email"]] = True
+                #sht, rows, col, cell_val
+                #updt_status = self._gSpread_Stuff.update_many_cells_by_addr_str(self._updt_sht, cell_ranges_status, self._updt_statuses['for_review_steward'])
+                #updt_dt_changed = self._gSpread_Stuff.update_many_cells_by_addr_str(self._updt_sht, cell_ranges_dt_changed, self._current_date)
      
-                #print updt_status
                 #check to make sure that stuff actually updated correctly
                 #wkbk_cells_updted_dict[wkbk["data_cordinator"]["Email"]] = True
-            #except Exception, e:
-            #print str(e)
+            except Exception, e:
+                print str(e)
                 #wkbk_cells_updted_dict[wkbk["data_cordinator"]["Email"]] = False
             #write the results to json file
             wkbk_cells_updted_dict[wkbk["data_cordinator"]["Email"]] = True
@@ -96,9 +109,7 @@ class UpdateMetadataFields(UpdateMetadata):
         print self._updt_sht
 
     def findUpdtRow( self, field_dict):
-        #find cell on columnid
         row_num = self._gSpread_Stuff.findRow(self._updt_sht, str(field_dict['1']))
-        #print row_num
         return row_num
 
 
@@ -137,12 +148,18 @@ class UpdateMetadataFields(UpdateMetadata):
         return sucessupdt
 
     def update_fieldList_alpha(self, fieldList):
+        rows_to_exclude = self.get_overrride_cells()
+        print rows_to_exclude 
         for field_dict in fieldList:
             print "finding row"
-            row_num = self.findUpdtRow( field_dict)
-            print "updating row"
-            field_updt_dict = self.build_fieldUpdate_dict(row_num, field_dict)
-            updted = self.update_fieldDict_cells_addr( row_num, field_dict )
+            row_num = self.findUpdtRow(field_dict)
+            print row_num
+            if row_num not in rows_to_exclude:
+                print "updating row"
+                field_updt_dict = self.build_fieldUpdate_dict(row_num, field_dict)
+                updted = self.update_fieldDict_cells_addr( row_num, field_dict )
+            else:
+                print row_num
         return True
 
 

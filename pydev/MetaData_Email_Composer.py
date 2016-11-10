@@ -99,23 +99,25 @@ class ForReviewBySteward(MetaData_Email_Composer):
         return "<tr><td>" + dataset["datasetID"] + "</td><td>" + dataset["Dataset Name"] + '</td><td class="count">' + str(dataset["count"]) + "</td></tr>"
 
 
-    def generate_All_Emails(self, wkbks, updated_list_json):
+    def generate_All_Emails(self, wkbks):
         '''generates and sends wkbks to recipients'''
         wkbks_sent_out = []
+        print len(wkbks['workbooks'])
         for wkbk in wkbks['workbooks']:
-            if updated_list_json['updated'][wkbk[ "data_cordinator"]['Email']]:
-                msgBody =  self.msgBodyFill(wkbk)
-                #receipient = wkbk[ "data_cordinator"]['Email']
-                receipient = "janine.heiser@sfgov.org"
-                subject_line = self._subject_line
-                attachment_fullpath = wkbk["path_to_wkbk"]
-                attachment = self.wkbk_file_name(wkbk["path_to_wkbk"])
-                try:
-                    #print "sending email"
-                    self.email_msg(receipient, subject_line, msgBody, attachment, attachment_fullpath )
-                    wkbks_sent_out.append(wkbk)
-                except Exception, e:
-                    print str(e)
+            #if updated_list_json['updated'][wkbk[ "data_cordinator"]['Email']]:
+            msgBody =  self.msgBodyFill(wkbk)
+            receipient = wkbk[ "data_cordinator"]['Email']
+            print receipient
+            receipient = "janine.heiser@sfgov.org"
+            subject_line = self._subject_line
+            attachment_fullpath = wkbk["path_to_wkbk"]
+            attachment = self.wkbk_file_name(wkbk["path_to_wkbk"])
+            try:
+                #print "sending email"
+                self.email_msg(receipient, subject_line, msgBody, attachment, attachment_fullpath )
+                wkbks_sent_out.append(wkbk)
+            except Exception, e:
+                print str(e)
         return wkbks_sent_out
 
 

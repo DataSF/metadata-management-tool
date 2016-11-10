@@ -49,11 +49,15 @@ class ScreenDoorStuff:
     def set_FileInfo(self):
         files_to_download = []
         for response in self._responses:
+            #print response
             response_items =  response['responses'].keys()
             for item in response_items:
-                response_id = response['responses'][item]
-                for item in response['responses'][item]['files']:
-                    files_to_download.append(item)
+                response_file_dictList = response['responses'][item]
+                for file_info in response_file_dictList:
+                    files_to_download.append(file_info)
+        print "*****downloading the following from screendoor*****"        
+        print  files_to_download 
+        print "**********************"
         return files_to_download
 
     def setDownloadUrl(self, fileId):
@@ -78,7 +82,6 @@ class ScreenDoorStuff:
         except Exception, e:
             print str(e)
         return downloaded
-
 
 
     def get_attachments(self):

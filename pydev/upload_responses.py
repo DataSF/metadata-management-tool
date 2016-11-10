@@ -56,13 +56,19 @@ if updt_metadata_fields_json:
 else:
     print False
 fieldList = wkbk_parser.load_updt_fields_json()
-print fieldList
+#print fieldList
 
+#print len(fieldList)
+
+print "******* updating Fields***********"
 gspread_stuff = gSpread_Stuff(configItems)
 update_metadata_fields =  UpdateMetadataFields(configItems, gspread_stuff)
 
 
-updt_fieldList = update_metadata_fields.update_fieldList_alpha( fieldList)
+updt_fieldList = update_metadata_fields.update_fieldList_alpha( fieldList[42:44])
+
+#updt_fieldList = update_metadata_fields.update_fieldList_alpha( fieldList)
+
 print updt_fieldList
 
 

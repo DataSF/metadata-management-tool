@@ -110,13 +110,26 @@ class gSpread_Stuff:
 
     @staticmethod
     def update_cell_addr(sht, row, col, cell_val ):
+        '''updates cells by row col address'''
         updated = False
         try:
-            sht.update_cell(row, col, cell_val)
+            print str(row) + ":" + str(col)
+            sht.update_cell(int(row), int(col), cell_val)
             updated = True
         except Exception, e:
             print str(e)
         return updated
+    
+    def update_many_cells_by_addr(self, sht, rows, col, cell_val ):
+        '''updates a list of cells by row/col addr with the same value'''
+        updated_cells = []
+        for row in rows:
+            try:
+                updt = self.update_cell_addr(sht, row, col, cell_val )
+                updated_cells.append(updt)
+            except Exception, e:
+                print str(e)
+        return updated_cells
 
     @staticmethod
     def update_cell_addr_str(sht, cell_addr_str, cell_val):
@@ -142,6 +155,7 @@ class gSpread_Stuff:
                 print cell_val
                 print "*********"
         return True
+        
         
     @staticmethod
     def getCellRange(column,rows):

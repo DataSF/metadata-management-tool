@@ -87,21 +87,21 @@ print "********updating google spreadsheets**************** "
 
 wkbks = wkbk_json.loadJsonFile(configItems['wkbk_output_dir'], configItems['wkbk_output_json'])
 
+#print "****loaded file****"
+#update_metadata_status = UpdateMetadataStatus(configItems, gspread_stuff)
 
-update_metadata_status = UpdateMetadataStatus(configItems, gspread_stuff)
+#update_successful = update_metadata_status.updatewkbk_info(wkbks)
 
-update_successful = update_metadata_status.updatewkbk_info(wkbks)
+#if update_successful:
+#    print "Success- Cells were successfully updated"
+#else:
+#  print "FAILED- Something went wrong-cells where not successfully updated"
 
-if update_successful:
-    print "Success- Cells were successfully updated"
-else:
-  print "FAILED- Something went wrong-cells where not successfully updated"
-
-print "*************Sendng out emails ******"
+#print "*************Sendng out emails ******"
 
 
 #get list of Stewards where the shts have been updated
-json_updt_file =  wkbk_json.loadJsonFile(configItems['wkbk_uploads_dir'], configItems['json_wksht_status_update_fname'])
+#json_updt_file =  wkbk_json.loadJsonFile(configItems['wkbk_uploads_dir'], configItems['json_wksht_status_update_fname'])
 emailer_review_steward = ForReviewBySteward(configItems, emailer)
-wkbks_sent_out = emailer_review_steward.generate_All_Emails(wkbks, json_updt_file )
+wkbks_sent_out = emailer_review_steward.generate_All_Emails(wkbks)
 print wkbks_sent_out

@@ -48,8 +48,8 @@ configItems = myUtils.setConfigs(config_inputdir, fieldConfigFile )
 
 #instantiate classes
 #emailer =  Emailer(configItems)
-#gspread_stuff = gSpread_Stuff(configItems)
-#wkbk_json = WkbkJson(configItems)
+gspread_stuff = gSpread_Stuff(configItems)
+wkbk_json = WkbkJson(configItems)
 
 
 #set up the configs
@@ -72,9 +72,9 @@ print "********getting metadata fields from google spreadsheets***********"
 
 cells_dataDict = unpickle_cells(pickle_name_datadict)
 #print cells_dataDict
-#cells_stewards = gspread_stuff.unpickle_cells(pickle_name_stewards)
-#fieldtype_cells = gspread_stuff.unpickle_cells(pickle_name_fieldtypes)
+cells_stewards = gspread_stuff.unpickle_cells(pickle_name_stewards)
+fieldtype_cells = gspread_stuff.unpickle_cells(pickle_name_fieldtypes)
 
 ef = ExistingFieldDefs(configItems, cells_dataDict)
-#existing_fields_def_list = ef.get_datasetsToLoadList()
+existing_fields_def_list = ef.get_datasetsToLoadList()
 stuff = ef.buildDocumentedFields()

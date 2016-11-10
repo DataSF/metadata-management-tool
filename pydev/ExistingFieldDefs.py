@@ -10,7 +10,7 @@ import requests
 
 #from GSpread_Stuff import *
 import shutil
-from tabula import read_pdf_table
+#from tabula import read_pdf_table
 
 ##
 class ExistingFieldDefs:
@@ -69,6 +69,16 @@ class ExistingFieldDefs:
       if(searchObj):
         return fnPretty
       return fName
+    @staticmethod
+    def make_fnNameOther(dataset):
+      fName = False
+      urlStuff  =  dataset['Attachment URL'].split('&filename=')
+      #download the attachment for the dataset
+      fnPretty = urlStuff[1]
+      #searchObj = re.search( r'.pdf', fnPretty)
+      if(fnPretty):
+        return fnPretty
+      return fName
 
     @staticmethod
     def get_shts(fn):
@@ -95,55 +105,62 @@ class ExistingFieldDefs:
 
 
     def buildDocumentedFields(self):
+      allOthers = []
       allBlanks = []
       allDefs = []
       allPdfs = []
       dowloaded = False
-      for dataset in self._datasetsToLoadList[0:10]:
+      for dataset in self._datasetsToLoadList:
         #get the main dataset
         dataset_df = self.get_dfDatasetToLoad(dataset['datasetID'])
-
-        fName = self.make_fnNameXlxs(dataset)
-        if(fName):
-          #if(myUtils.getFiles(self._documented_fields_dir, fName , dataset['Attachment URL'])) :
-          if(myUtils.getAttachmentFullPath( self._documented_fields_dir + "xlsx", fName , dataset['Attachment URL'])):
-            wkbk_stuff = self.get_shts(self._documented_fields_dir+"xlsx/"+fName)
-            wkbkName = self._wkbk_formats['format1']['wksht_name']
-            skipRows = self._wkbk_formats['format1']['skip_rows']
-            try:
-              dfSht = self.getShtDf(wkbk_stuff, wkbkName, skipRows )
-            except Exception, e:
-              print str(e)
-              print wkbk_stuff
-            if dfSht.any:
-              df_all = pd.merge(dataset_df, dfSht, how='left', on='Field Name')
-              df_all = PandasUtils.renameCols(df_all, self._documented_fields_name_mapping)
-              df_all = self.addStatusFields(df_all)
-              df_all = df_all[self._documented_fields_list]
-              df_all = df_all.fillna('')
-              df_blanks = df_all[df_all['field_definition'] == '']
-              df_defs = df_all[df_all['field_definition'] != '']
-              blanksList =  df_blanks.to_dict('records')
-              defList = df_defs.to_dict('records')
-              allBlanks  = allBlanks  +  blanksList
-              allDefs = allDefs + defList
+        print dataset
+        fNameXlsx = self.make_fnNameXlxs(dataset)
+        if( fNameXlsx):
+            print fNameXlsx
+            if(myUtils.getFiles(self._documented_fields_dir+ "xlsx/", fNameXlsx , dataset['Attachment URL'])) :
+              print self._documented_fields_dir+ "xlsx/"
+              if(myUtils.getAttachmentFullPath( self._documented_fields_dir + "xlsx/", fNameXlsx , dataset['Attachment URL'])):
+                wkbk_stuff = self.get_shts(self._documented_fields_dir+"xlsx/"+fNameXlsx)
+                wkbkName = self._wkbk_formats['format1']['wksht_name']
+                skipRows = self._wkbk_formats['format1']['skip_rows']
+                try:
+                  dfSht = self.getShtDf(wkbk_stuff, wkbkName, skipRows )
+                except Exception, e:
+                  print str(e)
+                  print wkbk_stuff
+                if dfSht.any:
+                  df_all = pd.merge(dataset_df, dfSht, how='left', on='Field Name')
+                  df_all = PandasUtils.renameCols(df_all, self._documented_fields_name_mapping)
+                  df_all = self.addStatusFields(df_all)
+                  df_all = df_all[self._documented_fields_list]
+                  df_all = df_all.fillna('')
+                  df_blanks = df_all[df_all['field_definition'] == '']
+                  df_defs = df_all[df_all['field_definition'] != '']
+                  blanksList =  df_blanks.to_dict('records')
+                  defList = df_defs.to_dict('records')
+                  allBlanks  = allBlanks  +  blanksList
+                  allDefs = allDefs + defList
         else:
-          fName = self.make_fnNamePdf(dataset)
-          if(fName):
-            print "***pdf****"
-            if(myUtils.getAttachmentFullPath( self._documented_fields_dir+"pdf/", fName , dataset['Attachment URL'])):
-              try:
-                print "in here"
-                allPdfs.append(dataset)
+            fNamePdf = self.make_fnNamePdf(dataset)
+            if(fNamePdf):
+              if(myUtils.getFiles(self._documented_fields_dir+ "pdf/", fNamePdf , dataset['Attachment URL'])) :
+           
+                print "***pdf****"
+                try:
+                    print "in here"
+                    allPdfs.append(dataset)
 
-              except Exception, e:
-                print str(e)
-          else:
-            print "********failed!*******"
-            print
-            print
-            print dataset
-            print "********************"
+                except Exception, e:
+                  print str(e)
+            else:
+              fnameOther = self.make_fnNameOther(dataset)
+              if(myUtils.getFiles(self._documented_fields_dir+ "other/", fnameOther , dataset['Attachment URL'])) :
+           
+                print "********other*******"
+                print
+                print
+                print dataset
+                print "********************"
       #print allFields
       wroteFileDefs = myUtils.write_wkbk_csv(self._documented_fields_dir +"output/" + self._document_fields_outputfile_fn, allDefs, self._documented_fields_list)
       wroteFileBlanks =  myUtils.write_wkbk_csv(self._documented_fields_dir + "output/"+ "blank_fields.csv", allBlanks, self._documented_fields_list)
