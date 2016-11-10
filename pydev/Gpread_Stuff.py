@@ -50,8 +50,11 @@ class gSpread_Stuff:
 
     @staticmethod
     def findCells(sht, regex_str):
-        # Find all cells with regexp
-        cell_list = sht.findall(regex_str)
+        try:
+            # Find all cells with regexp
+            cell_list = sht.findall(regex_str)
+        except Exception, e:
+            print str(e)
         return cell_list
 
     @staticmethod
