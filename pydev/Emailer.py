@@ -17,7 +17,7 @@ import itertools
 import base64
 import inflection
 import csv, codecs, cStringIO
-from Utils import *
+from ConfigUtils import *
 
 
 
@@ -28,17 +28,17 @@ class Emailer():
     def __init__(self, configItems):
         self._config_dir =  configItems['config_dir']
         self._email_config_file = configItems['email_config_file']
-        self._emailConfigs = myUtils.setConfigs(self._config_dir, self._email_config_file)
-        self._server = None 
-        self._server_port = None 
-        self._sender = None 
-        self._password = None 
-        self._bcc = None 
+        self._emailConfigs = ConfigUtils.setConfigs(self._config_dir, self._email_config_file)
+        self._server = None
+        self._server_port = None
+        self._sender = None
+        self._password = None
+        self._bcc = None
         self.setConfigs()
-    
-   
-        
-    
+
+
+
+
     def setConfigs(self):
         self._server = self._emailConfigs['server_addr']
         self._server_port = self._emailConfigs['server_port']
@@ -46,19 +46,21 @@ class Emailer():
         self._bcc = self._emailConfigs['bcc']
         if (self._emailConfigs['sender_password']):
             self._password = base64.b64decode(self._emailConfigs['sender_password'])
-       
-    
+
+
     def sendEmails(self, recipients, subject_line, msgBody, fname_attachment=None, fname_attachment_fullpath=None):
         fromaddr = self._sender
         toaddr =  recipients
+        print recipients
         msg = MIMEMultipart()
         msg['From'] = fromaddr
-        msg['To'] = recipients
+        #msg['To'] = recipients
+        msg['To'] = 'janine.heiser@sfgov.org'
         msg['Subject'] = subject_line
         msg['Bcc'] = self._bcc
         body = msgBody
         msg.attach(MIMEText(body, 'html'))
-          
+
         #Optional Email Attachment:
         if(not(fname_attachment is None and fname_attachment_fullpath is None)):
             filename = fname_attachment
@@ -68,11 +70,11 @@ class Emailer():
             encoders.encode_base64(part)
             part.add_header('Content-Disposition', "attachment; filename= %s" % filename)
             msg.attach(part)
-        
+
         #normal emails, no attachment
         server = smtplib.SMTP(self._server, self._server_port)
-        #server.starttls()
-        #server.login(fromaddr, self._password)
+        server.starttls()
+        server.login(fromaddr, self._password)
         text = msg.as_string()
         server.sendmail(fromaddr, toaddr, text)
         server.quit()

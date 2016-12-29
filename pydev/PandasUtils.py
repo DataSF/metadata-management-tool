@@ -31,10 +31,6 @@ class PandasUtils:
     return df.rename(columns=field_mapping_dict)
 
   @staticmethod
-  def groupbyCountStar(df, group_by_list):
-    return df.groupby(group_by_list).size().reset_index(name='count')
-
-  @staticmethod
   def renameCols(df, colMappingDict):
     df = df.rename(columns=colMappingDict)
     return df

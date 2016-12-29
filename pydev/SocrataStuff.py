@@ -163,6 +163,8 @@ class SocrataQueries:
         self.username = clientItems['username']
         self.passwd =  clientItems['password']
         self._logger = logger
+        self.rowsInserted = configItems['dataset_records_cnt_field']
+        self.src_records_cnt_field = configItems['src_records_cnt_field']
 
     def getRowCnt(self, fourXFour):
         time.sleep(1)
@@ -209,6 +211,11 @@ class SocrataQueries:
             offset = offset + 1000
             returned_records = len(results)+ returned_records
         return all_results
+
+    def setDatasetDicts(self, dataset):
+        dataset[self.rowsInserted] = 0
+        dataset[self.src_records_cnt_field] = 0
+        return dataset
 
 if __name__ == "__main__":
     main()
