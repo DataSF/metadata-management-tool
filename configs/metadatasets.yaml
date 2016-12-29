@@ -1,0 +1,9 @@
+master_data_dictionary:
+    fourXFour: 8zp7-ik63
+    Socrata Dataset Name: Master Data Dictionary
+    row_id: columnid
+    json_fn: master_data_dictionary.json
+field_types_dataset:
+    fourXFour: 8efc-aram
+    json_fn: field_types.json
+    columns_to_fetch: field_type
