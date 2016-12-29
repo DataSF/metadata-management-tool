@@ -1,7 +1,7 @@
 from __future__ import division
 from Emailer import *
 from Utils import *
-
+from DictUtils import *
 
 class MetaData_Email_Composer(object):
     '''
@@ -70,7 +70,9 @@ class ForReviewBySteward(MetaData_Email_Composer):
 
     def msgBodyFill(self, wkbk):
         msgParts = self.getMsgBodyText()
-        steward_name = wkbk[ "data_cordinator"]["First Name"]
+        steward_name = wkbk[ "data_cordinator"]["data_steward_name"]
+        steward_name = steward_name.split(" ")
+        steward_name = steward_name[0]
         worksheet_filename = self.wkbk_file_name(wkbk["path_to_wkbk"])
         submitted_fields = wkbk['submittedFields']['submitted']
         datasets_to_review = self.dataset_Name_and_Cnts(wkbk)
@@ -89,14 +91,14 @@ class ForReviewBySteward(MetaData_Email_Composer):
 
     def dataset_Name_and_Cnts(self, wkbk):
         dataset_html = ''
-        keysToKeep = ['count', 'Dataset Name', 'datasetID']
-        datasets = myUtils.filterDictList(wkbk['datasets'], keysToKeep)
+        keysToKeep = ['count', 'dataset_name', 'datasetid']
+        datasets = DictUtils.filterDictList(wkbk['datasets'], keysToKeep)
         dataset_html = " ".join([ self.makeDatasetHtml(dataset) for dataset in datasets])
         return dataset_html
 
     @staticmethod
     def makeDatasetHtml(dataset):
-        return "<tr><td>" + dataset["datasetID"] + "</td><td>" + dataset["Dataset Name"] + '</td><td class="count">' + str(dataset["count"]) + "</td></tr>"
+        return "<tr><td>" + dataset["datasetid"] + "</td><td>" + dataset["dataset_name"] + '</td><td class="count">' + str(dataset["count"]) + "</td></tr>"
 
 
     def generate_All_Emails(self, wkbks):
@@ -106,7 +108,7 @@ class ForReviewBySteward(MetaData_Email_Composer):
         for wkbk in wkbks['workbooks']:
             #if updated_list_json['updated'][wkbk[ "data_cordinator"]['Email']]:
             msgBody =  self.msgBodyFill(wkbk)
-            receipient = wkbk[ "data_cordinator"]['Email']
+            receipient = wkbk[ "data_cordinator"]['data_steward']
             print receipient
             receipient = "janine.heiser@sfgov.org"
             subject_line = self._subject_line

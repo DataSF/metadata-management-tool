@@ -22,21 +22,22 @@ class WkbkParser:
         self.statuses = configItems['update_info']['statuses']
         self.statuses_submited = self.statuses['submitted_steward']
         self._current_date = datetime.datetime.now().strftime("%m/%d/%Y")
+
     @staticmethod
     def getWkbk(fn):
         wkbk = pd.ExcelFile(fn)
         return wkbk
-    
+
     @staticmethod
     def get_sht_names(wkbk):
         shts =  wkbk.sheet_names
         return [ sht for sht in shts if sht != 'Dataset Summary']
-    
+
     def add_status_info(self, df_wkbk):
         df_wkbk[self.field_name_mappings['status']] = self.statuses_submited
         df_wkbk[self.field_name_mappings['date_last_changed']] = self._current_date
         return df_wkbk
-    
+
     def parse_sht(self, wkbk, sht_name):
         df_wkbk =  wkbk.parse(sht_name)
         df_wkbk = df_wkbk[self.keys_to_keep]
@@ -54,13 +55,13 @@ class WkbkParser:
         df_dictList = [ myUtils.filterDictOnNans(field_dict) for field_dict in df_dictList ]
         #double check that the field actually changed- needs to a be at least a len of 4 for a field to actually be updted after removing all nan vals
         return  [k for k in df_dictList if len(k.keys()) > 3]
-        
+
     def get_shts(self, fn):
         wkbk = self.getWkbk(fn)
         sht_names = self.get_sht_names(wkbk)
         metadata_dicts = [ self.parse_sht(wkbk, sht_name) for sht_name in sht_names]
         return myUtils.flatten_list(metadata_dicts)
-        
+
     def get_metadata_updt_fields_from_shts(self, fileList):
         wroteJsonFile = False
         metadata_dicts = [ self.get_shts(fn) for fn in fileList ]
@@ -69,8 +70,8 @@ class WkbkParser:
             wroteJsonFile = WkbkJson.write_json_object( metadata_dictJson, self.wkbk_uploads_dir, self.updt_fields_json_name)
         except Exception, e:
             print str(e)
-        return wroteJsonFile  
-            
+        return wroteJsonFile
+
     def load_updt_fields_json(self):
         updt_fieldList = []
         try:
@@ -79,7 +80,7 @@ class WkbkParser:
         except Exception, e:
             print str(e)
         return updt_fieldList
-        
+
 
 if __name__ == "__main__":
     main()

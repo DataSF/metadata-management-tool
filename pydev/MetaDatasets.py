@@ -34,6 +34,12 @@ class MetaDatasets:
       downloaded_datasets = True
     return downloaded_datasets
 
+  def set_master_dd_updt_info(self, updt_rows):
+    dataset = self._master_dd_config
+    dataset = self._socrataQueriesObject.setDatasetDicts(dataset)
+    dataset[self._socrataQueriesObject.src_records_cnt_field] = len(updt_rows)
+    return dataset
+
 
 if __name__ == "__main__":
     main()
