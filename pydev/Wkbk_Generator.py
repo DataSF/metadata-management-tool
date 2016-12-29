@@ -3,32 +3,50 @@
 
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
-import pickle
-from openpyxl import Workbook
+#from openpyxl import Workbook
 import json
 import inflection
+from Wkbk_Json import *
+from PandasUtils import *
+from ConfigUtils import *
+from WkBk_Writer import *
 
 class WkbkGenerator:
     """class to generate data dictionaries"""
-    def __init__(self,  configItems, cells_dataDict=None, cells_stewards=None):
+    def __init__(self,  configItems, logger):
         self.sheet_keys = configItems['sheet_keys']
-        self.steward_keys = configItems['steward_keys']
-        self._df_master = self.set_master_df(cells_dataDict)
+        self._config_inputdir = configItems['config_dir']
+        self._wkbk_output_json = configItems['wkbk_output_json']
+        self._json_object = { "workbooks": []}
+        self._metadata_config_fn = configItems['metadataset_config']
+        self._metadataset_config = ConfigUtils.setConfigs(self._config_inputdir,  self._metadata_config_fn )
+        self._master_dd_config = self._metadataset_config['master_data_dictionary']
+        self._fieldtypes_config = self._metadataset_config['field_types_dataset']
+        self._pickle_dir = configItems['pickle_dir']
+        self._wkbk_json = WkbkJson(configItems, logger)
+        self._df_master = self.set_master_df()
         self._df_stewards = self.set_df_stewards()
         self._stewardsList = self.set_stewardsList()
-        self._df_stewardsInfo = self.set_df_stewardsInfo(cells_stewards)
-        self.json_object = { "workbooks": []}
+        self._field_types_list = self.set_field_types_list()
+        self._wkbk_writer = WkBkWriter(configItems, logger, self._field_types_list)
+        self._valsToNotOverride = configItems['valsToNotOverride']
 
     @property
     def df_master(self):
         return self._df_master
 
-    def set_master_df(self, cells):
-        '''creates a dataframe of the master field list'''
+    def set_master_df(self):
+        '''creates a dataframe of the master field list from json'''
         '''returns all rows where Do Not Process == False '''
-        if cells:
-            df = pd.DataFrame(cells)
-            return df[  (df["Do Not Process"] == "FALSE" ) & (df['datasetID'] != '#N/A') & (df['Global Field'] == 'FALSE') ]
+        json_obj = self._wkbk_json.loadJsonFile(self._pickle_dir, self._master_dd_config['json_fn'])
+        df = PandasUtils.makeDfFromJson(json_obj)
+        return df[ (df["do_not_process"] == False)  & (df['datasetid'] != '#N/A') & (df['global_field'] == False) ]
+
+    def set_field_types_list(self):
+        json_obj = self._wkbk_json.loadJsonFile(self._pickle_dir, self._fieldtypes_config['json_fn'])
+        df = PandasUtils.makeDfFromJson(json_obj)
+        field_types = list(df['field_type'])
+        return field_types
 
     @property
     def df_stewards(self):
@@ -36,7 +54,8 @@ class WkbkGenerator:
 
     def set_df_stewards(self):
         '''sets a dataframe of datastewards and counts based on main dataframe'''
-        return pd.DataFrame({'count' : self._df_master.groupby("Data Steward").size()}).reset_index()
+        #return pd.DataFrame({'count' : self._df_master.groupby("data_steward").size()}).reset_index()
+        return PandasUtils.groupbyCountStar(self._df_master, ['data_steward', 'data_steward_name', 'department'])
 
     @property
     def stewardsList(self):
@@ -44,7 +63,7 @@ class WkbkGenerator:
 
     def set_stewardsList(self):
         '''creates a list of data steward email adddresses'''
-        return list(self._df_stewards['Data Steward'])
+        return list(set(list(self._df_stewards['data_steward'])))
 
     @property
     def df_stewardsInfo(self):
@@ -69,7 +88,8 @@ class WkbkGenerator:
         return stwd_info
 
     def steward_info(self, stwd):
-        steward_info = self.df_stewardsInfo[self.df_stewardsInfo["Email"] == stwd.strip()]
+        '''grabs the data steward info from the df and turns into json'''
+        steward_info = self._df_stewards[ self._df_stewards['data_steward'] == stwd.strip()]
         if len(steward_info) > 0:
             steward_info = steward_info.to_dict(orient='records')[0]
         else:
@@ -78,10 +98,10 @@ class WkbkGenerator:
 
     def set_Datasets(self, stwd):
         '''gets the datasets associatiated with a steward'''
-        df_datasets = pd.DataFrame({'count' : self._df_master[ ( self._df_master["Data Steward"] == stwd) & (self._df_master['Status'] != "Submitted by Steward") & (self._df_master['Status'] != "Complete") & (self._df_master['Status'] != "Do Not Process") & (self._df_master['Status'] != "Submitted by Coordinator")].groupby(["inventoryID", "datasetID", "Dataset Name", "Open Data Portal URL"]).size()}).reset_index()
+        df_datasets = pd.DataFrame({'count' : self._df_master[ ( self._df_master["data_steward"] == stwd) & (self._df_master['status'] != "Submitted by Steward") & (self._df_master['status'] != "Complete") & (self._df_master['status'] != "Do Not Process") & (self._df_master['status'] != "Submitted by Coordinator")].groupby(["inventoryid", "datasetid", "dataset_name", "open_data_portal_url"]).size()}).reset_index()
         #get the dates of datsets with submitted fields
-        df_datasetsSubmitted =  pd.DataFrame({'count' : self._df_master[ ((self._df_master["Data Steward"] == stwd) & ( (self._df_master['Status'] == "Submitted by Steward") | (self._df_master['Status'] == "Complete") | (self._df_master['Status'] == "Do Not Process") | (self._df_master['Status'] == "Submitted by Coordinator"))) ].groupby(["Date Last Changed"]).size()}).reset_index()
-        df_datasetsList = list(df_datasets['datasetID'])
+        df_datasetsSubmitted =  pd.DataFrame({'count' : self._df_master[ ((self._df_master["data_steward"] == stwd) & ( (self._df_master['status'] == "Submitted by Steward") | (self._df_master['status'] == "Complete") | (self._df_master['status'] == "Do Not Process") | (self._df_master['status'] == "Submitted by Coordinator"))) ].groupby(["date_last_changed"]).size()}).reset_index()
+        df_datasetsList = list(df_datasets['datasetid'])
         datasetsSubmittedCnt = sum(list(df_datasetsSubmitted['count']))
         df_datasetsDict = df_datasets.T.to_dict().values()
         datasetToDoCount = sum(list(df_datasets['count']))
@@ -90,11 +110,11 @@ class WkbkGenerator:
     @staticmethod
     def makeSummarySheet(df_datasets):
         df_datasets.rename(columns={'count': 'Number of Fields'}, inplace=True)
-        return {"datasetID": "Dataset Summary", "sheet_df": df_datasets}
+        return {"datasetid": "Dataset Summary", "sheet_df": df_datasets}
 
     def sheet(self, datasetID):
         '''creates a sheet dictionary item'''
-        return {"datasetID": datasetID, "sheet_df" : self._df_master[self.sheet_keys][ (self._df_master['datasetID'] == datasetID) & (self._df_master['Status'] != "Submitted by Steward") ]}
+        return {"datasetid": datasetID, "sheet_df" : self._df_master[self.sheet_keys][ (self._df_master['datasetid'] == datasetID) & (self._df_master['status'] != "Submitted by Steward") ]}
 
     def set_Sheets(self, df_datasetsList,df_datasets):
         '''creates a list of dictionaries that contain sheet information to be written to a wkbk'''
@@ -123,25 +143,37 @@ class WkbkGenerator:
         percent_done = 0
         totalFields = datasetsSubmittedCnt + datasetToDoCount
         if datasetsSubmittedCnt > 0:
-            #print datasetsSubmittedCnt
             submitted = True
             percent_done = round(100 * float(datasetsSubmittedCnt)/float(totalFields), 2)
-            #print percent_done
+            print percent_done
         return {"submitted": submitted, "submitted_fields_cnt": datasetsSubmittedCnt, "fields_to_do_cnt": datasetToDoCount, "total_fields": totalFields, "percent_done": percent_done }
 
-    def build_Wkbks(self, wkbk_writer):
+    def build_Wkbks(self):
         '''builds and writes wkbks for datastewards'''
         #sprint self._stewardsList[0:3]
-        for stwd in self._stewardsList:
+        for stwd in self._stewardsList[0:2]:
+            print stwd
             stwd_info  = self.steward_info(stwd)
             df_datasets, df_datasetsList, df_datasetsDict, datasetsSubmittedCnt, datasetToDoCount = self.set_Datasets(stwd)
             submittedFields = self.checkIfSubmittedFields(datasetsSubmittedCnt, datasetToDoCount)
             sheets = self.set_Sheets(df_datasetsList, df_datasets)
-            wkbk_fullpath, current_date = wkbk_writer.write_wkbk(sheets, stwd_info)
-            self.json_object["workbooks"].append( self.make_json_item(stwd_info, wkbk_fullpath, df_datasetsDict, current_date, submittedFields))
-        return self.json_object
+            wkbk_fullpath, current_date =  self._wkbk_writer.write_wkbk(sheets, stwd_info)
+            self._json_object["workbooks"].append( self.make_json_item(stwd_info, wkbk_fullpath, df_datasetsDict, current_date, submittedFields))
+        wrote_json = WkbkJson.write_json_object(self._json_object,  self._pickle_dir,  self._wkbk_output_json)
+        self.update_metadata_status()
+        return wrote_json
 
-
+    def update_metadata_status(self, current_date):
+        '''creates rows to update the master data dictionary with status codes'''
+        wkbks =  self._json_object['workbooks']
+        dataset_status_updts = []
+        for wkbk in wkbks:
+            dataset_info =  wkbk['datasets']
+            dataset_ids = [d['datasetid'] for d in dataset_info ]
+            dataset_status_updts =  dataset_status_updts + dataset_ids
+        updt_df = self._df_master[(self._df_master['datasetid'].isin(dataset_status_updts)) & (~self._df_master['status'].isin(self._valsToNotOverride))]
+        updt_df['date_last_changed'] = current_date
+        updt_df['status'] = 'For Review by Steward'
 
 if __name__ == "__main__":
     main()

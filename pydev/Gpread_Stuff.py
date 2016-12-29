@@ -119,7 +119,7 @@ class gSpread_Stuff:
         except Exception, e:
             print str(e)
         return updated
-    
+
     def update_many_cells_by_addr(self, sht, rows, col, cell_val ):
         '''updates a list of cells by row/col addr with the same value'''
         updated_cells = []
@@ -155,8 +155,8 @@ class gSpread_Stuff:
                 print cell_val
                 print "*********"
         return True
-        
-        
+
+
     @staticmethod
     def getCellRange(column,rows):
         rows =  sorted(rows)
@@ -185,11 +185,6 @@ class gSpread_Stuff:
         return cell_ranges
 
 
-    def pickle_cells(self, cells, pickle_name ):
-        pickle.dump( cells, open( self.picked_dir + pickle_name + "_pickled_cells.p", "wb" ) )
-
-    def unpickle_cells(self, pickle_name):
-        return pickle.load( open( self.picked_dir + pickle_name +"_pickled_cells.p", "rb" ) )
 
     def getMetaDataset(self, wkbk_key, sht_name, pickle_name):
         wkbk = self.get_wkbk(wkbk_key)
