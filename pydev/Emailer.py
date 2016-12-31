@@ -37,7 +37,10 @@ class Emailer():
         self.setConfigs()
 
 
-
+    def getRecipients(self):
+        if 'etl_recipients'in self._emailConfigs.keys():
+            return self._emailConfigs['etl_recipients']
+        return None
 
     def setConfigs(self):
         self._server = self._emailConfigs['server_addr']
@@ -48,10 +51,11 @@ class Emailer():
             self._password = base64.b64decode(self._emailConfigs['sender_password'])
 
 
-    def sendEmails(self, recipients, subject_line, msgBody, fname_attachment=None, fname_attachment_fullpath=None):
+    def sendEmails(self, subject_line, msgBody, fname_attachment=None, fname_attachment_fullpath=None, recipients=None):
         fromaddr = self._sender
+        if(not(recipients)):
+            recipients = self.getRecipients()
         toaddr =  recipients
-        print recipients
         msg = MIMEMultipart()
         msg['From'] = fromaddr
         #msg['To'] = recipients

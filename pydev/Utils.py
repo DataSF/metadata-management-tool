@@ -1,10 +1,6 @@
 # coding: utf-8
 import csv
 import time
-import datetime
-import logging
-from retry import retry
-import yaml
 import os
 import itertools
 import base64
@@ -19,7 +15,17 @@ import requests
 import shutil
 from csv import DictWriter
 from cStringIO import StringIO
+import datetime
+import collections
 
+class DateUtils:
+    @staticmethod
+    def get_current_date_month_day_year():
+        return datetime.datetime.now().strftime("%m/%d/%Y")
+
+    @staticmethod
+    def get_current_date_year_month_day():
+        return datetime.datetime.now().strftime("%Y_%m_%d_")
 
 class PickleUtils:
     @staticmethod
@@ -60,16 +66,12 @@ class UnicodeWriter:
         for row in rows:
             self.writerow(row)
 
-
+class FileUtils:
+    '''class for file/os util functions'''
     @staticmethod
     def getFileListForDir(filepath_str_to_search):
         '''gets file list in a directory based on some path string to search- ie: /home/adam/*.txt'''
         return glob.glob(filepath_str_to_search)
-
-
-    @staticmethod
-    def flatten_list(listofLists):
-        return [item for sublist in listofLists for item in sublist]
 
     @staticmethod
     def getAttachmentFullPath(output_dir, output_fn, download_url):
@@ -100,6 +102,17 @@ class UnicodeWriter:
             downloaded = True
         return downloaded
 
+    @staticmethod
+    def remove_files_on_regex(dir, regex):
+        files_to_remove =  FileUtils.getFileListForDir(dir + regex )
+        for the_file in files_to_remove:
+            try:
+                if os.path.isfile(the_file):
+                    os.unlink(the_file)
+                #this would remove subdirs
+                #elif os.path.isdir(file_path): shutil.rmtree(file_path)
+            except Exception as e:
+                print(e)
 
     @staticmethod
     def write_wkbk_csv(fn, dictList, headerCols):
@@ -119,10 +132,43 @@ class UnicodeWriter:
                 print str(e)
         return wrote_wkbk
 
+class ListUtils:
+
+    '''class for list util functions'''
+    @staticmethod
+    def flatten_list(listofLists):
+        return [item for sublist in listofLists for item in sublist]
+
+
+class EncodeObjects:
+
+    @staticmethod
+    def convertToString(data):
+        '''converts unicode to string'''
+        if isinstance(data, basestring):
+            return str(data)
+        elif isinstance(data, collections.Mapping):
+            return dict(map(EncodeObjects.convertToString, data.iteritems()))
+        elif isinstance(data, collections.Iterable):
+            return type(data)(map(EncodeObjects.convertToString, data))
+        else:
+            return data
+
+    @staticmethod
+    def convertToUTF8(data):
+        '''converts unicode to string'''
+        if isinstance(data, basestring):
+            return data.encode('utf-8')
+        elif isinstance(data, collections.Mapping):
+            return dict(map(EncodeObjects.convertToUTF8, data.iteritems()))
+        elif isinstance(data, collections.Iterable):
+            return type(data)(map(EncodeObjects.convertToUTF8, data))
+        else:
+            return data
+
 
 class ShtUtils:
     '''class for common wksht util functions'''
-
     @staticmethod
     def getWkbk(fn):
         wkbk = pd.ExcelFile(fn)
@@ -133,13 +179,7 @@ class ShtUtils:
         shts =  wkbk.sheet_names
         return [ sht for sht in shts if sht != 'Dataset Summary']
 
-class PandasUtils:
-    '''class for common pandas utility functions'''
 
-    @staticmethod
-    def renameCols(df, colMappingDict):
-        df = df.rename(columns=colMappingDict)
-        return df
 
 
 
