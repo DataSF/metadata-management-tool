@@ -74,7 +74,7 @@ class SocrataCRUD:
         self._logger = logger
 
     @retry( tries=5, delay=1, backoff=2)
-    def insertGeodataSet(self, dataset, insertDataSet):
+    def insertDataSet(self, dataset, insertDataSet):
         insertChunks = self.makeChunks(insertDataSet)
         #overwrite the dataset on the first insert chunk[0] if there is no row id
         if dataset[self.rowsInserted] == 0 and dataset[self.row_id ] == '':
@@ -104,7 +104,7 @@ class SocrataCRUD:
     @retry( tries=10, delay=1, backoff=2)
     def insertData(self, dataset, chunk):
         result = self.client.upsert(dataset[self.fourXFour], chunk)
-        dataset[self.rowsInserted] = dataset[self.rowsInserted] + int(result['Rows Created'])
+        dataset[self.rowsInserted] = dataset[self.rowsInserted] + int(result['Rows Created']) + int(result['Rows Updated'])
         time.sleep(0.25)
 
 
@@ -114,7 +114,7 @@ class SocrataCRUD:
 
     def postDataToSocrata(self, dataset, insertDataSet ):
         if dataset[self.fourXFour]!= 0:
-            dataset = self.insertGeodataSet(dataset, insertDataSet)
+            dataset = self.insertDataSet(dataset, insertDataSet)
             dataset = self.checkCompleted(dataset)
         else:
             msg =  dataset[self.name] + "  does not exist"
@@ -127,13 +127,12 @@ class SocrataCRUD:
             dataset[self.isLoaded] = 'success'
         else:
             dataset[self.isLoaded] = 'failed'
-        if dataset[self.isLoaded] == 'failed':
-            diff = float(dataset[self.rowsInserted])/float(dataset[self.src_records_cnt_field])
-            dataset[self.rowsInserted] = self.getRowCnt(dataset)
-            if dataset[self.rowsInserted] == dataset[self.src_records_cnt_field]:
+            dataset['record_cnt_on_portal'] =  self.getRowCnt(dataset)
+            if dataset['record_cnt_on_portal'] == dataset[self.src_records_cnt_field]:
                 dataset[self.isLoaded] = 'success'
-            #3% difference in the dataset
-            elif diff < 0.05:
+            #Up to 5% difference in the dataset file size to records on portal is okay
+            diff = float(dataset[self.rowsInserted])/float(dataset[self.src_records_cnt_field])
+            if diff < 0.05:
                 dataset[self.isLoaded] = 'success'
         if dataset[self.isLoaded] == 'success':
             msg =  "data insert success for " + dataset[self.name] + " !"  + " Loaded " + str(dataset[self.rowsInserted]) + "rows!"
@@ -170,7 +169,6 @@ class SocrataQueries:
         time.sleep(1)
         qry = '?$select=count(*)'
         qry = self.full_url +fourXFour+ ".json" + qry
-        print qry
         count = None
         try:
             r = requests.get( qry , auth=( self.username, base64.b64decode(self.passwd)))
@@ -194,7 +192,6 @@ class SocrataQueries:
         while returned_records < row_cnt:
             limit_offset = "&$limit=1000&$offset="+ str(offset)
             qry = '?$select='+qry_cols+ limit_offset
-            print qry
             try:
                 results = self.getQry(fbf, qry)
             except Exception, e:

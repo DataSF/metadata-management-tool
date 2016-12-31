@@ -10,6 +10,7 @@ from Wkbk_Json import *
 from PandasUtils import *
 from ConfigUtils import *
 from WkBk_Writer import *
+from MetaDatasets import *
 
 class WkbkGenerator:
     """class to generate data dictionaries"""
@@ -23,31 +24,25 @@ class WkbkGenerator:
         self._master_dd_config = self._metadataset_config['master_data_dictionary']
         self._fieldtypes_config = self._metadataset_config['field_types_dataset']
         self._pickle_dir = configItems['pickle_dir']
+        self._pickle_data_dir = configItems['pickle_data_dir']
         self._wkbk_json = WkbkJson(configItems, logger)
-        self._df_master = self.set_master_df()
+        self._df_master = MetaDatasets.set_master_df(self._pickle_data_dir, self._master_dd_config['json_fn'])
         self._df_stewards = self.set_df_stewards()
         self._stewardsList = self.set_stewardsList()
         self._field_types_list = self.set_field_types_list()
         self._wkbk_writer = WkBkWriter(configItems, logger, self._field_types_list)
         self._valsToNotOverride = configItems['valsToNotOverride']
-        self._current_date = datetime.datetime.now().strftime("%m/%d/%Y")
+        #self._current_date = datetime.datetime.now().strftime("%m/%d/%Y")
+        self._current_date = DateUtils.get_current_date_month_day_year()
 
 
     @property
     def df_master(self):
         return self._df_master
 
-    def set_master_df(self):
-        '''creates a dataframe of the master field list from json'''
-        '''returns all rows where Do Not Process == False '''
-        json_obj = self._wkbk_json.loadJsonFile(self._pickle_dir, self._master_dd_config['json_fn'])
-        df = PandasUtils.makeDfFromJson(json_obj)
-        df_master = df[ (df["do_not_process"] == False)  & (df['datasetid'] != '#N/A') & (df['global_field'] == False) ]
-        print len(df_master)
-        return df_master
 
     def set_field_types_list(self):
-        json_obj = self._wkbk_json.loadJsonFile(self._pickle_dir, self._fieldtypes_config['json_fn'])
+        json_obj = self._wkbk_json.loadJsonFile(self._pickle_data_dir, self._fieldtypes_config['json_fn'])
         df = PandasUtils.makeDfFromJson(json_obj)
         field_types = list(df['field_type'])
         return field_types
@@ -155,12 +150,11 @@ class WkbkGenerator:
     def build_Wkbks(self):
         '''builds and writes wkbks for datastewards'''
         #sprint self._stewardsList[0:3]
-        for stwd in self._stewardsList[0:2]:
+        for stwd in self._stewardsList:
             print stwd
             stwd_info  = self.steward_info(stwd)
             df_datasets, df_datasetsList, df_datasetsDict, datasetsSubmittedCnt, datasetToDoCount = self.set_Datasets(stwd)
             submittedFields = self.checkIfSubmittedFields(datasetsSubmittedCnt, datasetToDoCount)
-            print submittedFields
             sheets = self.set_Sheets(df_datasetsList, df_datasets)
             wkbk_fullpath, current_date =  self._wkbk_writer.write_wkbk(sheets, stwd_info)
             self._json_object["workbooks"].append( self.make_json_item(stwd_info, wkbk_fullpath, df_datasetsDict, current_date, submittedFields))
@@ -177,7 +171,6 @@ class WkbkGenerator:
             dataset_ids = [d['datasetid'] for d in dataset_info ]
             dataset_status_updts =  dataset_status_updts + dataset_ids
         updt_df = self._df_master[(self._df_master['datasetid'].isin(dataset_status_updts)) & (~self._df_master['status'].isin(self._valsToNotOverride))].reset_index()
-        print len(updt_df)
         updt_df['date_last_changed'] = self._current_date
         updt_df['status'] = 'For Review by Steward'
         return PandasUtils.convertDfToDictrows(updt_df[['columnid', 'status', 'date_last_changed']])

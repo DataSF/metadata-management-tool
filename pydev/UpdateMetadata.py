@@ -25,14 +25,15 @@ class UpdateMetadata(object):
         self._field_positions = configItems['update_info']['field_positions']
         #self._current_date = datetime.datetime.now() - timedelta(days=10)
         #self._current_date = self._current_date.strftime("%m/%d/%Y")
-        self._current_date = datetime.datetime.now().strftime("%m/%d/%Y")
+        self._current_date = DateUtils.get_current_date_month_day_year()
+
         self._updt_statuses = configItems['update_info']['statuses']
         self._valsToNotOverride = configItems['valsToNotOverride']
 
     @staticmethod
     def getDatasetsList(wkbk):
         return [elem['Dataset Name'].strip() for elem in wkbk['datasets'] if 'Dataset Name' in elem]
-    
+
     def get_overrride_cells(self):
         excludeRowsEmpty = []
         #"****vals do not override ***"
@@ -55,7 +56,7 @@ class UpdateMetadataStatus(UpdateMetadata):
             cells_updated = True
         return cells_updated
 
-   
+
     def updatewkbk_info(self, wkbks):
         '''method that does the heavy lifting/updating-uses info in the json wkbk object'''
         wkbk_cells_updted_dict = {}
@@ -72,13 +73,13 @@ class UpdateMetadataStatus(UpdateMetadata):
                 #get the cell ranges
                 datasets_rows = self._gSpread_Stuff.getCellRows(self._updt_sht, datasetsList)
                 datasets_rows = list(set(datasets_rows).difference(set(doNotOverrideList)))
-           
+
                 if len(datasets_rows) > 1:
                     datasets_rows = [str(row) for row in datasets_rows ]
-                    print datasets_rows 
+                    print datasets_rows
                 #cell_ranges_dt_changed = self._gSpread_Stuff.generateCellLocations(all_rows, self._field_positions['date_last_changed'])
                 #print cell_ranges_dt_changed
-               
+
                 #cell_ranges_status =  self._gSpread_Stuff.generateCellLocations(all_rows, self._field_positions['status'])
                     print "updating status"
                     updt_status = self._gSpread_Stuff.update_many_cells_by_addr(self._updt_sht, datasets_rows, "8",  self._updt_statuses['for_review_steward'])
@@ -90,7 +91,7 @@ class UpdateMetadataStatus(UpdateMetadata):
                 #sht, rows, col, cell_val
                 #updt_status = self._gSpread_Stuff.update_many_cells_by_addr_str(self._updt_sht, cell_ranges_status, self._updt_statuses['for_review_steward'])
                 #updt_dt_changed = self._gSpread_Stuff.update_many_cells_by_addr_str(self._updt_sht, cell_ranges_dt_changed, self._current_date)
-     
+
                 #check to make sure that stuff actually updated correctly
                 #wkbk_cells_updted_dict[wkbk["data_cordinator"]["Email"]] = True
             except Exception, e:
@@ -149,7 +150,7 @@ class UpdateMetadataFields(UpdateMetadata):
 
     def update_fieldList_alpha(self, fieldList):
         rows_to_exclude = self.get_overrride_cells()
-        print rows_to_exclude 
+        print rows_to_exclude
         for field_dict in fieldList:
             print "finding row"
             row_num = self.findUpdtRow(field_dict)

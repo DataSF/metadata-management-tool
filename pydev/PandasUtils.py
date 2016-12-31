@@ -4,9 +4,25 @@
 import pandas as pd
 import json
 from pandas.io.json import json_normalize
-
+import unicodedata as ucd
 
 class PandasUtils:
+
+  @staticmethod
+  def getWkbk(fn):
+    wkbk = pd.ExcelFile(fn)
+    return wkbk
+
+
+  @staticmethod
+  def removeCols(df, list_of_cols_to_remove):
+    '''removes cols inplace'''
+    df_col = list(df.columns)
+    #check to make sure that column exists in the dataframe
+    list_of_cols_to_remove = [col for col in list_of_cols_to_remove if col in df_col]
+    return df.drop(list_of_cols_to_remove, axis=1)
+    #return df.drop(df[list_of_cols_to_remove],inplace=True,axis=1)
+
 
   @staticmethod
   def loadCsv(fullpath):
@@ -39,7 +55,15 @@ class PandasUtils:
   def groupbyCountStar(df, group_by_list):
     return df.groupby(group_by_list).size().reset_index(name='count')
 
-
+  @staticmethod
+  def colToLower(df, field_name):
+    '''strips off white space and converts the col to lower'''
+    df[field_name] = df[field_name].astype(str)
+    df[field_name] = df[field_name].str.lower()
+    #df[field_name] = df[field_name].astype(str)
+    #print "made it here"
+    df[field_name] = df[field_name].map(str.strip)
+    return df
 
 if __name__ == "__main__":
     main()

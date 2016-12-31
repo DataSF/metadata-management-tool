@@ -22,11 +22,11 @@ class MetaData_Email_Composer(object):
             msgBody=myfile.read().replace('\n', '')
         return msgBody
 
-    def email_msg(self, receipient, subject_line, msgBody, attachment=None, attachment_fullpath=None ):
+    def email_msg(self, subject_line, msgBody, attachment=None, attachment_fullpath=None, receipient=None ):
         if os.path.isfile(attachment_fullpath):
-            self._emailer.sendEmails( receipient, subject_line, msgBody, attachment, attachment_fullpath)
+            self._emailer.sendEmails(  subject_line, msgBody, attachment, attachment_fullpath, receipient,)
         else:
-            self._emailer.sendEmails( receipient, subject_line, msgBody)
+            self._emailer.sendEmails(  subject_line, msgBody, None, None, receipient,)
 
     @staticmethod
     def get_msgparts(email_txt_basedir, situation, text_file_subparts):
@@ -104,19 +104,16 @@ class ForReviewBySteward(MetaData_Email_Composer):
     def generate_All_Emails(self, wkbks):
         '''generates and sends wkbks to recipients'''
         wkbks_sent_out = []
-        print len(wkbks['workbooks'])
         for wkbk in wkbks['workbooks']:
             #if updated_list_json['updated'][wkbk[ "data_cordinator"]['Email']]:
             msgBody =  self.msgBodyFill(wkbk)
             receipient = wkbk[ "data_cordinator"]['data_steward']
-            print receipient
-            receipient = "janine.heiser@sfgov.org"
+            receipient = 'janine.heiser@sfgov.org'
             subject_line = self._subject_line
             attachment_fullpath = wkbk["path_to_wkbk"]
             attachment = self.wkbk_file_name(wkbk["path_to_wkbk"])
             try:
-                #print "sending email"
-                self.email_msg(receipient, subject_line, msgBody, attachment, attachment_fullpath )
+                self.email_msg(subject_line, msgBody, attachment, attachment_fullpath, receipient )
                 wkbks_sent_out.append(wkbk)
             except Exception, e:
                 print str(e)

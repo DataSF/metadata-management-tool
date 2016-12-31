@@ -15,6 +15,7 @@ from MetaDatasets import *
 from Emailer import *
 from MetaData_Email_Composer import *
 import sys
+from JobStatusEmailerComposer import *
 
 
 def parse_opts():
@@ -65,24 +66,27 @@ def main():
   metadatasets = MetaDatasets(configItems, sqry, logger)
   emailer =  Emailer(configItems)
   wkbk_json = WkbkJson(configItems, logger)
-  #metadata_json = metadatasets.get_base_datasets()
-  metadata_json = True
+  metadata_json = metadatasets.get_base_datasets()
   if metadata_json:
-    print "Awesome! Downloaded master dd"
+    logger_msg =  "Awesome! Downloaded master dd"
+    print logger_msg
+    logger.info(logger_msg)
     wkbk_generator = WkbkGenerator(configItems,logger)
-    generated_wkbks, update_rows = wkbk_generator.build_Wkbks()
+    generated_wkbks, updt_rows = wkbk_generator.build_Wkbks()
     if generated_wkbks:
-      print "Awesome, generated data steward workbooks!"
-      dataset_info = metadatasets.set_master_dd_updt_info(update_rows)
-      dataset_info = scrud.postDataToSocrata(dataset_info, update_rows )
-      print dataset_info
+      logger_msg =  "Awesome, generated data steward workbooks!"
+      print logger_msg
+      logger.info(logger_msg)
+      dataset_info = metadatasets.set_master_dd_updt_info( updt_rows )
+      dataset_info = scrud.postDataToSocrata(dataset_info,  updt_rows  )
   #now email out the workbooks
   wkbks = wkbk_json.loadJsonFile(configItems['pickle_dir'], configItems['wkbk_output_json'])
-  print wkbks
   emailer_review_steward = ForReviewBySteward(configItems, emailer)
   wkbks_sent_out = emailer_review_steward.generate_All_Emails(wkbks)
-  print wkbks_sent_out
-
+   #email the results of ETL update
+  dsse = JobStatusEmailerComposer(configItems, logger)
+  dsse.sendJobStatusEmail([dataset_info])
+  logger.info("****************END JOB- generating workbooks******************")
 
 if __name__ == "__main__":
     main()

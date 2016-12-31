@@ -3,12 +3,17 @@
 
 import json
 import os.path
+from Utils import *
+
 
 class WkbkJson:
     def __init__(self, configItems, logger):
         #self._json_item = {"data_cordinator": None , "path_to_wkbk":None , "datasets":None ,"timestamp":None}
-        self._wkbk_output_json = configItems['wkbk_output_json']
-        self._wkbk_output_dir = configItems["wkbk_output_dir"]
+        self._wkbk_output_json = None
+        self._wkbk_output_dir  = None
+        if 'wkbk_output_json' in configItems.keys():
+            self._wkbk_output_json = configItems['wkbk_output_json']
+            self._wkbk_output_dir = configItems["wkbk_output_dir"]
         self._wkbk_uploads_dir = configItems['wkbk_uploads_dir']
         self._json_obj = self.loadJsonObject()
         self._wkbks = self.setWkbks()
@@ -20,9 +25,10 @@ class WkbkJson:
 
     def loadJsonObject(self):
         json_obj =  { "workbooks": []}
-        if os.path.isfile( self._wkbk_output_dir + self._wkbk_output_json):
-            json_data = open(self._wkbk_output_dir + self._wkbk_output_json).read()
-            json_obj =  json.loads(json_data)
+        if self._wkbk_output_dir:
+            if os.path.isfile( self._wkbk_output_dir + self._wkbk_output_json):
+                json_data = open(self._wkbk_output_dir + self._wkbk_output_json).read()
+                json_obj =  json.loads(json_data)
         return json_obj
 
     @staticmethod
@@ -56,12 +62,13 @@ class WkbkJson:
     def write_json_object(json_object, output_dir, json_fn):
         wroteFile = False
         try:
+            json_object = EncodeObjects.convertToUTF8(json_object)
             with open(output_dir + json_fn, 'w') as f:
                 json.dump(json_object, f, ensure_ascii=False)
                 wroteFile = True
         except Exception, e:
             print str(e)
-            self._logger.error(str(e))
+
         return wroteFile
 
 if __name__ == "__main__":

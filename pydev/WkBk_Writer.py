@@ -1,8 +1,7 @@
 # coding: utf-8
 import pandas as pd
 from openpyxl import Workbook
-import datetime
-
+from Utils import *
 
 class WkBkWriter:
     '''class to format and write excel workbooks'''
@@ -10,7 +9,8 @@ class WkBkWriter:
 
     def __init__(self, configItems, logger, field_types=None):
         self.wkbk_output_dir = configItems['wkbk_output_dir']
-        self.current_date = datetime.datetime.now().strftime("%Y_%m_%d")
+        #self.current_date = datetime.datetime.now().strftime("%Y_%m_%d")
+        self.current_date = DateUtils.get_current_date_year_month_day()
         self._fieldTypes = field_types
         self._fieldType_Flag = configItems['fieldType_flag']
         self.logger = logger
