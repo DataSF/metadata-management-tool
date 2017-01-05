@@ -12,7 +12,8 @@ class MetaDatasets:
     self._metadata_config_fn = configItems['metadataset_config']
     self._metadataset_config = ConfigUtils.setConfigs(self._config_inputdir,  self._metadata_config_fn )
     self._master_dd_config = self._metadataset_config['master_data_dictionary']
-    self._fieldtypes_config = self._metadataset_config['field_types_dataset']
+    self._fieldtypes_config = self._metadataset_config['field_types']
+    self._globalfields_config = self._metadataset_config['global_fields']
     self._pickle_dir = configItems['pickle_dir']
     self._pickle_data_dir = configItems['pickle_data_dir']
     self._socrataQueriesObject = socrataQueriesObject
@@ -39,6 +40,15 @@ class MetaDatasets:
     print len(df_master)
     return df_master
 
+  @staticmethod
+  def set_global_fields_list(pickle_data_dir, json_file):
+    '''creates a list of global field strings'''
+    json_obj = WkbkJson.loadJsonFile(pickle_data_dir, json_file)
+    df = PandasUtils.makeDfFromJson(json_obj)
+    df = PandasUtils.colToLower(df, 'global_string')
+    df = PandasUtils.colToLower(df, 'field_name')
+    return list(set(list(df['global_string']) + list(df['field_name'])))
+
   def get_master_metadataset_as_json(self):
     results_json = self._socrataQueriesObject.pageThroughResultsSelect( self._master_dd_config['fourXFour'], '*')
     return self._wkbk_json.write_json_object(results_json, self._pickle_data_dir, self._master_dd_config['json_fn'])
@@ -46,6 +56,10 @@ class MetaDatasets:
   def get_field_types(self):
     results_json  = self._socrataQueriesObject.pageThroughResultsSelect( self._fieldtypes_config['fourXFour'], self._fieldtypes_config['columns_to_fetch'])
     return self._wkbk_json.write_json_object(results_json, self._pickle_data_dir, self._fieldtypes_config['json_fn'])
+
+  def get_global_fields_as_json(self):
+    results_json  = self._socrataQueriesObject.pageThroughResultsSelect( self._globalfields_config['fourXFour'], self._globalfields_config['columns_to_fetch'])
+    return self._wkbk_json.write_json_object(results_json, self._pickle_data_dir, self._globalfields_config['json_fn'])
 
   def get_base_datasets(self):
     downloaded_datasets = False

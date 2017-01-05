@@ -60,8 +60,6 @@ class PandasUtils:
     '''strips off white space and converts the col to lower'''
     df[field_name] = df[field_name].astype(str)
     df[field_name] = df[field_name].str.lower()
-    #df[field_name] = df[field_name].astype(str)
-    #print "made it here"
     df[field_name] = df[field_name].map(str.strip)
     return df
 

@@ -17,6 +17,7 @@ from csv import DictWriter
 from cStringIO import StringIO
 import datetime
 import collections
+import os.path
 
 class DateUtils:
     @staticmethod
@@ -68,6 +69,17 @@ class UnicodeWriter:
 
 class FileUtils:
     '''class for file/os util functions'''
+
+
+    @staticmethod
+    def read_csv_into_dictlist(fn):
+        dictList = []
+        print fn
+        if os.path.exists(fn):
+            with open(fn) as f:
+                dictList = [row for row in csv.DictReader(f, skipinitialspace=True)]
+        return dictList
+
     @staticmethod
     def getFileListForDir(filepath_str_to_search):
         '''gets file list in a directory based on some path string to search- ie: /home/adam/*.txt'''
@@ -123,14 +135,18 @@ class FileUtils:
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                 writer.writeheader()
                 for data in dictList:
+                    #print data
                     try:
                         writer.writerow({ s:str(v).encode("ascii",  'ignore') for s, v in data.iteritems()  } )
-                    except:
+                    except Exception, e:
+                        print str(e)
                         print "could not write row"
                 wrote_wkbk = True
             except Exception, e:
                 print str(e)
         return wrote_wkbk
+
+
 
 class ListUtils:
 
@@ -179,8 +195,25 @@ class ShtUtils:
         shts =  wkbk.sheet_names
         return [ sht for sht in shts if sht != 'Dataset Summary']
 
+class WkbkUtils:
+    '''util class for dealing with excel workbooks'''
 
+    @staticmethod
+    def get_shts(fn):
+      '''gets the sheets from the workbook as a dcitionary'''
+      wkbk = ShtUtils.getWkbk(fn)
+      sht_names = ShtUtils.get_sht_names(wkbk)
+      return {'wkbk': wkbk, 'shts': sht_names}
 
+    @staticmethod
+    def getShtDf(wkbk_stuff, wkbkName, skipRows):
+      '''turns a wksht into a df based on a name and the number of rows to skip'''
+      dfSht = False
+      df = wkbk_stuff['wkbk'].parse(wkbkName, header=skipRows )
+      dfCols = list(df.columns)
+      if len(dfCols) > 3:
+        return df
+      return dfSht
 
 
 if __name__ == "__main__":
