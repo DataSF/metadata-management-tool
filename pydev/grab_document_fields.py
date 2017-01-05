@@ -56,28 +56,28 @@ def main():
   scrud = SocrataCRUD(client, clientItems, configItems, logger)
   sqry = SocrataQueries(clientItems, configItems, logger)
   metadatasets = MetaDatasets(configItems, sqry, logger)
-
+  dsse = JobStatusEmailerComposer(configItems, logger)
   #get these supporting datasets from the portal
-  #master_dd_json = metadatasets.get_master_metadataset_as_json()
+  master_dd_json = metadatasets.get_master_metadataset_as_json()
   global_fields_json = metadatasets.get_global_fields_as_json()
   ef = ExistingFieldDefs(configItems)
   wroteFileDefs, wroteFileOnlyInAttach, wroteFileOnlyInMaster, wrotePdfDatasets, wroteOthersDatasets = ef.buildDocumentedFields()
   if(wroteFileDefs):
     #load the csvs
     updt_rows = FileUtils.read_csv_into_dictlist(configItems['documented_fields_dir']+"output/"+ configItems['document_fields_outputfile_fn'])
-
-    #print updt_rows
     if len(updt_rows) > 0:
       dataset_info = metadatasets.set_master_dd_updt_info(updt_rows)
       print dataset_info
       #post update master dd on portal
       dataset_info = scrud.postDataToSocrata(dataset_info, updt_rows )
       print dataset_info
-      dsse = JobStatusEmailerComposer(configItems, logger)
+      #send out the email
       dsse.sendJobStatusEmail([dataset_info])
     else:
-      print "**** No rows to update*****"
-
+      dataset_info = metadatasets.set_master_dd_updt_info(updt_rows)
+      dataset_info['isLoaded'] = 'success'
+      print "*******No rows to update****"
+      dsse.sendJobStatusEmail([dataset_info])
 
 if __name__ == "__main__":
     main()

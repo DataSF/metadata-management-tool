@@ -94,10 +94,6 @@ class WkbkParser:
         df_wkbk = df_wkbk[(df_wkbk['columnid'].isin(list(self._df_master['columnid'])))].reset_index()
         df_wkbk = df_wkbk[self.keys_to_keep_field]
         df_wkbk_columnid_not_found =  df_wkbk[(~df_wkbk['columnid'].isin(list(self._df_master['columnid'])))].reset_index()
-        #print df_wkbk_columnid_not_found
-        #print "**after filtering: " + str(len(df_wkbk))
-        #print list(df_wkbk['columnid'])
-        #print "****"
         df_dictList =  df_wkbk.to_dict(orient='records')
         #filter out the nans
         df_dictList = [ DictUtils.filterDictOnNans(field_dict) for field_dict in df_dictList ]

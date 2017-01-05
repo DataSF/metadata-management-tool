@@ -15,7 +15,7 @@ dataset_name_field: Socrata Dataset Name
 dataset_src_dir_field:  Dataset_Source_Dir
 dataset_src_fn_field: Dataset Source Filename
 base_url: data.sfgov.org
-job_name: Update Master Data Dictionary after Workbook Creation
+job_name: Upload DataDictionary Attachments
 
 metadataset_config: metadatasets.yaml
 
