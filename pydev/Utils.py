@@ -74,7 +74,6 @@ class FileUtils:
     @staticmethod
     def read_csv_into_dictlist(fn):
         dictList = []
-        print fn
         if os.path.exists(fn):
             with open(fn) as f:
                 dictList = [row for row in csv.DictReader(f, skipinitialspace=True)]

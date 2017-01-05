@@ -25,7 +25,7 @@ class ExistingFieldDefs:
         self._documented_fields_unmatched = [ 'columnid',  'datasetid', 'dataset_name',  'field_name']
         self._pdf_others_fields_list = ['datasetid', 'dataset_name', 'field_count', 'attachment_url', 'file_name']
         self._wkbk_formats = configItems['wkbk_formats']
-        self._cols_to_remove_basedf = ['field_definition', 'status', 'date_last_changed']
+        self._cols_to_remove_basedf = ['field_definition', 'date_last_changed']
         self._cols_to_keep_uploaded = ['field_definition', 'field_name']
         self._current_date = DateUtils.get_current_date_month_day_year()
         self._document_fields_outputfile_fn = configItems['document_fields_outputfile_fn']
@@ -120,24 +120,33 @@ class ExistingFieldDefs:
       return dfSht
 
 
-    def makeFieldLists(self, dataset, dataset_df, dfSht ):
-      '''tries to match the attachment to the master dd and returns matched and unmatched'''
-      #get fields that match
+    def make_df_both(self, dataset_df, dfSht):
+      '''returns a dataframe of the fields that match in both '''
       df_both = pd.merge(dataset_df, dfSht, on='field_name')
       #filter out globals
       df_both =  df_both[(~df_both['field_name'].isin(self._globalfields_list))] #.reset_index()
-      #filter out just the columns we want to update
+      #get a cnt of fields that were previously complete
+      cnt_prev_complete = len(df_both[df_both['status'] == 'Complete'])
+      #remove rows where status is complete
+      df_both = df_both[df_both['status'] != 'Complete'].reset_index()
+      #add the status col info
+      df_both = PandasUtils.removeCols(df_both, ['status'])
       df_both = self.addStatusFields(df_both)
+       #filter out just the columns we want to update
       df_both = df_both[self._documented_fields_matched]
+      return df_both, cnt_prev_complete
 
-      #get the fields that only appear in the master datadict
+    def make_df_only_in_mm(self, dataset_df, dfSht):
+      '''returns a df of the fields that only appear in the master dd'''
       df_only_in_mm = pd.merge(dataset_df, dfSht, how="left", on='field_name')
       df_only_in_mm = df_only_in_mm.fillna('')
       df_only_in_mm =  df_only_in_mm[df_only_in_mm['field_definition'] == '']
       df_only_in_mm =  df_only_in_mm[(~df_only_in_mm['field_name'].isin(self._globalfields_list))] #.reset_index()
       df_only_in_mm =  df_only_in_mm[self._documented_fields_unmatched]
+      return df_only_in_mm
 
-      #get the fields that are only in attachment
+    def make_df_only_in_attch(self, dataset, dataset_df, dfSht):
+      '''returns a df of the fields that are only in the attachment'''
       df_only_in_attch = pd.merge(dataset_df, dfSht, how="right", on='field_name')
       df_only_in_attch = df_only_in_attch.fillna('')
       df_only_in_attch = df_only_in_attch[df_only_in_attch['columnid']== '']
@@ -145,17 +154,28 @@ class ExistingFieldDefs:
       df_only_in_attch =  df_only_in_attch[self._documented_fields_unmatched]
       df_only_in_attch['datasetid'] = dataset['datasetid']
       df_only_in_attch['dataset_name'] = dataset['dataset_name']
-      cnt_report = self.getCntsOnFieldMatch(dataset, dataset_df, dfSht, df_both, df_only_in_mm, df_only_in_attch)
+      return df_only_in_attch
 
+    def makeFieldLists(self, dataset, dataset_df, dfSht ):
+      '''tries to match the attachment to the master dd and returns matched and unmatched'''
+      #get fields that match
+      df_both, cnt_prev_complete = self.make_df_both(dataset_df, dfSht)
+      #get the fields that only appear in the master datadict
+      df_only_in_mm = self.make_df_only_in_mm(dataset_df, dfSht)
+      #get the fields that are only in attachment
+      df_only_in_attch = self.make_df_only_in_attch(dataset, dataset_df, dfSht)
+      #make a report of the cnts
+      cnt_report = self.getCntsOnFieldMatch(dataset, dataset_df, dfSht, df_both, df_only_in_mm, df_only_in_attch, cnt_prev_complete)
       items = {'both': df_both, 'mm': df_only_in_mm, 'attch': df_only_in_attch}
+      #turn all the dfs to dict lists
       dfs_as_rows =  {k:v.to_dict('records') for k,v in items.iteritems() }
       return cnt_report, dfs_as_rows
 
-    def getCntsOnFieldMatch(self, dataset, dataset_df, dfSht, df_both, df_only_in_master, df_only_in_attachment):
+    def getCntsOnFieldMatch(self, dataset, dataset_df, dfSht, df_both, df_only_in_master, df_only_in_attachment, cnt_prev_complete):
       '''returns some cnts on match rate-removes globals fields from the counts'''
       attch_globals = len(dfSht[(dfSht['field_name'].isin(self._globalfields_list))])
       mm_globals = len(dataset_df[(dataset_df['field_name'].isin(self._globalfields_list))])
-      cnt_report = {'datasetid': dataset['datasetid'],'dataset_name': dataset['dataset_name'],  'tot_fields_in_master': len(dataset_df)-mm_globals, 'tot_fields_in_attch': len(dfSht) - attch_globals, 'matched_cnt': len(df_both) , 'only_in_master': len( df_only_in_master), 'only_in_attached': len(df_only_in_attachment) }
+      cnt_report = {'datasetid': dataset['datasetid'],'dataset_name': dataset['dataset_name'],  'tot_fields_in_master': len(dataset_df)-mm_globals, 'tot_fields_in_attch': len(dfSht) - attch_globals, 'matched_cnt': len(df_both)+ cnt_prev_complete , 'only_in_master': len( df_only_in_master), 'only_in_attached': len(df_only_in_attachment) }
       cnt_report = {k:str(v) for k,v in cnt_report.iteritems() }
       return cnt_report
 
@@ -167,7 +187,7 @@ class ExistingFieldDefs:
       allPdfs = []
       cnt_report_all =  []
       dowloaded = False
-      for dataset in self._datasets_load_list[0:3]:
+      for dataset in self._datasets_load_list:
         #get the main dataset
         datasetid = dataset['datasetid']
         dataset_df = self.get_dfDatasetToLoad(dataset['datasetid'])
@@ -183,7 +203,6 @@ class ExistingFieldDefs:
             in_both  = in_both + dfs_as_rows['both']
             only_in_mm = only_in_mm  + dfs_as_rows['mm']
             only_in_attch = only_in_attch + dfs_as_rows['attch']
-            print cnt_report
           else:
             dataset['file_name'] = fNameXlsx
             allOthers.append(dataset)
