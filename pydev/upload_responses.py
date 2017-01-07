@@ -57,10 +57,11 @@ def main():
   sqry = SocrataQueries(clientItems, configItems, logger)
   metadatasets = MetaDatasets(configItems, sqry, logger)
   master_dd_json = metadatasets.get_master_metadataset_as_json()
-
+  print "made it here"
+  dsse = JobStatusEmailerComposer(configItems, logger)
   print "*****Starting to download workbooks*****"
-  downloaded_files = False
   downloaded_files, number_of_wkbks_to_load = screendoor_stuff.get_attachments()
+  downloaded_files = True
   if downloaded_files:
     print "Awesome, downloaded files and made json list"
     print "Downloaded " + str(number_of_wkbks_to_load) + " wkbks"
@@ -68,28 +69,30 @@ def main():
     print "ERROR: Not able to download load workbooks!"
     exit(1)
   wkbk_parser = WkbkParser(configItems)
-  updt_metadata_fields_json = wkbk_parser.get_metadata_updt_fields_from_shts()
+  updt_metadata_fields_json, unmatchedFn = wkbk_parser.get_metadata_updt_fields_from_shts()
   wrote_updshts_json = False
-
   if (not(updt_metadata_fields_json)):
       print "Error: Something went wrong, could not parse worksheets"
       exit(1)
   else:
       print "successfully grabbed metadata fields to update from worksheets"
-      #wrote_updshts_json = wkbk_parser.load_updt_fields_json()
       if master_dd_json:
         print "Updating rows in the master dd"
         updt_rows = WkbkJson.loadJsonFile(configItems['pickle_dir'], configItems['updt_fields_json_fn'])
-        print updt_rows
         if(len(updt_rows['updt_fields'])> 0):
           dataset_info = metadatasets.set_master_dd_updt_info(updt_rows['updt_fields'])
+          print dataset_info
           #post update master dd on portal
           dataset_info = scrud.postDataToSocrata(dataset_info, updt_rows['updt_fields'] )
           print dataset_info
-          dsse = JobStatusEmailerComposer(configItems, logger)
-          dsse.sendJobStatusEmail([dataset_info])
+          dataset_info['jobStatus'] = 'success'
+          dataset_info['isLoaded'] = 'Success'
+          dsse.sendJobStatusEmail([dataset_info], [{unmatchedFn: configItems['pickle_dir']+unmatchedFn}])
         else:
           print "**** No rows to update*****"
+          dataset_info = metadatasets.set_master_dd_updt_info(updt_rows)
+          dataset_info['isLoaded'] = 'success'
+          dsse.sendJobStatusEmail([dataset_info], [{unmatchedFn: configItems['pickle_dir']+unmatchedFn}])
       else:
         print "*****errror could not upload dataasets"
         exit(1)

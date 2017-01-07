@@ -72,6 +72,10 @@ update_info:
         field_type_flag: Field Type Flag
         status: status
         date_last_changed: date_last_changed
+        dataset_name: Dataset Name
+        open_data_portal_url: Open Data Portal URL
+        field_name: Field Name
+        field_type: Field Type
     field_not_blank: ["Field Alias", "Field Definition", "Field Type Flag" ]
 
     statuses:

@@ -19,7 +19,8 @@ class WkbkParser:
         self._config_dir =  configItems['config_dir']
         #self.keys_to_keep = ['columnID', 'Field Type', 'Field Definition', 'Field Alias', 'Field Type Flag']
         self.keys_to_keep = ['columnID', 'Field Definition', 'Field Alias', 'Field Type Flag']
-        self.keys_to_keep_field = ['columnid', 'field_definition', 'field_alias', 'field_type_flag']
+        self.keys_to_keep_field = ['columnid', 'field_definition', 'field_alias', 'field_type_flag', 'status', 'date_last_changed']
+        self.keys_to_keep_field_unmatched = ['columnid', 'dataset_name', 'field_name', 'field_type', 'field_definition']
 
         self.updt_fields_json_name = configItems['updt_fields_json_fn']
         self.json_key = "updt_fields"
@@ -43,7 +44,7 @@ class WkbkParser:
         self._df_master = MetaDatasets.set_master_df(self._pickle_data_dir, self._master_dd_config['json_fn'])
         self._valsToNotOverride= configItems['valsToNotOverride']
         self._do_not_process_columnids = self.get_do_not_process_list()
-        #print self._do_not_process_columnids
+        self._current_date_year = DateUtils.get_current_date_year_month_day()
 
 
     def get_do_not_process_list(self):
@@ -78,46 +79,73 @@ class WkbkParser:
             '''
 
         df_wkbk =  wkbk.parse(sht_name)
-        df_wkbk = df_wkbk[self.keys_to_keep]
         df_wkbk = self.add_status_info(df_wkbk)
         #rename the cols to the spreadsheet cols for ease
         field_name_mapping =  dict((v,k) for k,v in self.field_name_mappings.iteritems())
-
         #use string col locations onto the dict
         df_wkbk= df_wkbk.rename(columns = field_name_mapping)
-        #print "*******"
         #print "**prior to filtering: " + str(len(df_wkbk))
-        #print list(df_wkbk['columnid'])
         #grab only records with the correct statuses
         df_wkbk = df_wkbk[(~df_wkbk['columnid'].isin(self._do_not_process_columnids))].reset_index()
+        #print "**filtering on status*: " + str(len(df_wkbk))
         #now make sure that the columnid is in the master datadict
-        df_wkbk = df_wkbk[(df_wkbk['columnid'].isin(list(self._df_master['columnid'])))].reset_index()
-        df_wkbk = df_wkbk[self.keys_to_keep_field]
-        df_wkbk_columnid_not_found =  df_wkbk[(~df_wkbk['columnid'].isin(list(self._df_master['columnid'])))].reset_index()
-        df_dictList =  df_wkbk.to_dict(orient='records')
+        df_wkbk_in_mmdd = df_wkbk[(df_wkbk['columnid'].isin(list(self._df_master['columnid'])))].reset_index()
+        #print "**filtering on mmdd*: " + str(len(df_wkbk_in_mmdd))
+        #get a df of the columns not in the master dd
+        df_wkbk_not_in_mmdd = df_wkbk[~(df_wkbk['columnid'].isin(list(self._df_master['columnid'])))].reset_index()
+        #print "**cols not in mmdd*: " + str(len(df_wkbk_not_in_mmdd))
+        #print df_wkbk_not_in_mmdd[['columnid','field_name']]
+        #only keep relevant fields
+        df_wkbk_in_mmdd = df_wkbk_in_mmdd[self.keys_to_keep_field]
+        df_wkbk_not_in_mmdd = df_wkbk_not_in_mmdd[self.keys_to_keep_field_unmatched]
+
+        df_dictList = df_wkbk_in_mmdd.to_dict(orient='records')
+        df_dictList_not_in_mmdd = df_wkbk_not_in_mmdd.to_dict(orient='records')
         #filter out the nans
         df_dictList = [ DictUtils.filterDictOnNans(field_dict) for field_dict in df_dictList ]
+        df_dictList_not_in_mmdd = [ DictUtils.filterDictOnNans(field_dict) for field_dict in df_dictList_not_in_mmdd ]
         #double check that the field actually changed- needs to a be at least a len of 4 for a field to actually be updted after removing all nan vals
-        return  [k for k in df_dictList if len(k.keys()) > 3]
+        df_dictList =  [k for k in df_dictList if len(k.keys()) > 3]
+        df_dictList_not_in_mmdd =  [k for k in df_dictList_not_in_mmdd if len(k.keys()) > 4]
+
+        return [df_dictList, df_dictList_not_in_mmdd]
 
     def get_shts(self, fn):
         wkbk = PandasUtils.getWkbk(fn)
         sht_names = self.get_sht_names(wkbk)
         metadata_dicts = [ self.parse_sht(wkbk, sht_name) for sht_name in sht_names]
-        return ListUtils.flatten_list(metadata_dicts)
+        #list of the fields we'll upload
+        metadata_dicts_in_mmdd = [ metadata_dict[0] for metadata_dict in metadata_dicts if len(metadata_dict[0]) > 0]
+        #list of fields that weren't in the mmdd
+        unmatched_fields = [ metadata_dict[1] for metadata_dict in metadata_dicts if len(metadata_dict[1]) > 0]
+        #wroteUnmatchedFields = FileUtils.write_wkbk_csv(self._pickle_dir+self._current_date_year+"_unmatched_fields" ,unmatched_fields, self._documented_fields_matched)
+        metadata_dicts_in_mmdd =  ListUtils.flatten_list(metadata_dicts_in_mmdd)
+        unmatched_fields = ListUtils.flatten_list(unmatched_fields)
+        return [metadata_dicts_in_mmdd, unmatched_fields]
+
+
 
     def get_metadata_updt_fields_from_shts(self):
         fileList =  FileUtils.getFileListForDir(self._wkbk_uploads_dir + "*.xlsx")
-        #print len(fileList)
         wroteJsonFile = False
+        unmatchedFn = None
         metadata_dicts = [ self.get_shts(fn) for fn in fileList ]
-        metadata_dictJson = { self.json_key: ListUtils.flatten_list(metadata_dicts)}
+        metadata_dicts_in_mmdd = [ metadata_dict[0] for metadata_dict in metadata_dicts if len(metadata_dict[0]) > 0]
+        metadata_dicts_not_in_mmdd = [ metadata_dict[1] for metadata_dict in metadata_dicts if len(metadata_dict[1]) > 0]
+        metadata_dictJson = { self.json_key: ListUtils.flatten_list(metadata_dicts_in_mmdd)}
         try:
             wroteJsonFile = WkbkJson.write_json_object( metadata_dictJson, self._pickle_dir, self.updt_fields_json_name)
         except Exception, e:
             print "could not wrtite file"
             print str(e)
-        return wroteJsonFile
+        unmatched_cols = ['columnid',  'dataset_name', 'field_name', 'field_type', 'field_definition',]
+        metadata_dict_not_in_mmdd_csv =  ListUtils.flatten_list(metadata_dicts_not_in_mmdd)
+        #print metadata_dict_not_in_mmdd_csv
+        fn = self._current_date_year+"unmatched_fields.csv"
+        wroteUnmatchedFields = FileUtils.write_wkbk_csv(self._pickle_dir+fn,metadata_dict_not_in_mmdd_csv, unmatched_cols)
+        if wroteUnmatchedFields:
+            unmatchedFn = fn
+        return wroteJsonFile, unmatchedFn
 
     def load_updt_fields_json(self):
         updt_fieldList = []

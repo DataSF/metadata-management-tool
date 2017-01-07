@@ -61,7 +61,7 @@ def main():
   master_dd_json = metadatasets.get_master_metadataset_as_json()
   global_fields_json = metadatasets.get_global_fields_as_json()
   ef = ExistingFieldDefs(configItems)
-  wroteFileDefs, wroteFileOnlyInAttach, wroteFileOnlyInMaster, wrotePdfDatasets, wroteOthersDatasets = ef.buildDocumentedFields()
+  cnt_report, wroteFileDefs, wroteFileOnlyInAttach, wroteFileOnlyInMaster, wrotePdfDatasets, wroteOthersDatasets = ef.buildDocumentedFields()
   if(wroteFileDefs):
     #load the csvs
     updt_rows = FileUtils.read_csv_into_dictlist(configItems['documented_fields_dir']+"output/"+ configItems['document_fields_outputfile_fn'])
@@ -72,12 +72,12 @@ def main():
       dataset_info = scrud.postDataToSocrata(dataset_info, updt_rows )
       print dataset_info
       #send out the email
-      dsse.sendJobStatusEmail([dataset_info])
+      dsse.sendJobStatusEmail([dataset_info],[cnt_report])
     else:
       dataset_info = metadatasets.set_master_dd_updt_info(updt_rows)
       dataset_info['isLoaded'] = 'success'
       print "*******No rows to update****"
-      dsse.sendJobStatusEmail([dataset_info])
+      dsse.sendJobStatusEmail([dataset_info], [cnt_report])
 
 if __name__ == "__main__":
     main()
