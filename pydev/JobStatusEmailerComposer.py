@@ -25,7 +25,11 @@ class JobStatusEmailerComposer:
     def sucessStatus(self, dataset):
         dataset = DictUtils.removeKeys(dataset, self.keysToRemove)
         dataset['jobStatus'] = dataset['isLoaded'].upper()
+        print "******"
+        print dataset['isLoaded']
+        print '*****'
         if dataset['isLoaded'] != 'success':
+
             self.failure = True
         return dataset
 
@@ -52,7 +56,7 @@ class JobStatusEmailerComposer:
         msg = dataset['jobStatus'] + ": " + dataset[self.datasetNameField] + "-> Total Rows:" + str(dataset[self.source_records_cnt]) + ", Rows Inserted: " + str(dataset[self.rowsInserted])  + ", Link: http://"  + self.dataset_base_url + "/" + dataset[self.fourXFour] + " \n\n\n "
         return msg
 
-    def sendJobStatusEmail(self, finishedDataSets):
+    def sendJobStatusEmail(self, finishedDataSets, msg_attachments = None):
         msgBody  = ""
         for i in range(len(finishedDataSets)):
             #remove the column definitions, check if records where inserted
@@ -65,6 +69,8 @@ class JobStatusEmailerComposer:
         emailconfigs = e.setConfigs()
         if os.path.isfile(self.logfile_fullpath):
             e.sendEmails( subject_line, msgBody, self.logfile_fname, self.logfile_fullpath)
+        if msg_attachments:
+            e.sendEmails( subject_line, msgBody, None, None, None, msg_attachments)
         else:
             e.sendEmails( subject_line, msgBody)
         logger_msg =  "****JOB STATUS: " +  self.job_name + "*:* "+ subject_line +"***"
@@ -75,3 +81,5 @@ class JobStatusEmailerComposer:
 
 if __name__ == "__main__":
     main()
+
+

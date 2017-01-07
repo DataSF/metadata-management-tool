@@ -21,12 +21,16 @@ class ExistingFieldDefs:
         self._documented_fields_dir = configItems['documented_fields_dir']
         self._documented_fields_name_mapping = { 'datasetID': 'datasetid', 'columnID': 'columnid', 'Dataset Name': 'dataset_name', 'Field Name': 'field_name', 'Field Alias': 'field_alias', 'Definition': 'field_definition', 'Field Type Flag':'field_type_flag','Status': 'status', 'date_last_changed': 'date_last_changed', 'Data Type':'field_type'  }
         #self._documented_fields_list = [ 'columnid',  'datasetid', 'dataset_name',  'field_name',  'field_alias',  'field_definition', 'field_type_flag']
+
+        self._cols_to_keep_master = ['status', 'datasetid', 'columnid', 'dataset_name', 'field_name', 'field_count', 'attachment_url']
         self._documented_fields_matched = [ 'columnid',  'field_definition', 'status', 'date_last_changed' ]
         self._documented_fields_unmatched = [ 'columnid',  'datasetid', 'dataset_name',  'field_name']
         self._pdf_others_fields_list = ['datasetid', 'dataset_name', 'field_count', 'attachment_url', 'file_name']
         self._wkbk_formats = configItems['wkbk_formats']
-        self._cols_to_remove_basedf = ['field_definition', 'date_last_changed']
+        #fields to keep from the screendoor wkbks
         self._cols_to_keep_uploaded = ['field_definition', 'field_name']
+
+        self._cols_to_remove_basedf = ['field_count', 'attachment_url']
         self._current_date = DateUtils.get_current_date_month_day_year()
         self._document_fields_outputfile_fn = configItems['document_fields_outputfile_fn']
         self._pickle_data_dir = configItems['pickle_data_dir']
@@ -40,6 +44,7 @@ class ExistingFieldDefs:
         self._datasets_load_list = self.find_attachment_datasets()
         self._cnt_report_columns = ['datasetid', 'dataset_name', 'matched_cnt', 'only_in_master', 'tot_fields_in_attch', 'only_in_attached',  'tot_fields_in_master']
 
+
     def find_attachment_datasets(self):
       '''gets the datasets with download urls'''
       #print list(self._df_master['data_dictionary_attached'])
@@ -50,6 +55,16 @@ class ExistingFieldDefs:
       df =  self._df_master[self._df_master['datasetid'] == datasetID]
       #make the field_name to lower
       df = PandasUtils.colToLower(df.copy(), 'field_name')
+      #print '***here are all the cols in the df***'
+      #print list(df.columns)
+      #print "********"
+      #print  self._cols_to_keep_master
+      cols_to_remove = [col for col in list(df.columns) if col not in self._cols_to_keep_master]
+      #print cols_to_remove
+      #remove the cols that we will be updating
+      df = PandasUtils.removeCols(df,cols_to_remove)
+      if 'status' not in list(df.columns):
+        df['status'] = ''
       return df
 
     @staticmethod
@@ -121,6 +136,7 @@ class ExistingFieldDefs:
 
 
     def make_df_both(self, dataset_df, dfSht):
+      self._cols_to_remove_basedf
       '''returns a dataframe of the fields that match in both '''
       df_both = pd.merge(dataset_df, dfSht, on='field_name')
       #filter out globals
@@ -191,8 +207,9 @@ class ExistingFieldDefs:
         #get the main dataset
         datasetid = dataset['datasetid']
         dataset_df = self.get_dfDatasetToLoad(dataset['datasetid'])
-        #remove the cols that we will be updating
-        dataset_df = PandasUtils.removeCols(dataset_df, self._cols_to_remove_basedf)
+        #print "***** here are the dataset columns****"
+        #print dataset_df.columns
+        #print "********"
         fNameXlsx = self.make_fnNameXlxs(dataset)
         if( fNameXlsx):
           print "***xlxs:"+ fNameXlsx + "******"
@@ -228,7 +245,7 @@ class ExistingFieldDefs:
       wrotePdfDatasets = FileUtils.write_wkbk_csv(self._documented_fields_dir + "output/"+ "pdf_datasets.csv", allPdfs,self._pdf_others_fields_list)
       wroteOthersDatasets = FileUtils.write_wkbk_csv(self._documented_fields_dir + "output/"+ "other_datasets.csv", allOthers,self._pdf_others_fields_list)
       wroteCntReport = FileUtils.write_wkbk_csv(self._documented_fields_dir + "output/"+ "match_report.csv",cnt_report_all, self._cnt_report_columns)
-      return wroteFileDefs, wroteFileOnlyInAttach, wroteFileOnlyInMaster, wrotePdfDatasets, wroteOthersDatasets
+      return {'match_report.csv':self._documented_fields_dir + "output/"+ "match_report.csv"}, wroteFileDefs, wroteFileOnlyInAttach, wroteFileOnlyInMaster, wrotePdfDatasets, wroteOthersDatasets
 
 
 

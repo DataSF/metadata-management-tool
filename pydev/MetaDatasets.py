@@ -27,7 +27,6 @@ class MetaDatasets:
     json_obj = WkbkJson.loadJsonFile(pickle_data_dir, json_file)
     df = PandasUtils.makeDfFromJson(json_obj)
     df_master = df[ (df["do_not_process"] == False)  & (df['datasetid'] != '#N/A') & (df['global_field'] == False) ]
-    print len(df_master)
     return df_master
 
   @staticmethod
@@ -49,8 +48,19 @@ class MetaDatasets:
     df = PandasUtils.colToLower(df, 'field_name')
     return list(set(list(df['global_string']) + list(df['field_name'])))
 
+  @staticmethod
+  def populate_blank_cols(row, cols_to_include):
+    '''poplulates blanks so you can load the dataset into a df'''
+    missing = [col for col in cols_to_include if col not in row.keys() ]
+    for col in missing:
+      row[col] = ""
+    return row
+
   def get_master_metadataset_as_json(self):
-    results_json = self._socrataQueriesObject.pageThroughResultsSelect( self._master_dd_config['fourXFour'], '*')
+    #print self._master_dd_config['fourXFour']
+    cols_to_include = self._master_dd_config['columns_to_fetch'].split(',')
+    results_json = self._socrataQueriesObject.pageThroughResultsSelect( self._master_dd_config['fourXFour'], self._master_dd_config['columns_to_fetch'])
+    results_json = [self.populate_blank_cols(row, cols_to_include) for row in results_json  ]
     return self._wkbk_json.write_json_object(results_json, self._pickle_data_dir, self._master_dd_config['json_fn'])
 
   def get_field_types(self):
