@@ -1,29 +1,24 @@
 # coding: utf-8
 import pandas as pd
 from openpyxl import Workbook
-import datetime
-
+from Utils import *
 
 class WkBkWriter:
     '''class to format and write excel workbooks'''
 
 
-    def __init__(self, configItems, fieldtype_cells=None):
+    def __init__(self, configItems, logger, field_types=None):
         self.wkbk_output_dir = configItems['wkbk_output_dir']
-        self.current_date = datetime.datetime.now().strftime("%Y_%m_%d")
-        self._fieldTypes = self.set_fieldTypes(fieldtype_cells)
+        #self.current_date = datetime.datetime.now().strftime("%Y_%m_%d")
+        self.current_date = DateUtils.get_current_date_year_month_day()
+        self._fieldTypes = field_types
         self._fieldType_Flag = configItems['fieldType_flag']
+        self.logger = logger
+
 
     @property
     def fieldTypes(self):
         return self._fieldTypes
-
-    def set_fieldTypes(self, fieldtype_cells):
-        field_types = ''
-        if fieldtype_cells:
-            df = pd.DataFrame(fieldtype_cells)
-            field_types = list(df['field_type'])
-        return  field_types
 
     @staticmethod
     def format_worksheet_cols(worksheet, format_num, format_font):
@@ -63,15 +58,23 @@ class WkBkWriter:
         format_num, format_font = self.set_workbook_format(writer)
         for sheet in sheets:
             sheet_len = len(sheet["sheet_df"])
-            worksheet = writer.sheets[sheet['datasetID']]
+            worksheet = writer.sheets[sheet['datasetid']]
             worksheet.set_zoom(90)
             #format = workbook.add_format()
             worksheet = self.format_worksheet_cols(worksheet, format_num, format_font)
             worksheet = self.add_sht_validations(worksheet, sheet_len)
         return writer
 
+    @staticmethod
+    def parse_steward_info(steward_info):
+        steward_info_dict = {}
+        stwd_info_list = steward_info['data_steward_name'].split(" ")
+        steward_info_dict["First Name"] = "_".join(stwd_info_list[0:-1])
+        steward_info_dict["Last Name"] = stwd_info_list[-1]
+        return steward_info_dict
 
     def wkbk_name(self, steward_info):
+        steward_info  = self.parse_steward_info(steward_info)
         wkbk_name = "data_dictionary_" + steward_info["First Name"] + "_" + steward_info["Last Name"] + "_" + self.current_date+ ".xlsx"
         wkbk_fullpath = self.wkbk_output_dir + wkbk_name
         return wkbk_fullpath
@@ -81,7 +84,7 @@ class WkBkWriter:
         wkbk_fullpath = self.wkbk_name(steward_info)
         writer = pd.ExcelWriter( wkbk_fullpath,  engine='xlsxwriter' )
         for sheet in sheets:
-            sheet["sheet_df"].to_excel( writer, index=False,  sheet_name=sheet['datasetID'])
+            sheet["sheet_df"].to_excel( writer, index=False,  sheet_name=sheet['datasetid'])
         writer  = self.format_wkbk_shts(sheets, writer)
         writer.save()
         return wkbk_fullpath, self.current_date
