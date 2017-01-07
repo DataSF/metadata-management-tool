@@ -1,10 +1,6 @@
 # coding: utf-8
 import csv
 import time
-import datetime
-import logging
-from retry import retry
-import yaml
 import os
 import itertools
 import base64
@@ -19,19 +15,27 @@ import requests
 import shutil
 from csv import DictWriter
 from cStringIO import StringIO
+import datetime
+import collections
+import os.path
 
-class pyLogger:
-    def __init__(self, configItems):
-        self.logfn = configItems['exception_logfile']
-        self.log_dir = configItems['log_dir']
-        self.logfile_fullpath = self.log_dir+self.logfn
+class DateUtils:
+    @staticmethod
+    def get_current_date_month_day_year():
+        return datetime.datetime.now().strftime("%m/%d/%Y")
 
-    def setConfig(self):
-        #open a file to clear log
-        fo = open(self.logfile_fullpath, "w")
-        fo.close
-        logging.basicConfig(level=logging.DEBUG, filename=self.logfile_fullpath, format='%(asctime)s %(levelname)s %(name)s %(message)s')
-        logger=logging.getLogger(__name__)
+    @staticmethod
+    def get_current_date_year_month_day():
+        return datetime.datetime.now().strftime("%Y_%m_%d_")
+
+class PickleUtils:
+    @staticmethod
+    def pickle_cells(cells, pickle_name ):
+        pickle.dump( cells, open(picked_dir + pickle_name + "_pickled_cells.p", "wb" ) )
+
+    @staticmethod
+    def unpickle_cells(pickle_name):
+        return pickle.load( open(picked_dir + pickle_name +"_pickled_cells.p", "rb" ) )
 
 
 class UnicodeWriter:
@@ -63,78 +67,22 @@ class UnicodeWriter:
         for row in rows:
             self.writerow(row)
 
+class FileUtils:
+    '''class for file/os util functions'''
 
-class myUtils:
-
-    @staticmethod
-    def removeKeys( mydict, keysToRemove):
-        for key in keysToRemove:
-            try:
-                remove_columns = mydict.pop(key, None)
-            except:
-                noKey = True
-        return dataset
 
     @staticmethod
-    def filterDictList( dictList, keysToKeep):
-        return  [ {key: x[key] for key in keysToKeep if key in x.keys() } for x in dictList]
-
-    @staticmethod
-    def filterDict(mydict, keysToKeep):
-        mydictKeys = mydict.keys()
-        return {key: mydict[key] for key in keysToKeep  if key in mydictKeys }
-    @staticmethod
-    def filterDictListOnKeyVal(dictlist, key, valuelist):
-        #filter list of dictionaries with matching values for a given key
-        return [dictio for dictio in dictlist if dictio[key] in valuelist]
-
-    @staticmethod
-    def filterDictListOnKeyValExclude(dictlist, key, excludelist):
-        #filter list of dictionaries that aren't in an excludeList for a given key
-        return [dictio for dictio in dictlist if dictio[key] not in excludelist]
-    @staticmethod
-    def filterDictOnVals(some_dict, value_to_exclude):
-        return {k: v for k, v in some_dict.items() if v != value_to_exclude}
-
-    @staticmethod
-    def is_nan(x):
-        return isinstance(x, float) and math.isnan(x)
-    @staticmethod
-    def is_blank(x):
-        blank = False
-        if( (x == "") or (x == " ") or (x is None)):
-            blank = True
-        return blank
-
-    @staticmethod
-    def filterDictOnNans(some_dict):
-        '''excludes all k,v in a dict with v = NaN'''
-        return {k: v for k, v in some_dict.items() if not(myUtils.is_nan(v))}
-
-    @staticmethod
-    def filterDictOnBlanks(some_dict):
-        return {k: v for k, v in some_dict.items() if not(myUtils.is_blank(v))}
-
-    @staticmethod
-    def setConfigs(config_dir, config_file):
-        '''returns contents of yaml config file'''
-        with open( config_dir + config_file ,  'r') as stream:
-            try:
-                config_items = yaml.load(stream)
-                return config_items
-            except yaml.YAMLError as exc:
-                print(exc)
-        return 0
+    def read_csv_into_dictlist(fn):
+        dictList = []
+        if os.path.exists(fn):
+            with open(fn) as f:
+                dictList = [row for row in csv.DictReader(f, skipinitialspace=True)]
+        return dictList
 
     @staticmethod
     def getFileListForDir(filepath_str_to_search):
         '''gets file list in a directory based on some path string to search- ie: /home/adam/*.txt'''
         return glob.glob(filepath_str_to_search)
-
-
-    @staticmethod
-    def flatten_list(listofLists):
-        return [item for sublist in listofLists for item in sublist]
 
     @staticmethod
     def getAttachmentFullPath(output_dir, output_fn, download_url):
@@ -165,6 +113,17 @@ class myUtils:
             downloaded = True
         return downloaded
 
+    @staticmethod
+    def remove_files_on_regex(dir, regex):
+        files_to_remove =  FileUtils.getFileListForDir(dir + regex )
+        for the_file in files_to_remove:
+            try:
+                if os.path.isfile(the_file):
+                    os.unlink(the_file)
+                #this would remove subdirs
+                #elif os.path.isdir(file_path): shutil.rmtree(file_path)
+            except Exception as e:
+                print(e)
 
     @staticmethod
     def write_wkbk_csv(fn, dictList, headerCols):
@@ -175,9 +134,11 @@ class myUtils:
                 writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
                 writer.writeheader()
                 for data in dictList:
+                    #print data
                     try:
                         writer.writerow({ s:str(v).encode("ascii",  'ignore') for s, v in data.iteritems()  } )
-                    except:
+                    except Exception, e:
+                        print str(e)
                         print "could not write row"
                 wrote_wkbk = True
             except Exception, e:
@@ -185,9 +146,44 @@ class myUtils:
         return wrote_wkbk
 
 
+
+class ListUtils:
+
+    '''class for list util functions'''
+    @staticmethod
+    def flatten_list(listofLists):
+        return [item for sublist in listofLists for item in sublist]
+
+
+class EncodeObjects:
+
+    @staticmethod
+    def convertToString(data):
+        '''converts unicode to string'''
+        if isinstance(data, basestring):
+            return str(data)
+        elif isinstance(data, collections.Mapping):
+            return dict(map(EncodeObjects.convertToString, data.iteritems()))
+        elif isinstance(data, collections.Iterable):
+            return type(data)(map(EncodeObjects.convertToString, data))
+        else:
+            return data
+
+    @staticmethod
+    def convertToUTF8(data):
+        '''converts unicode to string'''
+        if isinstance(data, basestring):
+            return data.encode('utf-8')
+        elif isinstance(data, collections.Mapping):
+            return dict(map(EncodeObjects.convertToUTF8, data.iteritems()))
+        elif isinstance(data, collections.Iterable):
+            return type(data)(map(EncodeObjects.convertToUTF8, data))
+        else:
+            return data
+
+
 class ShtUtils:
     '''class for common wksht util functions'''
-
     @staticmethod
     def getWkbk(fn):
         wkbk = pd.ExcelFile(fn)
@@ -198,14 +194,25 @@ class ShtUtils:
         shts =  wkbk.sheet_names
         return [ sht for sht in shts if sht != 'Dataset Summary']
 
-class PandasUtils:
-    '''class for common pandas utility functions'''
+class WkbkUtils:
+    '''util class for dealing with excel workbooks'''
 
     @staticmethod
-    def renameCols(df, colMappingDict):
-        df = df.rename(columns=colMappingDict)
-        return df
+    def get_shts(fn):
+      '''gets the sheets from the workbook as a dcitionary'''
+      wkbk = ShtUtils.getWkbk(fn)
+      sht_names = ShtUtils.get_sht_names(wkbk)
+      return {'wkbk': wkbk, 'shts': sht_names}
 
+    @staticmethod
+    def getShtDf(wkbk_stuff, wkbkName, skipRows):
+      '''turns a wksht into a df based on a name and the number of rows to skip'''
+      dfSht = False
+      df = wkbk_stuff['wkbk'].parse(wkbkName, header=skipRows )
+      dfCols = list(df.columns)
+      if len(dfCols) > 3:
+        return df
+      return dfSht
 
 
 if __name__ == "__main__":
