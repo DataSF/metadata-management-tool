@@ -140,7 +140,7 @@ class ExistingFieldDefs:
       '''returns a dataframe of the fields that match in both '''
       df_both = pd.merge(dataset_df, dfSht, on='field_name')
       #filter out globals
-      df_both =  df_both[(~df_both['field_name'].isin(self._globalfields_list))] #.reset_index()
+      #df_both =  df_both[(~df_both['field_name'].isin(self._globalfields_list))] #.reset_index()
       #get a cnt of fields that were previously complete
       cnt_prev_complete = len(df_both[df_both['status'] == 'Complete'])
       #remove rows where status is complete

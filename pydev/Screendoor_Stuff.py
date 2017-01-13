@@ -53,7 +53,7 @@ class ScreenDoorStuff:
         files_to_download = []
         for response in self._responses:
             #print "********"
-            #print response
+            print response
             response_items =  response['responses'].keys()
             for item in response_items:
                 response_file_dictList = response['responses'][item]
