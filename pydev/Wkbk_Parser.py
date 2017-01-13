@@ -1,5 +1,6 @@
 
 
+
 # coding: utf-8
 import datetime
 import pandas as pd
@@ -42,26 +43,41 @@ class WkbkParser:
         self._master_dd_config = self._metadataset_config['master_data_dictionary']
         self._master_dd_fn = self._master_dd_config['json_fn']
         self._df_master = MetaDatasets.set_master_df(self._pickle_data_dir, self._master_dd_config['json_fn'])
+
         self._valsToNotOverride= configItems['valsToNotOverride']
-        self._do_not_process_columnids = self.get_do_not_process_list()
+        self._valsToExamine = configItems['valsToExamine']
+
+        #self._do_not_process_columnids = self.get_do_not_process_list()
         self._current_date_year = DateUtils.get_current_date_year_month_day()
 
 
     def get_do_not_process_list(self):
+        '''returns a list list of columnids that have the status of complete or do not process'''
         dnp_df = self._df_master[(self._df_master['status'].isin(self._valsToNotOverride))].reset_index()
         return list(dnp_df['columnid'])
+
+    def get_examine_list(self):
+        '''returns a list list of columnids that have the status of complete or do not process'''
+        exmne_df = self._df_master[(self._df_master['status'].isin(self._valsToExamine))].reset_index()
+        return list(exmne_df['columnid'])
+
+    def get_examine_dict(self):
+        exmne_df = self._df_master[(self._df_master['status'].isin(self._valsToExamine))].reset_index()
+        return PandasUtils.makeLookupDictOnTwo(exmne_df, 'columnid', 'date_last_changed')
+
 
     @staticmethod
     def get_sht_names(wkbk):
         shts =  wkbk.sheet_names
         return [ sht for sht in shts if sht != 'Dataset Summary']
 
-    def add_status_info(self, df_wkbk):
+    def add_status_info(self, df_wkbk, submission_dtt):
         df_wkbk[self.field_name_mappings['status']] = self.statuses_submited
-        df_wkbk[self.field_name_mappings['date_last_changed']] = self._current_date
+        df_wkbk[self.field_name_mappings['date_last_changed']] = submission_dtt
         return df_wkbk
 
-    def parse_sht(self, wkbk, sht_name):
+
+    def filter_sht_df( self, df_wkbk, submission_dtt):
         '''we only want to upload rows that should be updated.
         We want to filter the following records:
             -do not process
@@ -70,23 +86,18 @@ class WkbkParser:
             -Also want tot filter out rows with these statuses:
             -complete
             -do not process
-            -submitted by cordinator
-            -submitted by steward
-            --> these vals are in the config variable, valsToNotOverride;
-        When the class is intialized, we create the variable,  self._do_not_process_columnids
-            -this variable is a list of columnids with rows that have a status in the do not process list
-            - then, in the df_wkbk dataframe, we take just the rows where columnid NOT in self._do_not_process_columnids list
-            '''
-
-        df_wkbk =  wkbk.parse(sht_name)
-        df_wkbk = self.add_status_info(df_wkbk)
+             -do_not_process_columnids variable is a list of columnids with rows that have a status in the do not process list
+            - then, in the df_wkbk dataframe, we take just the rows where columnid NOT in do_not_process_columnids list
+        '''
+        df_wkbk = self.add_status_info(df_wkbk, submission_dtt)
         #rename the cols to the spreadsheet cols for ease
         field_name_mapping =  dict((v,k) for k,v in self.field_name_mappings.iteritems())
         #use string col locations onto the dict
         df_wkbk= df_wkbk.rename(columns = field_name_mapping)
         #print "**prior to filtering: " + str(len(df_wkbk))
         #grab only records with the correct statuses
-        df_wkbk = df_wkbk[(~df_wkbk['columnid'].isin(self._do_not_process_columnids))].reset_index()
+        do_not_process_columnids =  self.get_do_not_process_list()
+        df_wkbk = df_wkbk[(~df_wkbk['columnid'].isin(do_not_process_columnids))].reset_index()
         #print "**filtering on status*: " + str(len(df_wkbk))
         #now make sure that the columnid is in the master datadict
         df_wkbk_in_mmdd = df_wkbk[(df_wkbk['columnid'].isin(list(self._df_master['columnid'])))].reset_index()
@@ -98,22 +109,66 @@ class WkbkParser:
         #only keep relevant fields
         df_wkbk_in_mmdd = df_wkbk_in_mmdd[self.keys_to_keep_field]
         df_wkbk_not_in_mmdd = df_wkbk_not_in_mmdd[self.keys_to_keep_field_unmatched]
+        df_dictList = PandasUtils.convertDfToDictrows(df_wkbk_in_mmdd)    #.to_dict(orient='records')
+        df_dictList_not_in_mmdd = PandasUtils.convertDfToDictrows(df_wkbk_not_in_mmdd) #.to_dict(orient='records')
+        return df_dictList, df_dictList_not_in_mmdd
 
-        df_dictList = df_wkbk_in_mmdd.to_dict(orient='records')
-        df_dictList_not_in_mmdd = df_wkbk_not_in_mmdd.to_dict(orient='records')
+    def filter_previously_submitted(self,df_dictList):
+        examine_list = self.get_examine_list()
+        examine_dict = self.get_examine_dict()
+        print examine_list
+        if len(examine_list) > 0:
+            print df_dictList[0]
+            rows_to_review = [d for d in df_dictList if d['columnid'] in examine_list]
+            rows_ok = [d for d in df_dictList if d['columnid'] not in examine_list]
+            print "****rows okay******"
+            print rows_ok
+            print "********"
+            print
+            print "****rows to review*******"
+            print rows_to_review
+            print "********"
+            print
+        for row in rows_to_review:
+            print row['date_last_changed']
+            print examine_dict[row['columnid']]
+        print
+        rows_to_include = [ row for row in rows_to_review if DateUtils.compare_two_timestamps(row['date_last_changed'], examine_dict[row['columnid']], None, '%Y-%m-%dT%H:%M:%S') ]
+        #rows_to_exclude =  [ row for row in rows_to_review if DateUtils.compare_two_timestamps_reverse(row['date_last_changed'], examine_dict[row['columnid']])
+
+        print "******exclude*****"
+        #print rows_to_exclude
+        print "***********"
+        print "******include*****"
+        print rows_to_include
+        print  "***********"
+
+    def filter_sht_dict(self, df_dictList, df_dictList_not_in_mmdd):
         #filter out the nans
         df_dictList = [ DictUtils.filterDictOnNans(field_dict) for field_dict in df_dictList ]
         df_dictList_not_in_mmdd = [ DictUtils.filterDictOnNans(field_dict) for field_dict in df_dictList_not_in_mmdd ]
         #double check that the field actually changed- needs to a be at least a len of 4 for a field to actually be updted after removing all nan vals
         df_dictList =  [k for k in df_dictList if len(k.keys()) > 3]
         df_dictList_not_in_mmdd =  [k for k in df_dictList_not_in_mmdd if len(k.keys()) > 4]
+        #self.filter_previously_submitted(df_dictList)
+        return df_dictList, df_dictList_not_in_mmdd
 
-        return [df_dictList, df_dictList_not_in_mmdd]
+    def parse_sht(self, wkbk, sht_name, submission_dtt):
+        '''
+            For these statuses:
+            -> submitted by cordinator +submitted by steward
+            we need to compare the dt stamps in the master dd to the screendoor submission form
+
+         '''
+        df_wkbk =  wkbk.parse(sht_name)
+        df_dictList, df_dictList_not_in_mmdd = self.filter_sht_df(df_wkbk, submission_dtt)
+        df_dictList_filtered, df_dictList_not_in_mmdd_filtered = self.filter_sht_dict(df_dictList, df_dictList_not_in_mmdd)
+        return [df_dictList_filtered, df_dictList_not_in_mmdd_filtered]
 
     def get_shts(self, fn):
-        wkbk = PandasUtils.getWkbk(fn)
+        wkbk = PandasUtils.getWkbk(self._wkbk_uploads_dir + fn['file_name'])
         sht_names = self.get_sht_names(wkbk)
-        metadata_dicts = [ self.parse_sht(wkbk, sht_name) for sht_name in sht_names]
+        metadata_dicts = [ self.parse_sht(wkbk, sht_name, fn['submitted_at']) for sht_name in sht_names]
         #list of the fields we'll upload
         metadata_dicts_in_mmdd = [ metadata_dict[0] for metadata_dict in metadata_dicts if len(metadata_dict[0]) > 0]
         #list of fields that weren't in the mmdd
@@ -126,7 +181,10 @@ class WkbkParser:
 
 
     def get_metadata_updt_fields_from_shts(self):
-        fileList =  FileUtils.getFileListForDir(self._wkbk_uploads_dir + "*.xlsx")
+        #grab the json file with all the update info
+        files_to_load =  WkbkJson.loadJsonFile(self._pickle_dir,  self._wkbk_uploads_json_fn )
+        fileList = [ file_item for file_item in files_to_load['uploaded_workbooks'] if FileUtils.fileExists(self._wkbk_uploads_dir+file_item['file_name'])]
+        #fileList =  FileUtils.getFileListForDir(self._wkbk_uploads_dir + "*.xlsx")
         wroteJsonFile = False
         unmatchedFn = None
         metadata_dicts = [ self.get_shts(fn) for fn in fileList ]

@@ -23,10 +23,53 @@ class DateUtils:
     @staticmethod
     def get_current_date_month_day_year():
         return datetime.datetime.now().strftime("%m/%d/%Y")
+        #datetime.datetime(2017, 1, 13, 10, 42, 2, 313956)
 
     @staticmethod
     def get_current_date_year_month_day():
         return datetime.datetime.now().strftime("%Y_%m_%d_")
+
+    @staticmethod
+    def get_current_timestamp():
+        '''returns a timestamp of the current time in the format: 2017-01-13T10:53:33.858411Z'''
+        return datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+
+    @staticmethod
+    def compare_two_timestamps(t1, t2, dt_format1=None, dt_format2=None):
+        '''compares two timestamps a particular time format;
+           returns the true when t1 is larger than t2'''
+        default_time_format = '%Y-%m-%dT%H:%M:%S.%fZ'
+        if dt_format1 is None:
+            dt_format1 =  default_time_format
+        if dt_format2 is None:
+            dt_format2 =  default_time_format
+        t1_dtt =  datetime.datetime.strptime(t1,dt_format1)
+        t2_dtt =  datetime.datetime.strptime(t2,dt_format2)
+        if t1_dtt > t2_dtt:
+            return True
+        elif t2_dtt > t1_dtt:
+            return False
+        return False
+
+    @staticmethod
+    def compare_two_timestamps_reverse(t1, t2, dt_format1=None, dt_format2=None):
+        '''compares two timestamps a particular time format;
+           returns the true when t1 is larger than t2'''
+        default_time_format = '%Y-%m-%dT%H:%M:%S.%fZ'
+        if dt_format1 is None:
+            dt_format1 =  default_time_format
+        if dt_format2 is None:
+            dt_format2 =  default_time_format
+        t1_dtt =  datetime.datetime.strptime(t1,dt_format1)
+        t2_dtt =  datetime.datetime.strptime(t2,dt_format2)
+        if t1_dtt > t2_dtt:
+            return False
+        elif t2_dtt > t1_dtt:
+            return True
+        return True
+
+
+
 
 class PickleUtils:
     @staticmethod
@@ -69,7 +112,9 @@ class UnicodeWriter:
 
 class FileUtils:
     '''class for file/os util functions'''
-
+    @staticmethod
+    def fileExists(file_path):
+        return os.path.exists(file_path)
 
     @staticmethod
     def read_csv_into_dictlist(fn):
@@ -144,7 +189,6 @@ class FileUtils:
             except Exception, e:
                 print str(e)
         return wrote_wkbk
-
 
 
 class ListUtils:
