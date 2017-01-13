@@ -45,31 +45,13 @@ class DateUtils:
             dt_format2 =  default_time_format
         t1_dtt =  datetime.datetime.strptime(t1,dt_format1)
         t2_dtt =  datetime.datetime.strptime(t2,dt_format2)
+        t1_dtt = t1_dtt.replace(second=0, microsecond=0)
+        t2_dtt = t2_dtt.replace(second=0, microsecond=0)
         if t1_dtt > t2_dtt:
             return True
         elif t2_dtt > t1_dtt:
             return False
         return False
-
-    @staticmethod
-    def compare_two_timestamps_reverse(t1, t2, dt_format1=None, dt_format2=None):
-        '''compares two timestamps a particular time format;
-           returns the true when t1 is larger than t2'''
-        default_time_format = '%Y-%m-%dT%H:%M:%S.%fZ'
-        if dt_format1 is None:
-            dt_format1 =  default_time_format
-        if dt_format2 is None:
-            dt_format2 =  default_time_format
-        t1_dtt =  datetime.datetime.strptime(t1,dt_format1)
-        t2_dtt =  datetime.datetime.strptime(t2,dt_format2)
-        if t1_dtt > t2_dtt:
-            return False
-        elif t2_dtt > t1_dtt:
-            return True
-        return True
-
-
-
 
 class PickleUtils:
     @staticmethod

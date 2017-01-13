@@ -49,14 +49,14 @@ def main():
   configItems['app_name']= "Upload Wkbks"
   lg = pyLogger(configItems)
   logger = lg.setConfig()
-  #screendoor_stuff = ScreenDoorStuff(configItems)
+  screendoor_stuff = ScreenDoorStuff(configItems)
   sc = SocrataClient(config_inputdir, configItems, logger)
   client = sc.connectToSocrata()
   clientItems = sc.connectToSocrataConfigItems()
   scrud = SocrataCRUD(client, clientItems, configItems, logger)
   sqry = SocrataQueries(clientItems, configItems, logger)
   metadatasets = MetaDatasets(configItems, sqry, logger)
-  #master_dd_json = metadatasets.get_master_metadataset_as_json()
+  master_dd_json = metadatasets.get_master_metadataset_as_json()
   master_dd_json = True
   if (not (master_dd_json)):
     print "*****errror could not grab the master dd"
@@ -64,7 +64,7 @@ def main():
 
   dsse = JobStatusEmailerComposer(configItems, logger)
   print "*****Starting to download workbooks*****"
-  #downloaded_files, number_of_wkbks_to_load = screendoor_stuff.get_attachments()
+  downloaded_files, number_of_wkbks_to_load = screendoor_stuff.get_attachments()
   downloaded_files = True
   if downloaded_files:
     print "Awesome, downloaded files and made json list"
@@ -83,19 +83,19 @@ def main():
       print "Updating rows in the master dd"
       updt_rows = WkbkJson.loadJsonFile(configItems['pickle_dir'], configItems['updt_fields_json_fn'])
       print updt_rows
-      #if(len(updt_rows['updt_fields'])> 0):
-       # dataset_info = metadatasets.set_master_dd_updt_info(updt_rows['updt_fields'])
-        #print dataset_info
+      if(len(updt_rows['updt_fields'])> 0):
+        dataset_info = metadatasets.set_master_dd_updt_info(updt_rows['updt_fields'])
+        print dataset_info
         #post update master dd on portal
-        #dataset_info = scrud.postDataToSocrata(dataset_info, updt_rows['updt_fields'] )
-        #print dataset_info
-        #dataset_info['jobStatus'] = 'success'
-        #dataset_info['isLoaded'] = 'Success'
-        #dsse.sendJobStatusEmail([dataset_info], [{unmatchedFn: configItems['pickle_dir']+unmatchedFn}])
-      #else:
-        #print "**** No rows to update*****"
-        #dataset_info = metadatasets.set_master_dd_updt_info(updt_rows)
-        #dataset_info['isLoaded'] = 'success'
+        dataset_info = scrud.postDataToSocrata(dataset_info, updt_rows['updt_fields'] )
+        print dataset_info
+        dataset_info['jobStatus'] = 'success'
+        dataset_info['isLoaded'] = 'Success'
+        dsse.sendJobStatusEmail([dataset_info], [{unmatchedFn: configItems['pickle_dir']+unmatchedFn}])
+      else:
+        print "**** No rows to update*****"
+        dataset_info = metadatasets.set_master_dd_updt_info(updt_rows)
+        dataset_info['isLoaded'] = 'success'
         #dsse.sendJobStatusEmail([dataset_info], [{unmatchedFn: configItems['pickle_dir']+unmatchedFn}])
 
 
