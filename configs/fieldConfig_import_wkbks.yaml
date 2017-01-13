@@ -45,7 +45,8 @@ wkbk_formats:
         wksht_name: DataDictionary
         skip_rows: 4
 
-valsToNotOverride: ['Complete', "Do Not Process", "Submitted by Coordinator" , "Submitted by Steward"]
+valsToNotOverride: ['Complete', "Do Not Process"]
+valsToExamine: ["Submitted by Coordinator" , "Submitted by Steward"]
 
 
 update_info:
