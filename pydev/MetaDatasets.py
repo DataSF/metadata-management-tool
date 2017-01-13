@@ -13,6 +13,7 @@ class MetaDatasets:
     self._metadataset_config = ConfigUtils.setConfigs(self._config_inputdir,  self._metadata_config_fn )
     self._master_dd_config = self._metadataset_config['master_data_dictionary']
     self._fieldtypes_config = self._metadataset_config['field_types']
+    self._assetfields_config = self._metadataset_config['asset_fields']
     self._globalfields_config = self._metadataset_config['global_fields']
     self._pickle_dir = configItems['pickle_dir']
     self._pickle_data_dir = configItems['pickle_data_dir']
@@ -49,6 +50,14 @@ class MetaDatasets:
     return list(set(list(df['global_string']) + list(df['field_name'])))
 
   @staticmethod
+  def get_metadata_df(pickle_data_dir, json_file):
+    json_obj = WkbkJson.loadJsonFile(pickle_data_dir, json_file)
+    df = PandasUtils.makeDfFromJson(json_obj)
+    df
+    return df
+
+
+  @staticmethod
   def populate_blank_cols(row, cols_to_include):
     '''poplulates blanks so you can load the dataset into a df'''
     missing = [col for col in cols_to_include if col not in row.keys() ]
@@ -66,6 +75,10 @@ class MetaDatasets:
   def get_field_types(self):
     results_json  = self._socrataQueriesObject.pageThroughResultsSelect( self._fieldtypes_config['fourXFour'], self._fieldtypes_config['columns_to_fetch'])
     return self._wkbk_json.write_json_object(results_json, self._pickle_data_dir, self._fieldtypes_config['json_fn'])
+
+  def get_asset_fields_as_json(self):
+    results_json  = self._socrataQueriesObject.pageThroughResultsSelect( self._assetfields_config['fourXFour'], self._assetfields_config['columns_to_fetch'])
+    return self._wkbk_json.write_json_object(results_json, self._pickle_data_dir, self._assetfields_config['json_fn'])
 
   def get_global_fields_as_json(self):
     results_json  = self._socrataQueriesObject.pageThroughResultsSelect( self._globalfields_config['fourXFour'], self._globalfields_config['columns_to_fetch'])
