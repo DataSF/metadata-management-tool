@@ -34,6 +34,7 @@ class WkbkParser:
         self._current_date = DateUtils.get_current_date_month_day_year()
         self._screendoor_config_file = configItems['screendoor_config_file']
         self._screendoor_configs = ConfigUtils.setConfigs(self._config_dir, self._screendoor_config_file)
+
         self._wkbk_uploads_dir = self._screendoor_configs['wkbk_uploads_dir']
         self._wkbk_uploads_json_fn = self._screendoor_configs['wkbk_uploads_json_fn']
         self._pickle_dir = configItems['pickle_dir']
@@ -114,34 +115,17 @@ class WkbkParser:
         return df_dictList, df_dictList_not_in_mmdd
 
     def filter_previously_submitted(self,df_dictList):
+        screendoor_timestamp_format = '%Y-%m-%dT%H:%M:%S.%fZ'
+        socrata_timestamp_format = '%Y-%m-%dT%H:%M:%S'
         examine_list = self.get_examine_list()
         examine_dict = self.get_examine_dict()
-        print examine_list
         if len(examine_list) > 0:
-            print df_dictList[0]
             rows_to_review = [d for d in df_dictList if d['columnid'] in examine_list]
             rows_ok = [d for d in df_dictList if d['columnid'] not in examine_list]
-            print "****rows okay******"
-            print rows_ok
-            print "********"
-            print
-            print "****rows to review*******"
-            print rows_to_review
-            print "********"
-            print
-        for row in rows_to_review:
-            print row['date_last_changed']
-            print examine_dict[row['columnid']]
-        print
-        rows_to_include = [ row for row in rows_to_review if DateUtils.compare_two_timestamps(row['date_last_changed'], examine_dict[row['columnid']], None, '%Y-%m-%dT%H:%M:%S') ]
-        #rows_to_exclude =  [ row for row in rows_to_review if DateUtils.compare_two_timestamps_reverse(row['date_last_changed'], examine_dict[row['columnid']])
-
-        print "******exclude*****"
-        #print rows_to_exclude
-        print "***********"
-        print "******include*****"
-        print rows_to_include
-        print  "***********"
+            rows_to_include = [ row for row in rows_to_review if DateUtils.compare_two_timestamps(row['date_last_changed'], examine_dict[row['columnid']],  screendoor_timestamp_format, socrata_timestamp_format) ]
+            rows_to_exclude =  [ row for row in rows_to_review if not DateUtils.compare_two_timestamps(row['date_last_changed'], examine_dict[row['columnid']],  screendoor_timestamp_format, socrata_timestamp_format)]
+            return rows_ok + rows_to_include
+        return df_dictList
 
     def filter_sht_dict(self, df_dictList, df_dictList_not_in_mmdd):
         #filter out the nans
@@ -150,7 +134,7 @@ class WkbkParser:
         #double check that the field actually changed- needs to a be at least a len of 4 for a field to actually be updted after removing all nan vals
         df_dictList =  [k for k in df_dictList if len(k.keys()) > 3]
         df_dictList_not_in_mmdd =  [k for k in df_dictList_not_in_mmdd if len(k.keys()) > 4]
-        #self.filter_previously_submitted(df_dictList)
+        df_dictList = self.filter_previously_submitted(df_dictList)
         return df_dictList, df_dictList_not_in_mmdd
 
     def parse_sht(self, wkbk, sht_name, submission_dtt):
@@ -163,6 +147,8 @@ class WkbkParser:
         df_wkbk =  wkbk.parse(sht_name)
         df_dictList, df_dictList_not_in_mmdd = self.filter_sht_df(df_wkbk, submission_dtt)
         df_dictList_filtered, df_dictList_not_in_mmdd_filtered = self.filter_sht_dict(df_dictList, df_dictList_not_in_mmdd)
+        #print "*******Filtered Dict!*****"
+        #print df_dictList_filtered
         return [df_dictList_filtered, df_dictList_not_in_mmdd_filtered]
 
     def get_shts(self, fn):

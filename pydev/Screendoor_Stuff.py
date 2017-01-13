@@ -93,7 +93,7 @@ class ScreenDoorStuff:
         #remove any existing files in the dir
         remove_files = FileUtils.remove_files_on_regex(self._wkbk_uploads_dir, "*.xlsx")
         for file in self._files_to_download:
-            downloaded_files[ "uploaded_workbooks"].append( { 'file_name': file['filename'], 'downloaded': self.getAttachment(file['id'], file['filename']), 'submitted_at': file['submitted_at']})
+            downloaded_files[ "uploaded_workbooks"].append( { 'file_name': file['id']+"_"+file['filename'], 'downloaded': self.getAttachment(file['id'], file['id']+"_"+file['filename']), 'submitted_at': file['submitted_at']})
         number_of_wkbks_to_load = len(downloaded_files[ "uploaded_workbooks"])
         wrote_file = WkbkJson.write_json_object(downloaded_files, self._pickle_dir, self._wkbk_uploads_json_fn)
         return wrote_file,number_of_wkbks_to_load
