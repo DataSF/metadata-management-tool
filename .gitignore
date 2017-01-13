@@ -15,4 +15,4 @@ configs/screendoor_configs.yaml
 wkbk_uploads/
 *.pyc
 documented_fields/
-configs/old/fieldConfig.yaml
+configs/old/

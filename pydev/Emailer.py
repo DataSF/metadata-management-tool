@@ -39,7 +39,6 @@ class Emailer():
 
     def getRecipients(self):
         if 'etl_recipients'in self._emailConfigs.keys():
-            print self._emailConfigs['etl_recipients']
             return self._emailConfigs['etl_recipients']
         return None
 
