@@ -34,6 +34,10 @@ class PandasUtils:
     return df
 
   @staticmethod
+  def fillNaWithBlank(df):
+    return df.fillna("")
+
+  @staticmethod
   def makeDfFromJson(json_obj):
     df = json_normalize(json_obj)
     return df
@@ -62,6 +66,11 @@ class PandasUtils:
     df[field_name] = df[field_name].str.lower()
     df[field_name] = df[field_name].map(str.strip)
     return df
+
+  @staticmethod
+  def makeLookupDictOnTwo(df, key_col, val_col):
+      return dict(zip(df[key_col], df[val_col]))
+
 
 if __name__ == "__main__":
     main()
