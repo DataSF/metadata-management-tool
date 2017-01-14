@@ -1,4 +1,5 @@
 
+
 # coding: utf-8
 from ConfigUtils import *
 from Utils import *
@@ -53,12 +54,11 @@ class ScreenDoorStuff:
         files_to_download = []
         for response in self._responses:
             #print "********"
-            print response
             response_items =  response['responses'].keys()
             for item in response_items:
                 response_file_dictList = response['responses'][item]
                 for file_info in response_file_dictList:
-                    #print file_info
+                    file_info['submitted_at'] = response['submitted_at']
                     files_to_download.append(file_info)
         print "*****downloading " + str(len(files_to_download)) +" files from screendoor*****"
         return files_to_download
@@ -93,9 +93,9 @@ class ScreenDoorStuff:
         #remove any existing files in the dir
         remove_files = FileUtils.remove_files_on_regex(self._wkbk_uploads_dir, "*.xlsx")
         for file in self._files_to_download:
-            downloaded_files[ "uploaded_workbooks"].append( { file['filename']: self.getAttachment(file['id'], file['filename'])})
+            downloaded_files[ "uploaded_workbooks"].append( { 'file_name': file['id']+"_"+file['filename'], 'downloaded': self.getAttachment(file['id'], file['id']+"_"+file['filename']), 'submitted_at': file['submitted_at']})
         number_of_wkbks_to_load = len(downloaded_files[ "uploaded_workbooks"])
-        wrote_file = WkbkJson.write_json_object(downloaded_files, self._pickle_dir,  self._current_date + self._wkbk_uploads_json_fn)
+        wrote_file = WkbkJson.write_json_object(downloaded_files, self._pickle_dir, self._wkbk_uploads_json_fn)
         return wrote_file,number_of_wkbks_to_load
 
 
