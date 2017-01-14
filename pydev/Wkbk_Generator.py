@@ -22,7 +22,7 @@ class WkbkGenerator:
         self._metadata_config_fn = configItems['metadataset_config']
         self._metadataset_config = ConfigUtils.setConfigs(self._config_inputdir,  self._metadata_config_fn )
         self._master_dd_config = self._metadataset_config['master_data_dictionary']
-        self._fieldtypes_config = self._metadataset_config['field_types_dataset']
+        self._fieldtypes_config = self._metadataset_config['field_types']
         self._pickle_dir = configItems['pickle_dir']
         self._pickle_data_dir = configItems['pickle_data_dir']
         self._wkbk_json = WkbkJson(configItems, logger)

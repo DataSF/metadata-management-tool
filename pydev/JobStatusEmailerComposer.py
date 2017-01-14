@@ -28,8 +28,7 @@ class JobStatusEmailerComposer:
         print "******"
         print dataset['isLoaded']
         print '*****'
-        if dataset['isLoaded'] != 'success':
-
+        if dataset['isLoaded'].lower() != 'success':
             self.failure = True
         return dataset
 
@@ -63,13 +62,14 @@ class JobStatusEmailerComposer:
             dataset = self.sucessStatus( DictUtils.removeKeys(finishedDataSets[i], self.keysToRemove))
             msg = self.makeJobStatusMsg( finishedDataSets[i]  )
             msgBody  = msgBody  + msg
+            print dataset
         subject_line = self.getJobStatus()
         email_attachment = self.makeJobStatusAttachment(finishedDataSets)
         e = Emailer(self.configItems)
         emailconfigs = e.setConfigs()
-        if os.path.isfile(self.logfile_fullpath):
+        if((os.path.isfile(self.logfile_fullpath)) and (msg_attachments is None)):
             e.sendEmails( subject_line, msgBody, self.logfile_fname, self.logfile_fullpath)
-        if msg_attachments:
+        elif msg_attachments:
             e.sendEmails( subject_line, msgBody, None, None, None, msg_attachments)
         else:
             e.sendEmails( subject_line, msgBody)
