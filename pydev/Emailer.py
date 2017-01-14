@@ -65,11 +65,12 @@ class Emailer():
         fromaddr = self._sender
         if(not(recipients)):
             recipients = self.getRecipients()
-        toaddr =  recipients
+        #toaddr =  recipients
+        toaddr = 'janine.heiser@sfgov.org,jason.lally@sfgov.org'
         msg = MIMEMultipart()
         msg['From'] = fromaddr
-        msg['To'] = recipients
-        #msg['To'] = 'janine.heiser@sfgov.org'
+        #msg['To'] = recipients
+        msg['To'] = 'janine.heiser@sfgov.org,jason.lally@sfgov.org'
         msg['Subject'] = subject_line
         msg['Bcc'] = self._bcc
         body = msgBody
