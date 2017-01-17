@@ -77,7 +77,7 @@ def main():
   if(not(job_success)):
     dataset_info = {'Socrata Dataset Name': "Master DD", 'SrcRecordsCnt':0, 'DatasetRecordsCnt':0, 'fourXFour': "Job Failed"}
     dataset_info['isLoaded'] = 'failed'
-    #dsse.sendJobStatusEmail([dataset_info])
+    dsse.sendJobStatusEmail([dataset_info])
 
 
 
