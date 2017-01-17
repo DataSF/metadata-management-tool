@@ -8,7 +8,7 @@ setup/
 configs/email_configs_servers
 configs/email_config.yaml
 configs/email_config_server.yaml
-configs/metadata-mgmt-tool-31c31a0f34b6.json
+gconfigs/metadata-mgmt-tool-31c31a0f34b6.json
 pydev/.ipynb_checkpoints/
 pydev/.~c9_*
 configs/screendoor_configs.yaml

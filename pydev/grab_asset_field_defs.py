@@ -5,7 +5,6 @@ from Emailer import *
 from WkBk_Writer import *
 from Wkbk_Generator import *
 from Wkbk_Json import *
-from UpdateMetadata import *
 from ExistingFieldDefs import *
 from SocrataStuff import *
 from ConfigUtils import *
