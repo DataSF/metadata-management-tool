@@ -2,7 +2,6 @@
 
 from optparse import OptionParser
 from Screendoor_Stuff import *
-from UpdateMetadata import *
 from MetaDatasets import *
 from Wkbk_Parser import *
 from Utils import *
