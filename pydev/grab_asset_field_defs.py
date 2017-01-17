@@ -57,8 +57,6 @@ def main():
   metadatasets = MetaDatasets(configItems, sqry, logger)
   dsse = JobStatusEmailerComposer(configItems, logger)
   #get these supporting datasets from the portal
-  master_dd_json  = True
-  asset_fields_json =  True
   master_dd_json = metadatasets.get_master_metadataset_as_json()
   asset_fields_json = metadatasets.get_asset_fields_as_json()
   job_success = False
