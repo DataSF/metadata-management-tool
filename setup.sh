@@ -8,7 +8,7 @@ mkdir pickled
 mkdir documented_fields
 mkdir documented_fields/xlsx
 mkdir documented_fields/pdf
-mkidr documented_fields/other
+mkdir documented_fields/other
 
 #installs dependencies
 pip install --upgrade oauth2client
