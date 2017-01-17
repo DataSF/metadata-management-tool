@@ -11,7 +11,7 @@ wkbk_uploads_dir: /home/ubuntu/metadata-mgmt-tool/wkbk_uploads/
 #other yaml configs
 socrata_client_config_fname: socrata_config.yaml
 metadataset_config: metadatasets.yaml
-email_config_file: email_config_server.yaml
+email_config_file: email_config.yaml
 
 
 #file names
@@ -35,7 +35,4 @@ job_name: Update Master Data Dictionary with Existing Portal Definitions
 #other stuff
 json_key: updt_fields
 app_name: Grab Existing Portal Field Definitions
-
-
-
 
