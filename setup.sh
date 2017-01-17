@@ -11,8 +11,8 @@ mkdir documented_fields/pdf
 mkdir documented_fields/other
 
 #installs dependencies
-pip install --upgrade oauth2client
-pip install gspread
+#pip install --upgrade oauth2client
+#pip install gspread
 pip install openpyxl
 pip install pycurl
 pip install xlrd
