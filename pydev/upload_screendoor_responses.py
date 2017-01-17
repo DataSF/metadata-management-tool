@@ -95,7 +95,7 @@ def main():
         print "**** No rows to update*****"
         dataset_info = metadatasets.set_master_dd_updt_info(updt_rows)
         dataset_info['isLoaded'] = 'success'
-        #dsse.sendJobStatusEmail([dataset_info], [{unmatchedFn: configItems['pickle_dir']+unmatchedFn}])
+        dsse.sendJobStatusEmail([dataset_info], [{unmatchedFn: configItems['pickle_dir']+unmatchedFn}])
 
 
 
