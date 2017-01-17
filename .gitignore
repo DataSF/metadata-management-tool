@@ -7,7 +7,7 @@ pydev/screendoorstuff
 setup/
 configs/email_configs_servers
 configs/email_config.yaml
-configs/email_config_serverm.yaml
+configs/email_config_server.yaml
 configs/metadata-mgmt-tool-31c31a0f34b6.json
 pydev/.ipynb_checkpoints/
 pydev/.~c9_*
