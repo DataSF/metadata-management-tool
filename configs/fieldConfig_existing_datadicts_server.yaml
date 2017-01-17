@@ -1,7 +1,7 @@
 
 
 pickle_dir: /home/ubuntu/metadata-mgmt-tool/pickled/
-pickle_data_dir: /home/ubuntu/metadata-mgmt-tool/datasets/
+pickle_data_dir: /home/ubuntu/metadata-mgmt-tool/pickled/datasets/
 
 #socrata configs
 socrata_client_config_fname: socrata_config.yaml
