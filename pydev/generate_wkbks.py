@@ -8,7 +8,6 @@ from MetaData_Email_Composer import *
 from WkBk_Writer import *
 from Wkbk_Generator import *
 from Wkbk_Json import *
-from UpdateMetadata import *
 from SocrataStuff import *
 from ConfigUtils import *
 from MetaDatasets import *
