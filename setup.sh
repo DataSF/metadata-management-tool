@@ -5,6 +5,7 @@ mkdir logs
 mkdir output_wkbks
 mkdir wkbk_uploads
 mkdir pickled
+mkdir pickled/datasets
 mkdir documented_fields
 mkdir documented_fields/xlsx
 mkdir documented_fields/pdf
