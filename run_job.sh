@@ -16,7 +16,10 @@ display_help() {
     echo "   -p, --python path  -- path to python- ie run which python to find out"
     echo
     echo "   -j, --python job file  --python job file- ie the job you wan to run; ex: grab_asset_fields_defs.py or upload_screendoor_responses"
-    echo " ***example usage: ./run_job.sh -d /Users/j9/Desktop/metadata-mgmt-tool/ -j grab_asset_field_defs.py -p /usr/local/bin/python -c fieldConfig_grab_asset_field_defs.yaml"
+    echo " ***example usage: /home/ubuntu/metadata-mgmt-tool/run_job.sh -d /home/ubuntu/metadata-mgmt-tool/ -j grab_asset_field_defs.py -p /home/ubuntu/miniconda2/bin/python -c fieldConfig_grab_asset_field_defs_server.yaml"
+    echo "***example usage: /home/ubuntu/metadata-mgmt-tool/run_job.sh -d /home/ubuntu/metadata-mgmt-tool/ -j grab_datadictionary_attachments_defs.py -p /home/ubuntu/miniconda2/bin/python -c fieldConfig_existing_datadicts_server.yaml"
+    echo "***example usage: /home/ubuntu/metadata-mgmt-tool/run_job.sh -d /home/ubuntu/metadata-mgmt-tool/ -j upload_screendoor_responses.py -p /home/ubuntu/miniconda2/bin/python -c fieldConfig_import_wkbks_server.yaml"
+    echo "***example usage: /home/ubuntu/metadata-mgmt-tool/run_job.sh -d /home/ubuntu/metadata-mgmt-tool/ -j generate_wkbks.py -p /home/ubuntu/miniconda2/bin/python -c fieldConfig_generate_wkbks_server.yaml"
     exit 1
 }
 # Initialize our own variables:
