@@ -32,7 +32,7 @@ dataset_name_field: Socrata Dataset Name
 dataset_src_dir_field:  Dataset_Source_Dir
 dataset_src_fn_field: Dataset Source Filename
 base_url: data.sfgov.org
-job_name: Update Master Data Dictionary from Screendoorg
+job_name: Update Master Data Dictionary from Screendoor
 
 
 #lists of things
