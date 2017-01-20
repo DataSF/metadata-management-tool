@@ -15,6 +15,7 @@ class MetaDatasets:
     self._fieldtypes_config = self._metadataset_config['field_types']
     self._assetfields_config = self._metadataset_config['asset_fields']
     self._globalfields_config = self._metadataset_config['global_fields']
+    self._public_dd_config = self._metadataset_config['public_data_dictionary']
     self._pickle_dir = configItems['pickle_dir']
     self._pickle_data_dir = configItems['pickle_data_dir']
     self._socrataQueriesObject = socrataQueriesObject
@@ -94,6 +95,12 @@ class MetaDatasets:
 
   def set_master_dd_updt_info(self, updt_rows):
     dataset = self._master_dd_config
+    dataset = self._socrataQueriesObject.setDatasetDicts(dataset)
+    dataset[self._socrataQueriesObject.src_records_cnt_field] = len(updt_rows)
+    return dataset
+
+  def set_public_dd_updt_info(self, updt_rows):
+    dataset = self._public_dd_config
     dataset = self._socrataQueriesObject.setDatasetDicts(dataset)
     dataset[self._socrataQueriesObject.src_records_cnt_field] = len(updt_rows)
     return dataset
