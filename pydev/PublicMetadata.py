@@ -32,11 +32,14 @@ class PublicMetadata:
                return row['global_field_definition']
             return row['field_definition']
         self._df_master['field_definition'] = self._df_master.apply(lambda row:set_field_def_globals(row ),axis=1)
+        #filter out all the private or deleted columns
+        self._df_master =  self._df_master[ self._df_master['privateordeleted'] == '']
         self._df_master = self._df_master[ self._keys_to_keep ]
         return PandasUtils.convertDfToDictrows(self._df_master)
 
     def get_public_fields(self):
         mm_dd_list = self.master_df_public_list()
+        wroteJsonFile = False
         if len(mm_dd_list) > 0:
             try:
                 wroteJsonFile = WkbkJson.write_json_object({self.json_key: mm_dd_list}, self._pickle_dir, self._output_file)

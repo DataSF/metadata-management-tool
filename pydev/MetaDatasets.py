@@ -38,7 +38,7 @@ class MetaDatasets:
     json_obj = WkbkJson.loadJsonFile(pickle_data_dir, json_file)
     df = PandasUtils.makeDfFromJson(json_obj)
     df_master = df[  (df['datasetid'] != '#N/A')] #& (df['global_field'] == False) ]
-    print len(df_master)
+    #print len(df_master)
     return df_master
 
   @staticmethod

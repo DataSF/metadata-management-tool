@@ -66,12 +66,14 @@ def main():
     print "successfully grabbed metadata fields to update from public master data dictionary"
     updt_rows = WkbkJson.loadJsonFile(configItems['pickle_dir'], configItems['output_json_fn'])
     if(len(updt_rows['updt_fields'])> 0):
-        dataset_info = metadatasets.set_public_dd_updt_info(updt_rows['updt_fields'])
-        print dataset_info
-        dataset_info = scrud.postDataToSocrata(dataset_info, updt_rows['updt_fields'] )
-        dsse = JobStatusEmailerComposer(configItems, logger)
-        dsse.sendJobStatusEmail([dataset_info])
-        job_success = True
+      dataset_info = metadatasets.set_public_dd_updt_info(updt_rows['updt_fields'])
+      #replace the dataset on the portal rather than upserting
+      dataset_info['row_id'] = ''
+      print dataset_info
+      dataset_info = scrud.postDataToSocrata(dataset_info, updt_rows['updt_fields'] )
+      dsse = JobStatusEmailerComposer(configItems, logger)
+      dsse.sendJobStatusEmail([dataset_info])
+      job_success = True
   if(not(job_success)):
     dataset_info = {'Socrata Dataset Name': "Public DD", 'SrcRecordsCnt':0, 'DatasetRecordsCnt':0, 'fourXFour': "Job Failed"}
     dataset_info['isLoaded'] = 'failed'

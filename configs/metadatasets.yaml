@@ -4,7 +4,7 @@ master_data_dictionary:
     Socrata Dataset Name: Master Data Dictionary
     row_id: columnid
     json_fn: master_data_dictionary.json
-    columns_to_fetch: columnid,datasetid,dataset_name,open_data_portal_url,inventoryid,field_name,field_alias,socrata_field_type,field_type,field_definition,field_type_flag,api_key,data_steward,data_steward_name,department_from_inventory,department_from_catalog,department,data_coordinator,data_dictionary_attached,field_documented,attachment_url,global_field,do_not_process,status,date_last_changed,global_field_definition
+    columns_to_fetch: columnid,datasetid,dataset_name,open_data_portal_url,inventoryid,field_name,field_alias,socrata_field_type,field_type,field_definition,field_type_flag,api_key,data_steward,data_steward_name,department_from_inventory,department_from_catalog,department,data_coordinator,data_dictionary_attached,field_documented,attachment_url,global_field,do_not_process,status,date_last_changed,global_field_definition,privateordeleted
 field_types:
     fourXFour: 8efc-aram
     json_fn: field_types.json
@@ -20,5 +20,6 @@ asset_fields:
 public_data_dictionary:
     fourXFour: wn8x-uk7i
     Socrata Dataset Name: Public Data Dictionary
-    row_id: columnid
+    #row_id: columnid
+    #row_id:
 
