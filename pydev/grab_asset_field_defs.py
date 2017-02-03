@@ -67,6 +67,7 @@ def main():
       updt_rows = WkbkJson.loadJsonFile(configItems['pickle_dir'], configItems['output_json_fn'])
       if(len(updt_rows[configItems['json_key']])> 0):
           dataset_info = metadatasets.set_master_dd_updt_info(updt_rows['updt_fields'])
+          print dataset_info
           dataset_info = scrud.postDataToSocrata(dataset_info, updt_rows['updt_fields'] )
           dsse = JobStatusEmailerComposer(configItems, logger)
           dsse.sendJobStatusEmail([dataset_info])
