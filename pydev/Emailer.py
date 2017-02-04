@@ -89,6 +89,7 @@ class Emailer():
                 msg = self.make_attachment(msg, fname, fname_attachment_fullpath)
 
         #normal emails, no attachment
+        print self._server
         server = smtplib.SMTP(self._server, self._server_port)
         #server.starttls()
         #server.login(fromaddr, self._password)
