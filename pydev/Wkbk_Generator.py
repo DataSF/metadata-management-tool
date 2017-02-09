@@ -144,8 +144,9 @@ class WkbkGenerator:
         if datasetsSubmittedCnt > 0:
             submitted = True
             percent_done = round(100 * float(datasetsSubmittedCnt)/float(totalFields), 2)
-            print percent_done
-        return {"submitted": submitted, "submitted_fields_cnt": datasetsSubmittedCnt, "fields_to_do_cnt": datasetToDoCount, "total_fields": totalFields, "percent_done": percent_done }
+            if(percent_done != 100)
+                return {"submitted": submitted, "submitted_fields_cnt": datasetsSubmittedCnt, "fields_to_do_cnt": datasetToDoCount, "total_fields": totalFields, "percent_done": percent_done }
+        return False
 
     def build_Wkbks(self):
         '''builds and writes wkbks for datastewards'''
@@ -155,9 +156,10 @@ class WkbkGenerator:
             stwd_info  = self.steward_info(stwd)
             df_datasets, df_datasetsList, df_datasetsDict, datasetsSubmittedCnt, datasetToDoCount = self.set_Datasets(stwd)
             submittedFields = self.checkIfSubmittedFields(datasetsSubmittedCnt, datasetToDoCount)
-            sheets = self.set_Sheets(df_datasetsList, df_datasets)
-            wkbk_fullpath, current_date =  self._wkbk_writer.write_wkbk(sheets, stwd_info)
-            self._json_object["workbooks"].append( self.make_json_item(stwd_info, wkbk_fullpath, df_datasetsDict, current_date, submittedFields))
+            if(submittedFields)
+                sheets = self.set_Sheets(df_datasetsList, df_datasets)
+                wkbk_fullpath, current_date =  self._wkbk_writer.write_wkbk(sheets, stwd_info)
+                self._json_object["workbooks"].append( self.make_json_item(stwd_info, wkbk_fullpath, df_datasetsDict, current_date, submittedFields))
         wrote_json = WkbkJson.write_json_object(self._json_object,  self._pickle_dir,  self._wkbk_output_json)
         update_rows = self.update_metadata_status()
         return wrote_json, update_rows
