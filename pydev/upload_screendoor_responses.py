@@ -56,15 +56,12 @@ def main():
   sqry = SocrataQueries(clientItems, configItems, logger)
   metadatasets = MetaDatasets(configItems, sqry, logger)
   master_dd_json = metadatasets.get_master_metadataset_as_json()
-  master_dd_json = True
   if (not (master_dd_json)):
     print "*****errror could not grab the master dd"
     exit(1)
-
   dsse = JobStatusEmailerComposer(configItems, logger)
   print "*****Starting to download workbooks*****"
   downloaded_files, number_of_wkbks_to_load = screendoor_stuff.get_attachments()
-  downloaded_files = True
   if downloaded_files:
     print "Awesome, downloaded files and made json list"
     #print "Downloaded " + str(number_of_wkbks_to_load) + " wkbks"
@@ -73,7 +70,6 @@ def main():
     exit(1)
   wkbk_parser = WkbkParser(configItems)
   updt_metadata_fields_json, unmatchedFn = wkbk_parser.get_metadata_updt_fields_from_shts()
-
   if (not(updt_metadata_fields_json)):
       print "Error: Something went wrong, could not parse worksheets"
       exit(1)
