@@ -19,6 +19,7 @@ class PublicMetadata:
         self._metadataset_config = ConfigUtils.setConfigs(self._config_dir,  self._metadata_config_fn )
         self._master_dd_config = self._metadataset_config['master_data_dictionary']
         self._df_master = MetaDatasets.set_master_df_dd(self._pickle_data_dir, self._master_dd_config['json_fn'])
+        print len(self._df_master)
         #self._keys_to_keep_globals = ['columnid', 'datasetid', 'inventoryid', 'open_data_portal_url', 'department', 'dataset_name', 'field_name' , 'field_alias', 'field_type', 'api_key', 'field_definition', 'global_field_definition', 'field_type_flag', 'data_dictionary_attached', 'field_documented', 'attachment_url']
         self._keys_to_keep = ['columnid', 'datasetid', 'inventoryid', 'open_data_portal_url', 'department', 'dataset_name', 'field_name' , 'field_alias', 'field_type', 'api_key', 'field_definition', 'field_type_flag', 'data_dictionary_attached', 'field_documented', 'attachment_url']
         self._output_file = configItems['output_json_fn']
@@ -33,7 +34,9 @@ class PublicMetadata:
             return row['field_definition']
         self._df_master['field_definition'] = self._df_master.apply(lambda row:set_field_def_globals(row ),axis=1)
         #filter out all the private or deleted columns
-        self._df_master =  self._df_master[ self._df_master['privateordeleted'] == '']
+        dftest = PandasUtils.groupbyCountStar(self._df_master, ['privateordeleted'])
+        print dftest
+        self._df_master =  self._df_master[ self._df_master['privateordeleted'] != True ]
         self._df_master = self._df_master[ self._keys_to_keep ]
         return PandasUtils.convertDfToDictrows(self._df_master)
 
