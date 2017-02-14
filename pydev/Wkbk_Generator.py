@@ -27,6 +27,7 @@ class WkbkGenerator:
         self._pickle_data_dir = configItems['pickle_data_dir']
         self._wkbk_json = WkbkJson(configItems, logger)
         self._df_master = MetaDatasets.set_master_df(self._pickle_data_dir, self._master_dd_config['json_fn'])
+        self._df_master = self._df_master[self._df_master['privateordeleted'] == False ].reset_index()
         self._df_stewards = self.set_df_stewards()
         self._stewardsList = self.set_stewardsList()
         self._field_types_list = self.set_field_types_list()
