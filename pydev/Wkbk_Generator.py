@@ -144,15 +144,14 @@ class WkbkGenerator:
         if datasetsSubmittedCnt > 0:
             submitted = True
             percent_done = round(100 * float(datasetsSubmittedCnt)/float(totalFields), 2)
-            if(percent_done != 100):
-                return {"submitted": submitted, "submitted_fields_cnt": datasetsSubmittedCnt, "fields_to_do_cnt": datasetToDoCount, "total_fields": totalFields, "percent_done": percent_done }
+        if(percent_done != 100):
+            return {"submitted": submitted, "submitted_fields_cnt": datasetsSubmittedCnt, "fields_to_do_cnt": datasetToDoCount, "total_fields": totalFields, "percent_done": percent_done }
         return False
 
     def build_Wkbks(self):
         '''builds and writes wkbks for datastewards'''
         #sprint self._stewardsList[0:3]
         for stwd in self._stewardsList:
-            print stwd
             stwd_info  = self.steward_info(stwd)
             df_datasets, df_datasetsList, df_datasetsDict, datasetsSubmittedCnt, datasetToDoCount = self.set_Datasets(stwd)
             submittedFields = self.checkIfSubmittedFields(datasetsSubmittedCnt, datasetToDoCount)

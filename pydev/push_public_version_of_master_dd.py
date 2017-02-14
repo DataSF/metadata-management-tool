@@ -69,7 +69,6 @@ def main():
       dataset_info = metadatasets.set_public_dd_updt_info(updt_rows['updt_fields'])
       #replace the dataset on the portal rather than upserting
       dataset_info['row_id'] = ''
-      print dataset_info
       dataset_info = scrud.postDataToSocrata(dataset_info, updt_rows['updt_fields'] )
       dsse = JobStatusEmailerComposer(configItems, logger)
       dsse.sendJobStatusEmail([dataset_info])

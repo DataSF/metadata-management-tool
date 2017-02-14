@@ -46,6 +46,7 @@ class Emailer():
         self._server = self._emailConfigs['server_addr']
         self._server_port = self._emailConfigs['server_port']
         self._sender =  self._emailConfigs['sender_addr']
+        self._etl_sender =   self._emailConfigs['etl_sender_addr']
         self._bcc = self._emailConfigs['bcc']
         if (self._emailConfigs['sender_password']):
             self._password = base64.b64decode(self._emailConfigs['sender_password'])
@@ -62,15 +63,16 @@ class Emailer():
         return msg
 
     def sendEmails(self, subject_line, msgBody, fname_attachment=None, fname_attachment_fullpath=None, recipients=None, attachment_dictList = None, isETL=True):
-        fromaddr = self._sender
-        if(not(recipients)):
+        if(isETL):
+            fromaddr = self._etl_sender
             recipients = self.getRecipients()
-        #toaddr =  recipients
-        toaddr = 'janine.heiser@sfgov.org,jason.lally@sfgov.org'
+        else:
+            fromaddr = self._sender
+            recipients = recipients
+        toaddr = recipients
         msg = MIMEMultipart()
         msg['From'] = fromaddr
-        #msg['To'] = recipients
-        msg['To'] = 'janine.heiser@sfgov.org,jason.lally@sfgov.org'
+        msg['To'] = recipients
         msg['Subject'] = subject_line
         msg['Bcc'] = self._bcc
         body = msgBody
@@ -78,7 +80,6 @@ class Emailer():
         #Optional Email Attachment:
         if(not(fname_attachment is None and fname_attachment_fullpath is None)):
             msg = self.make_attachment(msg, fname_attachment, fname_attachment_fullpath)
-
         if attachment_dictList:
             print attachment_dictList
             for attachment in attachment_dictList:
@@ -91,8 +92,8 @@ class Emailer():
         #normal emails, no attachment
         print self._server
         server = smtplib.SMTP(self._server, self._server_port)
-        server.starttls()
-        server.login(fromaddr, self._password)
+        #server.starttls()
+        #server.login(fromaddr, self._password)
         text = msg.as_string()
         server.sendmail(fromaddr, toaddr, text)
         server.quit()

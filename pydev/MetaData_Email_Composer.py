@@ -24,9 +24,9 @@ class MetaData_Email_Composer(object):
 
     def email_msg(self, subject_line, msgBody, attachment=None, attachment_fullpath=None, receipient=None ):
         if os.path.isfile(attachment_fullpath):
-            self._emailer.sendEmails(  subject_line, msgBody, attachment, attachment_fullpath, receipient,)
+            self._emailer.sendEmails(  subject_line, msgBody, attachment, attachment_fullpath, receipient, None, False)
         else:
-            self._emailer.sendEmails(  subject_line, msgBody, None, None, receipient,)
+            self._emailer.sendEmails(  subject_line, msgBody, None, None, receipient)
 
     @staticmethod
     def get_msgparts(email_txt_basedir, situation, text_file_subparts):
@@ -108,6 +108,7 @@ class ForReviewBySteward(MetaData_Email_Composer):
             #if updated_list_json['updated'][wkbk[ "data_cordinator"]['Email']]:
             msgBody =  self.msgBodyFill(wkbk)
             receipient = wkbk[ "data_cordinator"]['data_steward']
+            print receipient
             receipient = 'janine.heiser@sfgov.org'
             subject_line = self._subject_line
             attachment_fullpath = wkbk["path_to_wkbk"]
@@ -118,7 +119,6 @@ class ForReviewBySteward(MetaData_Email_Composer):
             except Exception, e:
                 print str(e)
         return wkbks_sent_out
-
 
 
 

@@ -35,7 +35,6 @@ class PublicMetadata:
         self._df_master['field_definition'] = self._df_master.apply(lambda row:set_field_def_globals(row ),axis=1)
         #filter out all the private or deleted columns
         dftest = PandasUtils.groupbyCountStar(self._df_master, ['privateordeleted'])
-        print dftest
         self._df_master =  self._df_master[ self._df_master['privateordeleted'] != True ]
         self._df_master = self._df_master[ self._keys_to_keep ]
         return PandasUtils.convertDfToDictrows(self._df_master)
