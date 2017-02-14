@@ -61,7 +61,7 @@ class Emailer():
         msg.attach(part)
         return msg
 
-    def sendEmails(self, subject_line, msgBody, fname_attachment=None, fname_attachment_fullpath=None, recipients=None, attachment_dictList = None):
+    def sendEmails(self, subject_line, msgBody, fname_attachment=None, fname_attachment_fullpath=None, recipients=None, attachment_dictList = None, isETL=True):
         fromaddr = self._sender
         if(not(recipients)):
             recipients = self.getRecipients()
