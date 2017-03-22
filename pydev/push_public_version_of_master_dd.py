@@ -12,6 +12,7 @@ from PyLogger import *
 from JobStatusEmailerComposer import *
 from UploadAssetFieldDefs import *
 from PublicMetadata import *
+from MetaDatasets import *
 
 def parse_opts():
   sys.setdefaultencoding('utf8')

@@ -189,7 +189,7 @@ class SocrataQueries:
         returned_records = 0
         offset = 0
         all_results = []
-        while returned_records < row_cnt:
+        while offset < row_cnt:
             limit_offset = "&$limit=1000&$offset="+ str(offset)
             qry = '?$select='+qry_cols+ limit_offset
             try:
