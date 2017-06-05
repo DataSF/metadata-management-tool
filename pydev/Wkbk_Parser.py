@@ -20,9 +20,8 @@ class WkbkParser:
         self._config_dir =  configItems['config_dir']
         #self.keys_to_keep = ['columnID', 'Field Type', 'Field Definition', 'Field Alias', 'Field Type Flag']
         self.keys_to_keep = ['columnID', 'Field Definition', 'Field Alias', 'Field Type Flag']
-        self.keys_to_keep_field = ['columnid', 'field_definition', 'field_alias', 'field_type_flag', 'status', 'date_last_changed']
+        self.keys_to_keep_field = ['columnid', 'field_definition', 'field_alias', 'field_type_flag', 'status', 'date_last_changed', 'field_documented']
         self.keys_to_keep_field_unmatched = ['columnid', 'dataset_name', 'field_name', 'field_type', 'field_definition']
-
         self.updt_fields_json_name = configItems['updt_fields_json_fn']
         self.json_key = "updt_fields"
         self.wkbk_uploads_dir = configItems['wkbk_uploads_dir']
@@ -75,9 +74,16 @@ class WkbkParser:
     def add_status_info(self, df_wkbk, submission_dtt):
         df_wkbk[self.field_name_mappings['status']] = self.statuses_submited
         df_wkbk[self.field_name_mappings['date_last_changed']] = submission_dtt
+        df_wkbk['field_documented'] = df_wkbk.apply(lambda row: WkbkParser.calc_field_documented_row(row),axis=1)
         return df_wkbk
 
-
+    @staticmethod
+    def calc_field_documented_row(row):
+      '''calculates if a field has been documented or not:a field is documented '''
+      if row['field_definition'] != '':
+        return True
+      return False
+              
     def filter_sht_df( self, df_wkbk, submission_dtt):
         '''we only want to upload rows that should be updated.
         We want to filter the following records:

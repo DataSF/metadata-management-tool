@@ -19,3 +19,6 @@ documented_fields/
 configs/old/
 configs/socrata_config.yaml
 configs/email_config_server_gmail.yaml
+configs/email_txt/email_config.yaml
+configs/email_txt/email_config_server.yaml
+configs/email_txt/email_config_server_gmail.yaml

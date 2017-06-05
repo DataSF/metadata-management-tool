@@ -106,7 +106,20 @@ class MetaDatasets:
     return dataset
 
 
-
+  @staticmethod
+  def calc_field_documented(master_df):
+    '''calculates if a field has been documented or not:
+    a field is documented if its a global field, or has a data_dictionary_attachment, or has an existing field_definition '''
+    def calc_field_documented_row(row):
+      if row['global_field']:
+        return True
+      elif row['data_dictionary_attached']:
+        return True
+      elif row['field_definition'] != '':
+        return True
+      return False
+    master_df['field_documented'] = master_df.apply(lambda row: calc_field_documented_row(row),axis=1)
+    return master_df
 
 if __name__ == "__main__":
     main()
