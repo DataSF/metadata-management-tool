@@ -75,13 +75,21 @@ class WkbkParser:
         df_wkbk[self.field_name_mappings['status']] = self.statuses_submited
         df_wkbk[self.field_name_mappings['date_last_changed']] = submission_dtt
         df_wkbk['field_documented'] = df_wkbk.apply(lambda row: WkbkParser.calc_field_documented_row(row),axis=1)
+        #print df_wkbk
         return df_wkbk
 
     @staticmethod
     def calc_field_documented_row(row):
       '''calculates if a field has been documented or not:a field is documented '''
-      if row['field_definition'] != '':
-        return True
+      try:
+        if row['field_definition'] != '':
+          return True
+      except Exception, e:
+        try:
+          if row['Field Definition'] != '':
+            return True
+        except Exception, e:
+          print str(e)
       return False
               
     def filter_sht_df( self, df_wkbk, submission_dtt):
@@ -162,40 +170,53 @@ class WkbkParser:
         sht_names = self.get_sht_names(wkbk)
         metadata_dicts = [ self.parse_sht(wkbk, sht_name, fn['submitted_at']) for sht_name in sht_names]
         #list of the fields we'll upload
-        metadata_dicts_in_mmdd = [ metadata_dict[0] for metadata_dict in metadata_dicts if len(metadata_dict[0]) > 0]
+        #metadata_dicts_in_mmdd = [ metadata_dict[0] for metadata_dict in metadata_dicts if len(metadata_dict[0]) > 0]
+        #print "here"
+        #print metadata_dicts_in_mmdd
         #list of fields that weren't in the mmdd
-        unmatched_fields = [ metadata_dict[1] for metadata_dict in metadata_dicts if len(metadata_dict[1]) > 0]
+        #unmatched_fields = [ metadata_dict[1] for metadata_dict in metadata_dicts if len(metadata_dict[1]) > 0]
         #wroteUnmatchedFields = FileUtils.write_wkbk_csv(self._pickle_dir+self._current_date_year+"_unmatched_fields" ,unmatched_fields, self._documented_fields_matched)
-        metadata_dicts_in_mmdd =  ListUtils.flatten_list(metadata_dicts_in_mmdd)
-        unmatched_fields = ListUtils.flatten_list(unmatched_fields)
-        return [metadata_dicts_in_mmdd, unmatched_fields]
-
+        #metadata_dicts_in_mmdd =  ListUtils.flatten_list(metadata_dicts_in_mmdd)
+        #unmatched_fields = ListUtils.flatten_list(unmatched_fields)
+        #return [metadata_dicts_in_mmdd, unmatched_fields]
+        return metadata_dicts
 
 
     def get_metadata_updt_fields_from_shts(self):
         #grab the json file with all the update info
+        print
+        print self._wkbk_uploads_json_fn
+        print
         files_to_load =  WkbkJson.loadJsonFile(self._pickle_dir,  self._wkbk_uploads_json_fn )
+        #print files_to_load
         fileList = [ file_item for file_item in files_to_load['uploaded_workbooks'] if FileUtils.fileExists(self._wkbk_uploads_dir+file_item['file_name'])]
         #fileList =  FileUtils.getFileListForDir(self._wkbk_uploads_dir + "*.xlsx")
         wroteJsonFile = False
         unmatchedFn = None
         metadata_dicts = [ self.get_shts(fn) for fn in fileList ]
-        metadata_dicts_in_mmdd = [ metadata_dict[0] for metadata_dict in metadata_dicts if len(metadata_dict[0]) > 0]
-        metadata_dicts_not_in_mmdd = [ metadata_dict[1] for metadata_dict in metadata_dicts if len(metadata_dict[1]) > 0]
-        metadata_dictJson = { self.json_key: ListUtils.flatten_list(metadata_dicts_in_mmdd)}
+        metadata_dicts = ListUtils.flatten_list(metadata_dicts)
+        metadata_dicts = ListUtils.flatten_list(metadata_dicts)
+        metadata_dicts = ListUtils.flatten_list(metadata_dicts)
+        print metadata_dicts
+        #print ListUtils.flatten_list(metadata_dicts)
+        #metadata_dicts_in_mmdd = [ metadata_dict[0] for metadata_dict in metadata_dicts if len(metadata_dict[0]) > 0]
+        #metadata_dicts_not_in_mmdd = [ metadata_dict[1] for metadata_dict in metadata_dicts if len(metadata_dict[1]) > 0]
+        #print metadata_dicts
+        metadata_dictJson = { self.json_key:metadata_dicts}
+        print metadata_dictJson
         try:
             wroteJsonFile = WkbkJson.write_json_object( metadata_dictJson, self._pickle_dir, self.updt_fields_json_name)
         except Exception, e:
             print "could not wrtite file"
             print str(e)
-        unmatched_cols = ['columnid',  'dataset_name', 'field_name', 'field_type', 'field_definition',]
-        metadata_dict_not_in_mmdd_csv =  ListUtils.flatten_list(metadata_dicts_not_in_mmdd)
+        #unmatched_cols = ['columnid',  'dataset_name', 'field_name', 'field_type', 'field_definition']
+        #metadata_dict_not_in_mmdd_csv =  ListUtils.flatten_list(metadata_dicts_not_in_mmdd)
         #print metadata_dict_not_in_mmdd_csv
-        fn = self._current_date_year+"unmatched_fields.csv"
-        wroteUnmatchedFields = FileUtils.write_wkbk_csv(self._pickle_dir+fn,metadata_dict_not_in_mmdd_csv, unmatched_cols)
-        if wroteUnmatchedFields:
-            unmatchedFn = fn
-        return wroteJsonFile, unmatchedFn
+        #fn = self._current_date_year+"unmatched_fields.csv"
+        #wroteUnmatchedFields = FileUtils.write_wkbk_csv(self._pickle_dir+fn,metadata_dict_not_in_mmdd_csv, unmatched_cols)
+        #if wroteUnmatchedFields:
+        #    unmatchedFn = fn
+        return wroteJsonFile
 
     def load_updt_fields_json(self):
         updt_fieldList = []

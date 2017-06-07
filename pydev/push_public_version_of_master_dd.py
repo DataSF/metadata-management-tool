@@ -62,6 +62,20 @@ def main():
   master_dd_json = metadatasets.get_master_metadataset_as_json()
   job_success = False
   if master_dd_json:
+    #do a final pass to see if the field is documented
+    updt_rows = WkbkJson.loadJsonFile(configItems['pickle_data_dir'], 'master_data_dictionary.json')
+    df_master = PandasUtils.makeDfFromJson(updt_rows)
+    #print df_master.columns
+    #print 
+    #print df_master[['columnid', 'field_documented']].head(10)
+    df_master = metadatasets.calc_field_documented(df_master)
+
+    dfList =  df_master[['columnid', 'field_documented']]
+    dfList = PandasUtils.convertDfToDictrows(dfList)
+    dataset_info = metadatasets.set_master_dd_updt_info(dfList)
+    #print dfList
+    dataset_info = scrud.postDataToSocrata(dataset_info, dfList )
+    #now push the public version of the master data dictionary.
     pm = PublicMetadata(configItems)
     wroteJsonFile = pm.get_public_fields()
     print "successfully grabbed metadata fields to update from public master data dictionary"
@@ -74,6 +88,7 @@ def main():
       dsse = JobStatusEmailerComposer(configItems, logger)
       dsse.sendJobStatusEmail([dataset_info])
       job_success = True
+
   if(not(job_success)):
     dataset_info = {'Socrata Dataset Name': "Public DD", 'SrcRecordsCnt':0, 'DatasetRecordsCnt':0, 'fourXFour': "Job Failed"}
     dataset_info['isLoaded'] = 'failed'

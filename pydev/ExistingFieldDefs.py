@@ -1,4 +1,3 @@
-
 from __future__ import division
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
@@ -204,8 +203,12 @@ class ExistingFieldDefs:
       cnt_report_all =  []
       dowloaded = False
       for dataset in self._datasets_load_list:
+        print "******"
+        print dataset
+        print "******"
         #get the main dataset
         datasetid = dataset['datasetid']
+        print datasetid
         dataset_df = self.get_dfDatasetToLoad(dataset['datasetid'])
         #print "***** here are the dataset columns****"
         #print dataset_df.columns

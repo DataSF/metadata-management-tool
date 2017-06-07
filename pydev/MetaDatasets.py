@@ -115,6 +115,8 @@ class MetaDatasets:
         return True
       elif row['data_dictionary_attached']:
         return True
+      elif len(row['field_definition']) > 0:
+        return True
       elif row['field_definition'] != '':
         return True
       return False

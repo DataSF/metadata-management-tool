@@ -54,10 +54,17 @@ class ScreenDoorStuff:
         files_to_download = []
         for response in self._responses:
             #print "********"
+            #print response
+            #print response.keys()
+            submitted_dt =  response['submitted_at']
             response_items =  response['responses'].keys()
+            #print response_items
             for item in response_items:
-                response_file_dictList = response['responses'][item]
+              response_file_dictList = response['responses'][item]
+              #print response_file_dictList
+              if isinstance(response_file_dictList, list):
                 for file_info in response_file_dictList:
+                    #print file_info
                     file_info['submitted_at'] = response['submitted_at']
                     files_to_download.append(file_info)
         print "*****downloading " + str(len(files_to_download)) +" files from screendoor*****"

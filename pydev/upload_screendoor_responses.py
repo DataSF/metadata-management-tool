@@ -62,6 +62,7 @@ def main():
   dsse = JobStatusEmailerComposer(configItems, logger)
   print "*****Starting to download workbooks*****"
   downloaded_files, number_of_wkbks_to_load = screendoor_stuff.get_attachments()
+  #downloaded_files = True
   if downloaded_files:
     print "Awesome, downloaded files and made json list"
     #print "Downloaded " + str(number_of_wkbks_to_load) + " wkbks"
@@ -69,7 +70,7 @@ def main():
     print "ERROR: Not able to download load workbooks!"
     exit(1)
   wkbk_parser = WkbkParser(configItems)
-  updt_metadata_fields_json, unmatchedFn = wkbk_parser.get_metadata_updt_fields_from_shts()
+  updt_metadata_fields_json = wkbk_parser.get_metadata_updt_fields_from_shts()
   if (not(updt_metadata_fields_json)):
       print "Error: Something went wrong, could not parse worksheets"
       exit(1)
@@ -86,12 +87,13 @@ def main():
         print dataset_info
         dataset_info['jobStatus'] = 'success'
         dataset_info['isLoaded'] = 'Success'
-        dsse.sendJobStatusEmail([dataset_info], [{unmatchedFn: configItems['pickle_dir']+unmatchedFn}])
+        #dsse.sendJobStatusEmail([dataset_info], [{unmatchedFn: configItems['pickle_dir']+unmatchedFn}])
+        dsse.sendJobStatusEmail([dataset_info])
       else:
         print "**** No rows to update*****"
         dataset_info = metadatasets.set_master_dd_updt_info(updt_rows)
         dataset_info['isLoaded'] = 'success'
-        dsse.sendJobStatusEmail([dataset_info], [{unmatchedFn: configItems['pickle_dir']+unmatchedFn}])
+        dsse.sendJobStatusEmail([dataset_info])
 
 
 

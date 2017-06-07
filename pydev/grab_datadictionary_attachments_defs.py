@@ -70,7 +70,8 @@ def main():
       #post update master dd on portal
       dataset_info = scrud.postDataToSocrata(dataset_info, updt_rows )
       print dataset_info
-      #send out the email
+      dataset_info['jobStatus'] = 'SUCCESS'
+      dataset_info['isLoaded'] = 'success'
       dsse.sendJobStatusEmail([dataset_info],[cnt_report])
     else:
       dataset_info = metadatasets.set_master_dd_updt_info(updt_rows)
