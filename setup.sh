@@ -15,8 +15,8 @@ mkdir documented_fields/output
 #installs dependencies
 #pip install --upgrade oauth2client
 #pip install gspread
-pip install openpyxl
-pip install pycurl
-pip install xlrd
-pip install xlsxwriter
-pip install inflection
+#pip install openpyxl
+#pip install pycurl
+#pip install xlrd
+#pip install xlsxwriter
+#pip install inflection

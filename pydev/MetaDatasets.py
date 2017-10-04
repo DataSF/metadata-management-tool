@@ -111,6 +111,11 @@ class MetaDatasets:
     '''calculates if a field has been documented or not:
     a field is documented if its a global field, or has a data_dictionary_attachment, or has an existing field_definition '''
     def calc_field_documented_row(row):
+      if(row['datasetid'] == 'yitu-d5am'):
+        print 
+        print row
+        print row['field_definition']
+        print
       if row['global_field']:
         return True
       elif row['data_dictionary_attached']:

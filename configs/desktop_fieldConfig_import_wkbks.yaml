@@ -1,10 +1,27 @@
 
 
+#dir configs
 pickle_dir: /Users/j9/Desktop/metadata-mgmt-tool/pickled/
+log_dir: /Users/j9/Desktop/metadata-mgmt-tool/logs/
+config_dir: /Users/j9/Desktop/metadata-mgmt-tool/configs/
+documented_fields_dir: /Users/j9/Desktop/metadata-mgmt-tool/documented_fields/
+wkbk_uploads_dir: /Users/j9/Desktop/metadata-mgmt-tool/wkbk_uploads/
 pickle_data_dir: /Users/j9/Desktop/metadata-mgmt-tool/pickled/datasets/
 
-#socrata configs
+#other yaml configs
 socrata_client_config_fname: socrata_config.yaml
+metadataset_config: metadatasets.yaml
+email_config_file: email_config_gmail.yaml
+screendoor_config_file: screendoor_configs_desktop.yaml
+document_fields_outputfile_fn: documented_field_definitions.csv
+
+
+#file names
+exception_logfile: import_wkbks_exception_log.txt
+updt_fields_json_fn: metadata_updt_fields.json
+
+
+#socrata specific configs
 row_id_field: row_id
 src_records_cnt_field: SrcRecordsCnt
 dataset_records_cnt_field: DatasetRecordsCnt
@@ -15,46 +32,25 @@ dataset_name_field: Socrata Dataset Name
 dataset_src_dir_field:  Dataset_Source_Dir
 dataset_src_fn_field: Dataset Source Filename
 base_url: data.sfgov.org
-job_name: Upload DataDictionary Attachments
-
-metadataset_config: metadatasets.yaml
-
-client_key: /Users/j9/Desktop/metadata-mgmt-tool/configs/metadata-mgmt-tool-31c31a0f34b6.json
-
-config_dir: /Users/j9/Desktop/metadata-mgmt-tool/configs/
-email_config_file: email_config.yaml
-
-screendoor_config_file: screendoor_configs.yaml
-
-pickle_dir: /Users/j9/Desktop/metadata-mgmt-tool/pickled/
-
-wkbk_output_dir: /Users/j9/Desktop/metadata-mgmt-tool/output_wkbks/
-wkbk_output_json: workbooks_info.json
+job_name: Update Master Data Dictionary with Uploaded Workbooks
 
 
-datadict:
-    sht_name: VIEW_master_fields
-    pickle_name: data_dict
-
-stewards:
-     sht_name: import_data_coordinators
-     pickle_name: stewards
-
-
-field_types:
-    sht_name: field_types
-    pickle_name: field_types
-
-log_dir: /Users/j9/Desktop/metadata-mgmt-tool/logs/
-email_config_fname: email_config.yaml
-exception_logfile: exception_log.txt
-
+#lists of things
 sheet_keys: ["columnid", "dataset_name", "open_data_portal_url", "field_name", "field_type", "field_definition", "field_alias", "field_type_flag"]
 steward_keys: ["data_steward", "department", 'data_steward_name']
+fieldType_flag: ["Category", "Unique"]
+
+wkbk_formats:
+    format1:
+        wksht_name: DataDictionary
+        skip_rows: 4
+
+valsToNotOverride: ['Complete', "Do Not Process"]
+valsToExamine: ["Submitted by Coordinator" , "Submitted by Steward"]
 
 
 update_info:
-    wkbk_key: 1EDSn2iBROSQKgNmIscY05FynZAjy3KQeyV8QZQ0mkGg
+    #wkbk_key: 1EDSn2iBROSQKgNmIscY05FynZAjy3KQeyV8QZQ0mkGg
     updt_sht_name: field_definitions
     field_positions:
         columnID: A
@@ -71,12 +67,16 @@ update_info:
         status: 7
         date_last_changed: 8
     field_name_mappings:
-        columnID: columnID
+        columnid: columnID
         field_alias: Field Alias
         field_definition: Field Definition
         field_type_flag: Field Type Flag
         status: status
         date_last_changed: date_last_changed
+        dataset_name: Dataset Name
+        open_data_portal_url: Open Data Portal URL
+        field_name: Field Name
+        field_type: Field Type
     field_not_blank: ["Field Alias", "Field Definition", "Field Type Flag" ]
 
     statuses:
@@ -84,17 +84,5 @@ update_info:
         submitted_steward: Submitted by Steward
         complete: complete
 
-updt_fields_json_fn: metadata_updt_fields.json
-wkbk_uploads_dir: /Users/j9/Desktop/metadata-mgmt-tool/wkbk_uploads/
 
 
-fieldType_flag: ["Category", "Unique"]
-documented_fields_dir: /Users/j9/Desktop/metadata-mgmt-tool/documented_fields/
-document_fields_outputfile_fn: documented_field_definitions.csv
-
-wkbk_formats:
-    format1:
-        wksht_name: DataDictionary
-        skip_rows: 4
-
-valsToNotOverride: ['Complete', "Do Not Process", "Submitted by Coordinator" , "Submitted by Steward"]

@@ -16,11 +16,11 @@ from ConfigUtils import *
 class ExistingFieldDefs:
     """class to generate data dictionaries"""
     def __init__(self,  configItems):
+        print configItems.keys()
         self._config_dir = configItems['config_dir']
         self._documented_fields_dir = configItems['documented_fields_dir']
         self._documented_fields_name_mapping = { 'datasetID': 'datasetid', 'columnID': 'columnid', 'Dataset Name': 'dataset_name', 'Field Name': 'field_name', 'Field Alias': 'field_alias', 'Definition': 'field_definition', 'Field Type Flag':'field_type_flag','Status': 'status', 'date_last_changed': 'date_last_changed', 'Data Type':'field_type'  }
         #self._documented_fields_list = [ 'columnid',  'datasetid', 'dataset_name',  'field_name',  'field_alias',  'field_definition', 'field_type_flag']
-
         self._cols_to_keep_master = ['status', 'datasetid', 'columnid', 'dataset_name', 'field_name', 'field_count', 'attachment_url']
         self._documented_fields_matched = [ 'columnid',  'field_definition', 'status', 'date_last_changed' ]
         self._documented_fields_unmatched = [ 'columnid',  'datasetid', 'dataset_name',  'field_name']

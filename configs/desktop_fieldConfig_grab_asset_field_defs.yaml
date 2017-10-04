@@ -11,7 +11,7 @@ wkbk_uploads_dir: /Users/j9/Desktop/metadata-mgmt-tool/wkbk_uploads/
 #other yaml configs
 socrata_client_config_fname: socrata_config.yaml
 metadataset_config: metadatasets.yaml
-email_config_file: email_config.yaml
+email_config_file: email_config_gmail.yaml
 
 
 #file names

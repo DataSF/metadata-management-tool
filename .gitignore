@@ -22,3 +22,5 @@ configs/email_config_server_gmail.yaml
 configs/email_txt/email_config.yaml
 configs/email_txt/email_config_server.yaml
 configs/email_txt/email_config_server_gmail.yaml
+configs/screendoor_configs_desktop.yaml
+configs/email_config_gmail.yaml
