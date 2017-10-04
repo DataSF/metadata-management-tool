@@ -1,0 +1,6 @@
+app_token: yr app token
+url: data.sfgov.org
+username: your username
+password: your password base64 encoded
+timeout: 35
+

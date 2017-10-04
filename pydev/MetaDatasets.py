@@ -54,7 +54,6 @@ class MetaDatasets:
   def get_metadata_df(pickle_data_dir, json_file):
     json_obj = WkbkJson.loadJsonFile(pickle_data_dir, json_file)
     df = PandasUtils.makeDfFromJson(json_obj)
-    df
     return df
 
 
@@ -111,11 +110,6 @@ class MetaDatasets:
     '''calculates if a field has been documented or not:
     a field is documented if its a global field, or has a data_dictionary_attachment, or has an existing field_definition '''
     def calc_field_documented_row(row):
-      if(row['datasetid'] == 'yitu-d5am'):
-        print 
-        print row
-        print row['field_definition']
-        print
       if row['global_field']:
         return True
       elif row['data_dictionary_attached']:
@@ -128,5 +122,27 @@ class MetaDatasets:
     master_df['field_documented'] = master_df.apply(lambda row: calc_field_documented_row(row),axis=1)
     return master_df
 
+  @staticmethod
+  def update_field_documented(master_df):
+    print "called here"
+    '''calculates if a field has been documented or not:
+    a field is documented if its a global field, or has a data_dictionary_attachment, or has an existing field_definition '''
+    def calc_field_documented_row(row):
+      if row['global_field']:
+        return True
+      elif row['data_dictionary_attached']:
+        return True
+      elif len(row['field_definition']) > 0:
+        return True
+      elif row['field_definition'] != '':
+        return True
+      return False
+    master_df = master_df[master_df['field_documented'] != True].reset_index()
+    master_df['field_documented'] = master_df.apply(lambda row: calc_field_documented_row(row),axis=1)
+    master_df = master_df[master_df['field_documented'] == True]
+    return master_df
+
+
+    
 if __name__ == "__main__":
     main()

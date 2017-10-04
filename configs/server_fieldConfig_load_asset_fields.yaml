@@ -1,0 +1,19 @@
+inputDataDir: /home/ubuntu/fetch-metadata-fields/output/
+inputConfigDir: /home/ubuntu/fetch-metadata-fields/configs/
+socrata_client_config_fname: socrata_config.yaml
+log_dir: /home/ubuntu/fetch-metadata-fields/logs/
+exception_logfile: metadata_fields_exception.log
+src_records_cnt_field: SrcRecordsCnt
+dataset_records_cnt_field: DatasetRecordsCnt
+fourXFour: fourXFour
+row_id_field: row_id
+isLoaded: isLoaded
+datasets_to_load_fn: datasets_to_load_server.csv
+dataset_name_field: Socrata Dataset Name
+dataset_src_dir_field:  Dataset_Source_Dir
+dataset_src_fn_field: Dataset Source Filename
+base_url: data.sfgov.org
+app_name: metadata_fields
+job_name: Update Metadata Fields
+email_config_file: email_config_server.yaml
+inputConfigDir: /home/ubuntu/fetch-metadata-fields/configs/

@@ -24,3 +24,50 @@ configs/email_txt/email_config_server.yaml
 configs/email_txt/email_config_server_gmail.yaml
 configs/screendoor_configs_desktop.yaml
 configs/email_config_gmail.yaml
+logs/*
+output/*
+configs/email_config_gmail.yaml
+
+# Modules #
+###########
+node_modules/
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+*.ipynb_
+*.pyc
+
+package-lock.json
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
