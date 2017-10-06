@@ -1,3 +1,6 @@
+# coding: utf-8
+#!/usr/bin/env python
+
 import sys
 from Utils import *
 from optparse import OptionParser
