@@ -1,0 +1,6 @@
+projectid: 3159
+api_key: x66L_N1iqNR77m4LoumU3HAJp6n9DiwcoTDQk3Xa4uM
+responses_url: https://screendoor.dobt.co/api/projects/%s/responses?v=0&api_key=%s
+wkbk_uploads_dir: /home/ubuntu/metadata-mgmt-tool/wkbk_uploads/
+attachment_url: https://screendoor.dobt.co/attachments/%s/download
+wkbk_uploads_json_fn: screendoor_downloads.json
