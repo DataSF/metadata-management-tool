@@ -5,7 +5,7 @@ config_dir: /home/ubuntu/fetch-metadata-fields/configs/
 pickle_dir: /home/ubuntu/fetch-metadata-fields/output/
 pickle_data_dir: /home/ubuntu/fetch-metadata-fields/output/
 wkbk_uploads_dir: /home/ubuntu/fetch-metadata-fields/output/
-
+config_dir: /home/ubuntu/metadata-mgmt-tool/configs/
 
 master_dd_json_fn: master_data_dictionary.json
 

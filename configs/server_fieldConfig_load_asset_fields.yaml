@@ -17,3 +17,4 @@ app_name: metadata_fields
 job_name: Update Metadata Fields
 email_config_file: email_config_server.yaml
 inputConfigDir: /home/ubuntu/fetch-metadata-fields/configs/
+config_dir: /home/ubuntu/metadata-mgmt-tool/configs/
