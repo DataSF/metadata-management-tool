@@ -1,6 +1,7 @@
 finputDataDir: /home/ubuntu/fetch-metadata-fields/output/
 inputConfigDir: /home/ubuntu/fetch-metadata-fields/configs/
 socrata_client_config_fname: socrata_config.yaml
+config_dir: /home/ubuntu/metadata-mgmt-tool/configs/
 log_dir: /home/ubuntu/fetch-metadata-fields/logs/
 exception_logfile: master_dd_exception.log
 app_name: master_data_dictionary
