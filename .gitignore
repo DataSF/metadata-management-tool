@@ -27,6 +27,7 @@ configs/email_config_gmail.yaml
 logs/*
 output/*
 configs/email_config_gmail.yaml
+pydev/Get MTA Field Definitions.ipynb
 
 # Modules #
 ###########
