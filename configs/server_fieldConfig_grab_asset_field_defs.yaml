@@ -7,7 +7,7 @@ config_dir: /home/ubuntu/metadata-mgmt-tool/configs/
 pickle_data_dir: /home/ubuntu/metadata-mgmt-tool/pickled/datasets/
 wkbk_uploads_dir: /home/ubuntu/metadata-mgmt-tool/wkbk_uploads/
 
-
+config_dir: /home/ubuntu/metadata-mgmt-tool/configs/
 #other yaml configs
 socrata_client_config_fname: socrata_config.yaml
 metadataset_config: metadatasets.yaml

@@ -28,7 +28,7 @@ from socket import error as SocketError
 import errno
 from ConfigUtils import *
 from Utils import *
-
+from PandasUtils import *
 
 class SocrataClient:
     def __init__(self, inputdir, configItems, logger):
@@ -154,6 +154,48 @@ class SocrataCRUD:
             self._logger.info(str(e))
         return row_count
 
+    def deleteRows(self, fbf, rowsToDelete):
+      '''deletes a list of rows for a given 4x4; where row id is the uniq id for the row'''
+      rowsDeleted = 0
+      for rowId in rowsToDelete:
+        try:
+          result = self.client.delete(fbf, row_id=rowId)
+          rowsDeleted += 1
+        except Exception, e:
+          pass
+      return rowsDeleted
+
+class SocrataLoadUtils:
+    def __init__(self, configItems, clientItems=None):
+        self.datasets_to_load_fn = configItems['datasets_to_load_fn']
+        self.dataset_name_field = configItems['dataset_name_field']
+        self.dataset_src_dir_field = configItems['dataset_src_dir_field']
+        self.dataset_src_fn_field= configItems['dataset_src_fn_field']
+        self.inputConfigDir = configItems['inputConfigDir']
+        self.rowsInserted = configItems['dataset_records_cnt_field']
+        self.src_records_cnt_field = configItems['src_records_cnt_field']
+        self.row_id = configItems['row_id_field']
+
+    def make_datasets(self):
+        datasets = PandasUtils.loadCsv(self.inputConfigDir+self.datasets_to_load_fn)
+        #print self.inputConfigDir+self.datasets_to_load_fn
+        datasets = datasets.fillna('')
+        datasets = PandasUtils.convertDfToDictrows(datasets)
+        for dataset in datasets:
+            dataset = self.setDatasetDicts(dataset)
+        return datasets
+
+    def setDatasetDicts(self, dataset):
+        dataset[ self.rowsInserted] = 0
+        dataset[self.src_records_cnt_field] = 0
+        return dataset
+
+    def makeInsertDataSet(self, dataset):
+        insertDataSet = PandasUtils.loadCsv(dataset[self.dataset_src_dir_field]+ dataset[self.dataset_src_fn_field])
+        insertDataSet = insertDataSet.fillna('')
+        insertDataSet = PandasUtils.convertDfToDictrows(insertDataSet)
+        dataset[self.src_records_cnt_field] = len(insertDataSet)
+        return insertDataSet, dataset
 
 class SocrataQueries:
     def __init__(self, clientItems, configItems, logger):
@@ -209,6 +251,13 @@ class SocrataQueries:
             returned_records = len(results)+ returned_records
         return all_results
 
+
+    def getQryGeneric(self, qry):
+        '''returns results for a genereic qry string'''
+        r = requests.get( qry , auth=( self.username, base64.b64decode(self.passwd)))
+        return r.json()
+
+        
     def setDatasetDicts(self, dataset):
         dataset[self.rowsInserted] = 0
         dataset[self.src_records_cnt_field] = 0

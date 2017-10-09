@@ -1,16 +1,15 @@
 # coding: utf-8
 #!/usr/bin/env python
 
-
+#updates datadict dataset
 from optparse import OptionParser
-import sys
 from ConfigUtils import *
-from PyLogger import *
+from SocrataStuff import *
+from Utils import *
 from JobStatusEmailerComposer import *
-
+from PyLogger import *
 
 def parse_opts():
-  sys.setdefaultencoding('utf8')
   helpmsgConfigFile = 'Use the -c to add a config yaml file. EX: fieldConfig.yaml'
   parser = OptionParser(usage='usage: %prog [options] ')
   parser.add_option('-c', '--configfile',
@@ -25,14 +24,9 @@ def parse_opts():
                       dest='configDir',
                       default=None,
                       help=helpmsgConfigDir ,)
-  helpmsgConfigDir = 'Use the -m to add a fail notication messge. EX: "Failed: This job failed"'
-  parser.add_option('-m', '--fail_msg',
-                      action='store',
-                      dest='fail_msg',
-                      default=None,
-                      help=helpmsgConfigDir ,)
 
   (options, args) = parser.parse_args()
+
   if  options.configFn is None:
     print "ERROR: You must specify a config yaml file!"
     print helpmsgConfigFile
@@ -41,23 +35,36 @@ def parse_opts():
     print "ERROR: You must specify a directory path for the config files!"
     print helpmsgConfigDir
     exit(1)
+
+  fieldConfigFile = None
+  config_inputdir = None
   fieldConfigFile = options.configFn
   config_inputdir = options.configDir
-  fail_msg = options.fail_msg
-  return config_inputdir, fieldConfigFile, fail_msg
-
+  return config_inputdir, fieldConfigFile
 
 def main():
-  reload(sys)
-  config_inputdir, fieldConfigFile, fail_msg = parse_opts()
-  configItems = ConfigUtils.setConfigs(config_inputdir, fieldConfigFile )
-  configItems['job_name'] = fail_msg
+  config_inputdir, fieldConfigFile = parse_opts()
+  cI =  ConfigUtils(config_inputdir ,fieldConfigFile  )
+  configItems = cI.getConfigs()
   lg = pyLogger(configItems)
   logger = lg.setConfig()
+  logger.info("****************JOB START******************")
+  sc = SocrataClient(config_inputdir, configItems, logger)
+  client = sc.connectToSocrata()
+  clientItems = sc.connectToSocrataConfigItems()
+  socrataLoadUtils = SocrataLoadUtils(configItems)
+  scrud = SocrataCRUD(client, clientItems, configItems, logger)
+  sqry = SocrataQueries(clientItems, configItems, logger)
+  datasets = socrataLoadUtils.make_datasets()
+  finshed_datasets = []
+  for dataset in datasets:
+    insertDataSet, dataset = socrataLoadUtils.makeInsertDataSet(dataset)
+    dataset = scrud.postDataToSocrata(dataset, insertDataSet )
+    finshed_datasets.append(dataset)
+  print finshed_datasets
+  logger.info(finshed_datasets)
   dsse = JobStatusEmailerComposer(configItems, logger)
-  dataset_info = {'Socrata Dataset Name': fail_msg, 'SrcRecordsCnt':0, 'DatasetRecordsCnt':0, 'fourXFour': "Job Failed"}
-  dataset_info['isLoaded'] = 'failed'
-  dsse.sendJobStatusEmail([dataset_info])
+  dsse.sendJobStatusEmail(finshed_datasets)
 
 if __name__ == "__main__":
     main()

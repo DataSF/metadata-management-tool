@@ -12,6 +12,11 @@ class PandasUtils:
   def getWkbk(fn):
     wkbk = pd.ExcelFile(fn)
     return wkbk
+  
+
+  @staticmethod
+  def groupbyCountStar(df, group_by_list):
+    return df.groupby(group_by_list).size().reset_index(name='count')
 
 
   @staticmethod

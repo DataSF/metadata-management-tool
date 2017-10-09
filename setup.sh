@@ -11,6 +11,8 @@ mkdir documented_fields/xlsx
 mkdir documented_fields/pdf
 mkdir documented_fields/other
 mkdir documented_fields/output
+mkdir output
+npm install
 
 #installs dependencies
 #pip install --upgrade oauth2client
