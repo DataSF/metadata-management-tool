@@ -35,7 +35,6 @@ update_master_dd_config="fieldConfigMasterDD.yaml"
 get_nbeids_job="get_nbeids.py"
 get_nbeids_config="fieldConfig_nbeid.yaml"
 fail_notification_job="fail_notification.py"
-fail_notification_job=$path_to_main_dir"pydev/"$fail_notification_job
 fail_notication_config="fieldConfig_nbeid.yaml"
 
 
@@ -80,6 +79,8 @@ if [ -z "$npm_path" ]; then
 fi
 
 run_job_cmd=$path_to_main_dir"run_job.sh"
+fail_notification_job=$path_to_main_dir"pydev/"$fail_notification_job
+
 
 #first part - get the data
 $npm_path run --prefix $path_to_main_dir output_csvs
