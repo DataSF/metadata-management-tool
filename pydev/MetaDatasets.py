@@ -72,6 +72,14 @@ class MetaDatasets:
     results_json = [self.populate_blank_cols(row, cols_to_include) for row in results_json  ]
     return self._wkbk_json.write_json_object(results_json, self._pickle_data_dir, self._master_dd_config['json_fn'])
 
+  def get_master_dd_public_as_json(self):
+    print self._master_dd_config['fourXFour']
+    cols_to_include = self._master_dd_config['columns_to_fetch'].split(',')
+    columns_to_fetch = self._master_dd_config['columns_to_fetch'] + ' where privateordeleted = False'
+    results_json = self._socrataQueriesObject.pageThroughResultsSelect( self._master_dd_config['fourXFour'], columns_to_fetch)
+    results_json = [self.populate_blank_cols(row, cols_to_include) for row in results_json  ]
+    return results_json
+
   def get_field_types(self):
     results_json  = self._socrataQueriesObject.pageThroughResultsSelect( self._fieldtypes_config['fourXFour'], self._fieldtypes_config['columns_to_fetch'])
     return self._wkbk_json.write_json_object(results_json, self._pickle_data_dir, self._fieldtypes_config['json_fn'])
