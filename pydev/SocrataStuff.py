@@ -63,7 +63,7 @@ class SocrataCRUD:
 
     def __init__(self, client, clientItems, configItems, logger):
         self.client = client
-        self.chunkSize = 1000
+        self.chunkSize = 100
         self.row_id = configItems['row_id_field']
         self.name = configItems['dataset_name_field']
         self.fourXFour = configItems['fourXFour']
@@ -97,6 +97,11 @@ class SocrataCRUD:
     @retry( tries=10, delay=1, backoff=2)
     def replaceDataSet(self, dataset, chunk):
         result = self.client.replace( dataset[self.fourXFour], chunk )
+        if result['Errors'] > 0:
+            print 
+            print result
+            print chunk
+            print
         dataset[self.rowsInserted] = dataset[self.rowsInserted] + int(result['Rows Created'])
         time.sleep(0.25)
 
@@ -104,6 +109,9 @@ class SocrataCRUD:
     @retry( tries=10, delay=1, backoff=2)
     def insertData(self, dataset, chunk):
         result = self.client.upsert(dataset[self.fourXFour], chunk)
+        if result['Errors'] > 0:
+            print result
+            print chunk
         dataset[self.rowsInserted] = dataset[self.rowsInserted] + int(result['Rows Created']) + int(result['Rows Updated'])
         time.sleep(0.25)
 

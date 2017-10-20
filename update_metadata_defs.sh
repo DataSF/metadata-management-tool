@@ -52,7 +52,7 @@ while getopts "h?:d:p:r:n:" opt; do
     p)  python_path=$OPTARG
         ;;
     n)  npm_path=$OPTARG
-		;;
+        ;;
     esac
 done
 fail_notication_config="configs/"$run_env$"_"$fail_notication_config
@@ -151,5 +151,4 @@ else
    $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Could NOT Push Public Version of the Master Dataset to the Data Portal" -d $path_to_main_dir
    exit 1
 fi
-
 
