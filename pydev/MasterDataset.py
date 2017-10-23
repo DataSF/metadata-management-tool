@@ -10,6 +10,7 @@ from DictUtils import *
 import inflection
 from Utils import *
 from ConfigUtils import *
+import urllib
 
 class NbeIds:
     @staticmethod
@@ -235,6 +236,8 @@ class MasterDataDictionary:
         master_df['global_field_definition'] =  master_df.apply(lambda row: calc_global_field_def(row, global_def_dict, global_field_list ),axis=1)
         return master_df
 
+  
+
     @staticmethod
     def calc_field_documented(master_df):
         '''calculates if a field has been documented or not:
@@ -245,7 +248,12 @@ class MasterDataDictionary:
             elif row['field_definition'] != '':
                 return True
             return False
+        def encodAttachmentUrl(row):
+            if(row['attachment_url'] != ''):
+                return urllib.quote_plus(row['attachment_url'])
+            return row['attachment_url'] 
         master_df['field_documented'] = master_df.apply(lambda row: calc_field_documented_row(row),axis=1)
+        master_df['attachment_url'] =  master_df.apply(lambda row:encodAttachmentUrl(row ),axis=1)
         return master_df
 
     @staticmethod
@@ -279,7 +287,7 @@ class MasterDataDictionary:
         master_df =  MasterDataDictionary.calc_department_field(master_df,dfs_dict)
         master_df = MasterDataDictionary.calc_global_field(master_df,dfs_dict)
         master_df =  MasterDataDictionary.calc_field_documented(master_df)
-        master_df =  MasterDataDictionary.calc_do_not_process(master_df, dfs_dict)
+        master_df =  MasterDataDictionary.calc_do_not_process(master_df, dfs_dict)       
         return master_df
 
     @staticmethod
