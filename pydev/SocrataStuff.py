@@ -97,6 +97,7 @@ class SocrataCRUD:
     @retry( tries=10, delay=1, backoff=2)
     def replaceDataSet(self, dataset, chunk):
         result = self.client.replace( dataset[self.fourXFour], chunk )
+        print result
         if result['Errors'] > 0:
             print 
             print result
@@ -109,6 +110,7 @@ class SocrataCRUD:
     @retry( tries=10, delay=1, backoff=2)
     def insertData(self, dataset, chunk):
         result = self.client.upsert(dataset[self.fourXFour], chunk)
+        print result
         if result['Errors'] > 0:
             print result
             print chunk

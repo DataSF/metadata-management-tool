@@ -83,6 +83,7 @@ def main():
   if len(public_dd_json) > 0 :
     #load = [{'field_type': 'geometry: line', 'field_alias': 'Geometry', 'field_documented': True, 'columnid': 'ejbq-qm2c_the_geom', 'data_dictionary_attached': False, 'department': 'GSA - Technology', 'field_type_flag': '', 'field_definition': 'Contains the geometry of the record in Well Known Text (WKT) format.', 'dataset_name': 'stclines_highways', 'inventoryid': 'TIS-0017', 'open_data_portal_url': 'http://data.sfgov.org/resource/ejbq-qm2c', 'api_key': u'the_geom', 'field_name': 'the_geom', 'datasetid': 'ejbq-qm2c'}]
     public_master_dictList = PublicMetadata.set_master_df_public_list(public_dd_json)
+    print public_master_dictList[0]
     dataset_info = metadatasets.set_public_dd_updt_info(public_master_dictList)
     print dataset_info
     #replace the dataset on the portal rather than upserting
