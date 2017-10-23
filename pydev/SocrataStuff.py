@@ -63,7 +63,7 @@ class SocrataCRUD:
 
     def __init__(self, client, clientItems, configItems, logger):
         self.client = client
-        self.chunkSize = 100
+        self.chunkSize = 1000
         self.row_id = configItems['row_id_field']
         self.name = configItems['dataset_name_field']
         self.fourXFour = configItems['fourXFour']

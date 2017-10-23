@@ -8,6 +8,7 @@ import pandas as pd
 #from ConfigUtils import *
 from PandasUtils import *
 
+
 class PublicMetadata:
     """class to update master dd with existing definitions in asset fields dataset on the portal """
     '''
@@ -34,8 +35,14 @@ class PublicMetadata:
             if(row['global_field_definition'] != ''):
                return row['global_field_definition']
             return row['field_definition']
+        #def encodAttachmentUrl(row):
+        #    if(row['attachment_url'] != ''):
+        #        return urllib.quote_plus(row['attachment_url'])
+        #    return row['attachment_url'] 
+        
         df_public_master = PandasUtils.makeDfFromJson(public_dd_json)
         df_public_master['field_definition'] = df_public_master.apply(lambda row:set_field_def_globals(row ),axis=1)
+        #df_public_master['attachment_url'] = df_public_master.apply(lambda row:encodAttachmentUrl(row ),axis=1)
         keys_to_keep = ['columnid', 'datasetid', 'inventoryid', 'open_data_portal_url', 'department', 'dataset_name', 'field_name' , 'field_alias', 'field_type', 'api_key', 'field_definition', 'field_type_flag', 'data_dictionary_attached', 'field_documented', 'attachment_url']
         #filter out all the private or deleted columns
         #dftest = PandasUtils.groupbyCountStar(self._df_master, ['privateordeleted'])
