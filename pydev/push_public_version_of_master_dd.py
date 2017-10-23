@@ -61,11 +61,11 @@ def main():
   sqry = SocrataQueries(clientItems, configItems, logger)
   metadatasets = MetaDatasets(configItems, sqry, logger)
   dsse = JobStatusEmailerComposer(configItems, logger)
-
-
+  job_success = False
+  '''
   #get these supporting datasets from the portal
   master_dd_json = metadatasets.get_master_metadataset_as_json()
-  job_success = False
+ 
   if master_dd_json:
     #do a final pass to see if the field is documented
 
@@ -77,7 +77,7 @@ def main():
     dataset_info = metadatasets.set_master_dd_updt_info(dfList)
     #push to socrata
     dataset_info = scrud.postDataToSocrata(dataset_info, dfList )
-
+  '''
   #now push the public version of the master data dictionary.
   public_dd_json = metadatasets.get_master_dd_public_as_json()
   if len(public_dd_json) > 0 :
