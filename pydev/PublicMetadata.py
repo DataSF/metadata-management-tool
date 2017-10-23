@@ -7,7 +7,7 @@ import pandas as pd
 #from MetaDatasets import *
 #from ConfigUtils import *
 from PandasUtils import *
-
+import urllib
 
 class PublicMetadata:
     """class to update master dd with existing definitions in asset fields dataset on the portal """

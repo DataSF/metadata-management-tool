@@ -10,7 +10,7 @@ from DictUtils import *
 import inflection
 from Utils import *
 from ConfigUtils import *
-import urllib
+
 
 class NbeIds:
     @staticmethod
