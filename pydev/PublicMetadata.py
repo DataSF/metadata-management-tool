@@ -35,11 +35,7 @@ class PublicMetadata:
             if(row['global_field_definition'] != ''):
                return row['global_field_definition']
             return row['field_definition']
-        #def encodAttachmentUrl(row):
-        #    if(row['attachment_url'] != ''):
-        #        return urllib.quote_plus(row['attachment_url'])
-        #    return row['attachment_url'] 
-        
+
         #def encodAttachmentUrl(row):
         #    if(row['attachment_url'] != ''):
         #        return urllib.quote_plus(row['attachment_url'])
