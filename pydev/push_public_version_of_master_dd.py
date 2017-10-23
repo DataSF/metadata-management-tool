@@ -87,7 +87,7 @@ def main():
     #load = [{'field_type': 'geometry: line', 'field_alias': 'Geometry', 'field_documented': True, 'columnid': 'ejbq-qm2c_the_geom', 'data_dictionary_attached': False, 'department': 'GSA - Technology', 'field_type_flag': '', 'field_definition': 'Contains the geometry of the record in Well Known Text (WKT) format.', 'dataset_name': 'stclines_highways', 'inventoryid': 'TIS-0017', 'open_data_portal_url': 'http://data.sfgov.org/resource/ejbq-qm2c', 'api_key': u'the_geom', 'field_name': 'the_geom', 'datasetid': 'ejbq-qm2c'}]
     public_master_dictList = PublicMetadata.set_master_df_public_list(public_dd_json)
     for item in public_master_dictList:
-      if item['datasetid'] = '8zp7-ik63'
+      if item['datasetid'] == '8zp7-ik63'
         print "***"
         print item
         print "****"
