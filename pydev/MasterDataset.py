@@ -248,7 +248,6 @@ class MasterDataDictionary:
             elif row['field_definition'] != '':
                 return True
             return False
-          @staticmethod
         def encodAttachmentUrl(row):
             if(row['attachment_url'] != ''):
                 return urllib.quote_plus(row['attachment_url'])
