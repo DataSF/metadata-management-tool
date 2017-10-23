@@ -248,12 +248,8 @@ class MasterDataDictionary:
             elif row['field_definition'] != '':
                 return True
             return False
-        def encodAttachmentUrl(row):
-            if(row['attachment_url'] != ''):
-                return urllib.quote_plus(row['attachment_url'])
-            return row['attachment_url'] 
+    
         master_df['field_documented'] = master_df.apply(lambda row: calc_field_documented_row(row),axis=1)
-        master_df['attachment_url'] =  master_df.apply(lambda row:encodAttachmentUrl(row ),axis=1)
         return master_df
 
     @staticmethod
