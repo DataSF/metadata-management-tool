@@ -1,17 +1,16 @@
-inputDataDir: /home/ubuntu/fetch-metadata-fields/output/
-inputConfigDir: /home/ubuntu/fetch-metadata-fields/configs/
+inputDataDir: /home/ubuntu/metadata-mgmt-tool/output/
+inputConfigDir: /home/ubuntu/metadata-mgmt-tool/configs/
 metadataset_config: metadatasets.yaml
-config_dir: /home/ubuntu/fetch-metadata-fields/configs/
-pickle_dir: /home/ubuntu/fetch-metadata-fields/output/
-pickle_data_dir: /home/ubuntu/fetch-metadata-fields/output/
-wkbk_uploads_dir: /home/ubuntu/fetch-metadata-fields/output/
+config_dir: /home/ubuntu/metadata-mgmt-tool/configs/
+pickle_dir: /home/ubuntu/metadata-mgmt-tool/output/
+pickle_data_dir: /home/ubuntu/metadata-mgmt-tool/output/
+wkbk_uploads_dir: /home/ubuntu/metadata-mgmt-tool/output/
 config_dir: /home/ubuntu/metadata-mgmt-tool/configs/
 
 master_dd_json_fn: master_data_dictionary.json
 
-
 socrata_client_config_fname: socrata_config.yaml
-log_dir: /home/ubuntu/fetch-metadata-fields/logs/
+log_dir: /home/ubuntu/metadata-mgmt-tool/logs/
 exception_logfile: master_dd_exception.log
 app_name: master_data_dictionary
 src_records_cnt_field: SrcRecordsCnt
