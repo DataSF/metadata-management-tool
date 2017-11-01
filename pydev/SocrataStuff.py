@@ -191,6 +191,11 @@ class SocrataLoadUtils:
         #print self.inputConfigDir+self.datasets_to_load_fn
         datasets = datasets.fillna('')
         datasets = PandasUtils.convertDfToDictrows(datasets)
+        print 
+        print "*********"
+        print len(datasets)
+        print "*********"
+        print
         for dataset in datasets:
             dataset = self.setDatasetDicts(dataset)
         return datasets

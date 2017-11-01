@@ -1,7 +1,7 @@
-inputDataDir: /Users/j9/Desktop/fetch-metadata-fields/output/
-inputConfigDir: /Users/j9/Desktop/fetch-metadata-fields/configs/
+inputDataDir: /Users/j9/Desktop/metadata-mgmt-tool/output/
+inputConfigDir: /Users/j9/Desktop/metadata-mgmt-tool/configs/
 socrata_client_config_fname: socrata_config.yaml
-log_dir: /Users/j9/Desktop/fetch-metadata-fields/logs/
+log_dir: /Users/j9/Desktop/metadata-mgmt-tool/logs/
 exception_logfile: metadata_fields_exception.log
 src_records_cnt_field: SrcRecordsCnt
 dataset_records_cnt_field: DatasetRecordsCnt
@@ -16,4 +16,4 @@ base_url: data.sfgov.org
 app_name: metadata_fields
 job_name: Update Metadata Fields
 email_config_file: email_config_gmail.yaml
-config_dir: /Users/j9/Desktop/fetch-metadata-fields/configs/
+config_dir: /Users/j9/Desktop/metadata-mgmt-tool/configs/
