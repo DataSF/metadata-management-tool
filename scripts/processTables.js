@@ -6,6 +6,7 @@ var appDirList = appDir.split('/')
 appDirList.pop(-1)
 appDir = appDirList.join('/')
 
+
 function mapColumnTypes (dataTypeName) {
   var lookupDict = {
     'text': 'text',
@@ -33,14 +34,36 @@ function mapColumnTypes (dataTypeName) {
   return renderDataType
 }
 
+const fnPath = appDir + '/output/tables.json'
+
+
+let offset = 0
+
+
+//callback function: after we get 
+function writeResultsFile (allResults){
+  fs.writeFile(fnPath, JSON.stringify(allResults), function (err) {
+          if (err) return console.log(err)
+  })
+  console.log('We are done');
+}
+
+
+var allResults = []
+
+function getData(loopOffset, callback){
+console.log("starting the requests")
+
 request({
   url: 'https://data.sfgov.org/api/search/views.json',
-  qs: {limit: 1000}
+  qs: {limit: 1000, page: loopOffset}
 }, function (error, response, body) {
   if (error) {
     console.log(error)
   } else {
     var results = JSON.parse(body).results
+    if (results){
+      console.log("got some results")
     fs.writeFile(appDir + '/output/input.json', JSON.stringify(results), function (err) {
       if (err) return console.log(err)
     })
@@ -95,9 +118,23 @@ request({
       }).reduce(function (prev, curr) {
         return prev.concat(curr)
       })
-
-    fs.writeFile(appDir + '/output/tables.json', JSON.stringify(results), function (err) {
-      if (err) return console.log(err)
-    })
+      loopOffset = loopOffset + 1
+      console.log(loopOffset)
+      console.log(allResults.length)
+      console.log("in heeeeere")
+      allResults = allResults.concat(results)
+      console.log(allResults.length)
+      getData(loopOffset, callback)
+    }else {
+      console.log(allResults.length)
+      callback(allResults)
+      //return allResults
+    }
   }
 })
+}
+
+
+//get the data from views.json, then write data to file as the callback function
+getData(offset, writeResultsFile)
+

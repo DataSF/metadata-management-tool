@@ -29,6 +29,8 @@ output/*
 configs/email_config_gmail.yaml
 pydev/Get MTA Field Definitions.ipynb
 
+scripts/processTables_bkup.js
+
 # Modules #
 ###########
 node_modules/
