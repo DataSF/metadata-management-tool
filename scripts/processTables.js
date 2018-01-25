@@ -64,9 +64,9 @@ request({
     var results = JSON.parse(body).results
     if (results){
       console.log("got some results")
-    fs.writeFile(appDir + '/output/input.json', JSON.stringify(results), function (err) {
-      if (err) return console.log(err)
-    })
+    //fs.writeFile(appDir + '/output/input.json', JSON.stringify(results), function (err) {
+    //  if (err) return console.log(err)
+    //})
     results = results.filter(function (result) {
       return result.view.flags && (result.view.viewType === 'tabular' || result.view.viewType === 'geo')
     })
@@ -119,11 +119,10 @@ request({
         return prev.concat(curr)
       })
       loopOffset = loopOffset + 1
-      console.log(loopOffset)
-      console.log(allResults.length)
-      console.log("in heeeeere")
+      //console.log(loopOffset)
+      //console.log(allResults.length)
       allResults = allResults.concat(results)
-      console.log(allResults.length)
+      //console.log(allResults.length)
       getData(loopOffset, callback)
     }else {
       console.log(allResults.length)
