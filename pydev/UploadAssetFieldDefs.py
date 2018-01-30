@@ -48,12 +48,11 @@ class UploadAssetFieldDefs:
 
     def set_status(self, df):
         '''sets the status'''
-        def isComplete(row):
-            if row['field_definition'] != '':
-                return True
-        
-        df['field_documented'] =  df.apply(lambda row: isComplete(row), axis=1)
-        df['status'] = 'Entered on Portal'
+        def isComplete(row, fieldName, returnVal):
+            if row[fieldName] != '':
+                return returnVal
+        df['field_documented'] =  df.apply(lambda row: isComplete(row, 'field_definition', True), axis=1)
+        df['status'] = df.apply(lambda row: isComplete(row, 'field_definition', 'Entered on Portal'), axis=1)
         df['date_last_changed'] = self._current_date
         return df
 
