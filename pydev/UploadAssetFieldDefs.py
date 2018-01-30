@@ -51,6 +51,7 @@ class UploadAssetFieldDefs:
         def isComplete(row):
             if row['field_definition'] != '':
                 return True
+        
         df['field_documented'] =  df.apply(lambda row: isComplete(row), axis=1)
         df['status'] = 'Entered on Portal'
         df['date_last_changed'] = self._current_date
@@ -84,4 +85,3 @@ class UploadAssetFieldDefs:
                 print "could not wrtite file"
                 print str(e)
         return wroteJsonFile
- df.apply(lambda row: get_nbe_id(row, socrataQueriesObject), axis=1)
