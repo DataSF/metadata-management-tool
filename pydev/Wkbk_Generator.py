@@ -179,8 +179,8 @@ class WkbkGenerator:
             dataset_ids = [d['datasetid'] for d in dataset_info ]
             dataset_status_updts =  dataset_status_updts + dataset_ids
         updt_df = self._df_master[(self._df_master['datasetid'].isin(dataset_status_updts)) & (~self._df_master['status'].isin(self._valsToNotOverride))].reset_index()
-        updt_df['date_last_changed'] = self._current_date
-        updt_df['status'] = 'For Review by Steward'
+        #updt_df['date_last_changed'] = self._current_date
+        #updt_df['status'] = 'For Review by Steward'
         return PandasUtils.convertDfToDictrows(updt_df[['columnid', 'status', 'date_last_changed']])
 
 if __name__ == "__main__":
