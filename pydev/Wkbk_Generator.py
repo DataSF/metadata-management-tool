@@ -104,7 +104,7 @@ class WkbkGenerator:
 
     def set_Datasets(self, stwd):
         '''gets the datasets associatiated with a steward'''
-        df_datasets = pd.DataFrame({'count' : self._df_master[ ( self._df_master["data_steward"] == stwd) & (self._df_master['status'] != "Submitted by Steward") & (self._df_master['status'] != "Complete") & (self._df_master['status'] != "Do Not Process") & (self._df_master['status'] != "Submitted by Coordinator")].groupby(["inventoryid", "datasetid", "dataset_name", "open_data_portal_url"]).size()}).reset_index()
+        df_datasets = pd.DataFrame({'count' : self._df_master[ ( self._df_master["data_steward"] == stwd) & (self._df_master['status'] != "Submitted by Steward") & (self._df_master['status'] != "Complete") & (self._df_master['status'] != "Do Not Process") & (self._df_master['status'] != "Submitted by Coordinator") & (self._df_master['status'] != "Entered on Portal") ].groupby(["inventoryid", "datasetid", "dataset_name", "open_data_portal_url"]).size()}).reset_index()
         #get the dates of datsets with submitted fields
         df_datasetsSubmitted =  pd.DataFrame({'count' : self._df_master[ ((self._df_master["data_steward"] == stwd) & ( (self._df_master['status'] == "Submitted by Steward") | (self._df_master['status'] == "Complete") | (self._df_master['status'] == "Do Not Process") | (self._df_master['status'] == "Submitted by Coordinator"))) ].groupby(["date_last_changed"]).size()}).reset_index()
         df_datasetsList = list(df_datasets['datasetid'])
