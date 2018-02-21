@@ -68,7 +68,7 @@ class Emailer():
             recipients = self.getRecipients()
         else:
             fromaddr = self._sender
-            recipients = [recipients] + [self._bcc]
+            recipients = recipients
         toaddr = recipients 
         msg = MIMEMultipart()
         msg['From'] = fromaddr
@@ -96,7 +96,8 @@ class Emailer():
         #server.starttls()
         #server.login(fromaddr, self._password)
         text = msg.as_string()
-        server.sendmail(fromaddr, toaddr, text)
+        print toaddr
+        server.sendmail(fromaddr, toaddr + [self._bcc], text)
         server.quit()
 
 
