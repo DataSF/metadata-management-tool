@@ -68,7 +68,7 @@ class Emailer():
             recipients = self.getRecipients()
         else:
             fromaddr = self._sender
-            recipients = recipients + self._bcc
+            recipients = [recipients] + [self._bcc]
         toaddr = recipients 
         msg = MIMEMultipart()
         msg['From'] = fromaddr
