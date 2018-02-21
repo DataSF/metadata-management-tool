@@ -96,8 +96,10 @@ class Emailer():
         #server.starttls()
         #server.login(fromaddr, self._password)
         text = msg.as_string()
-        print toaddr
-        server.sendmail(fromaddr, toaddr + [self._bcc], text)
+        if self._bcc:
+            print "is bcc"
+            toaddr = [toaddr] + [self._bcc]
+        server.sendmail(fromaddr,  toaddr, text)
         server.quit()
 
 
