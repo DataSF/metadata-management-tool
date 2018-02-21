@@ -68,13 +68,14 @@ class Emailer():
             recipients = self.getRecipients()
         else:
             fromaddr = self._sender
-            recipients = recipients
-        toaddr = recipients
+            recipients = recipients + self._bcc
+        toaddr = recipients 
         msg = MIMEMultipart()
         msg['From'] = fromaddr
         msg['To'] = recipients
         msg['Subject'] = subject_line
-        msg['Bcc'] = self._bcc
+        #don't actually put the bcc because then people will know that who they are 
+        #msg['Bcc'] = self._bcc
         body = msgBody
         msg.attach(MIMEText(body, 'html'))
         #Optional Email Attachment:
@@ -95,7 +96,7 @@ class Emailer():
         #server.starttls()
         #server.login(fromaddr, self._password)
         text = msg.as_string()
-        server.sendmail(fromaddr+  self._bcc, toaddr, text)
+        server.sendmail(fromaddr, toaddr, text)
         server.quit()
 
 
