@@ -136,4 +136,4 @@ request({
 
 //get the data from views.json, then write data to file as the callback function
 getData(offset, writeResultsFile)
-
+console.log(allResults)
