@@ -35,7 +35,11 @@ class PublicMetadata:
             if(row['global_field_definition'] != ''):
                return row['global_field_definition']
             return row['field_definition']
-
+        def set_department(row):
+            if(row['department'] == ''):
+                return row['department_from_inventory']
+            else:
+                return row['department']
         #def encodAttachmentUrl(row):
         #    if(row['attachment_url'] != ''):
         #        return urllib.quote_plus(row['attachment_url'])
@@ -44,7 +48,7 @@ class PublicMetadata:
         df_public_master = PandasUtils.makeDfFromJson(public_dd_json)
         print list(df_public_master.columns)
         df_public_master['field_definition'] = df_public_master.apply(lambda row:set_field_def_globals(row ),axis=1)
-        
+        df_public_master['department'] = df_public_master.apply(lambda row:set_department(row ),axis=1)
 
         #df_public_master['attachment_url'] =   df_public_master.apply(lambda row:encodAttachmentUrl(row ),axis=1)
 
