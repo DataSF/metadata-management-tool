@@ -108,3 +108,37 @@ else
     $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Could not update the master dd" -d $path_to_main_dir
     exit 1
 fi
+
+(  exec $run_job_cmd -d $path_to_main_dir -j $get_nbeids_job -p $python_path -c $run_env"_"$get_nbeids_config  )
+if [ $? -eq 0 ]; then
+    echo "Updated the nbeids successfully"
+else
+    echo FAIL
+    $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Could not update nbeids" -d $path_to_main_dir
+    exit 1
+fi
+## second part- upload all the data dictionary definitions ##
+(  exec $run_job_cmd -d $path_to_main_dir -j $asset_fields_job  -p $python_path -c $run_env"_"$asset_fields_config  )
+if [ $? -eq 0 ]; then
+    echo "Asset Field Definitions update ran successfully"
+else
+    echo FAIL
+    $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Did not update the Asset Field Definitions" -d $path_to_main_dir
+    exit 1
+fi
+( exec $run_job_cmd -d $path_to_main_dir -j $data_dictionary_attachments_defs_job  -p $python_path -c $run_env"_"$data_dictionary_attachments_defs_config  )
+if [ $? -eq 0 ]; then
+   echo "Data Dictionary Attachment Definitions Update Ran Successfully"
+else
+    echo FAIL
+    $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Did not update the Data Dictionary Attachment Definitions" -d $path_to_main_dir
+    exit 1
+fi
+(  exec $run_job_cmd -d $path_to_main_dir -j $upload_screendoor_defs_job  -p $python_path -c $run_env"_"$upload_screendoor_defs_config  )
+if [ $? -eq 0 ]; then
+    echo "Screendoor Definitions Update Ran Successfully "
+else
+    echo FAIL
+    $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Could NOT Screendoor Definitions" -d $path_to_main_dir
+    exit 1
+fi
