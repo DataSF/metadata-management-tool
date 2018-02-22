@@ -42,7 +42,7 @@ class PublicMetadata:
         #   return row['attachment_url'] 
 
         df_public_master = PandasUtils.makeDfFromJson(public_dd_json)
-        
+        print list(df_public_master.columns)
         df_public_master['field_definition'] = df_public_master.apply(lambda row:set_field_def_globals(row ),axis=1)
         
 
