@@ -36,8 +36,9 @@ class PublicMetadata:
                return row['global_field_definition']
             return row['field_definition']
         def set_department(row):
+            print row['department']
             if(row['department'] == ''):
-                return row['department_from_inventory']
+                return row['department_from_catalog']
             else:
                 return row['department']
         #def encodAttachmentUrl(row):
