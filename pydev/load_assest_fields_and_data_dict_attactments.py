@@ -57,13 +57,12 @@ def main():
   scrud = SocrataCRUD(client, clientItems, configItems, logger)
   sqry = SocrataQueries(clientItems, configItems, logger)
   datasets = socrataLoadUtils.make_datasets()
-  #finshed_datasets = []
-  #for dataset in datasets:
-  #  insertDataSet, dataset = socrataLoadUtils.makeInsertDataSet(dataset)
-  #  dataset = scrud.postDataToSocrata(dataset, insertDataSet )
-  #  finshed_datasets.append(dataset)
-  #print finshed_datasets
-
+  finshed_datasets = []
+  for dataset in datasets:
+    insertDataSet, dataset = socrataLoadUtils.makeInsertDataSet(dataset)
+    dataset = scrud.postDataToSocrata(dataset, insertDataSet )
+    finshed_datasets.append(dataset)
+  '''
   q1 = "?$select=u_id as datasetid, name where type = 'dataset'  and publication_stage = 'published' and public = 'true' and derived_view = 'false'"
   results_json =   sqry.getQry('g9d8-sczp', q1)
   df_asset_inventory = BuildDatasets.makeDf(results_json)
@@ -72,12 +71,12 @@ def main():
   results_json2 =  sqry.getQry('skzx-6gkn', q2)
   df_asset_fields = BuildDatasets.makeDf(results_json2)
   df_merged = df_asset_inventory.merge(df_asset_fields, how='left', on='datasetid')
-  print df_merged.columns
-  print df_merged.head(2)
-
-  #logger.info(finshed_datasets)
-  #dsse = JobStatusEmailerComposer(configItems, logger)
-  #dsse.sendJobStatusEmail(finshed_datasets)
+  df_merged_missing = df_merged[df_merged['dataset_name'] == '']]
+  print df_merged_missing
+  '''
+  logger.info(finshed_datasets)
+  dsse = JobStatusEmailerComposer(configItems, logger)
+  dsse.sendJobStatusEmail(finshed_datasets)
 
 if __name__ == "__main__":
     main()
