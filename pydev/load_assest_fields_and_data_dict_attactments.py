@@ -8,6 +8,7 @@ from SocrataStuff import *
 from Utils import *
 from JobStatusEmailerComposer import *
 from PyLogger import *
+from MasterDataset import *
 
 def parse_opts():
   helpmsgConfigFile = 'Use the -c to add a config yaml file. EX: fieldConfig.yaml'
@@ -62,6 +63,16 @@ def main():
     dataset = scrud.postDataToSocrata(dataset, insertDataSet )
     finshed_datasets.append(dataset)
   print finshed_datasets
+
+  q1 = "select=u_id, dataset_name where type='public' and publication_stage='public and derived_view=False"
+  results_json =   sqry.getQry('g9d8-sczp', q1)
+  df_asset_inventory = BuildDatasets.makeDf(results_json)
+
+  q2='select=systemid, dataset name group by systemid, dataset_name'
+  results_json2 =  sqry.getQry('skzx-6gkn' q2)
+  df_asset_fields = BuildDatasets.makeDf(results_json)
+
+
   logger.info(finshed_datasets)
   dsse = JobStatusEmailerComposer(configItems, logger)
   dsse.sendJobStatusEmail(finshed_datasets)

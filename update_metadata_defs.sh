@@ -83,6 +83,7 @@ fail_notification_job=$path_to_main_dir"pydev/"$fail_notification_job
 
 
 #first part - get the data
+'''
 $npm_path run --prefix $path_to_main_dir output_csvs
 if [ $? -eq 0 ]; then
     echo "Grabbed the asset fields successfully "
@@ -91,7 +92,9 @@ else
     $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Could NOT grab the asset fields" -d $path_to_main_dir
     exit 1
 fi
+'''
 (  exec $run_job_cmd -d $path_to_main_dir -j $load_asset_fields_job -p $python_path -c $run_env"_"$load_asset_fields_config )
+
 if [ $? -eq 0 ]; then
     echo "Uploaded the asset fields successfully to the master dd"
 else
@@ -99,7 +102,7 @@ else
     $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Could NOT upload the asset fields to the master dd" -d $path_to_main_dir
     exit 1
 fi
-
+'''
 (  exec $run_job_cmd -d $path_to_main_dir -j $update_master_dd_job -p $python_path -c $run_env"_"$update_master_dd_config )
 if [ $? -eq 0 ]; then
     echo "Updated the master dd successfully "
@@ -108,5 +111,53 @@ else
     $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Could not update the master dd" -d $path_to_main_dir
     exit 1
 fi
+(  exec $run_job_cmd -d $path_to_main_dir -j $get_nbeids_job -p $python_path -c $run_env"_"$get_nbeids_config  )
 
+'''
+
+'''
+if [ $? -eq 0 ]; then
+    echo "Updated the nbeids successfully"
+else
+    echo FAIL
+    $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Could not update nbeids" -d $path_to_main_dir
+    exit 1
+fi
+
+## second part- upload all the data dictionary definitions ##
+(  exec $run_job_cmd -d $path_to_main_dir -j $asset_fields_job  -p $python_path -c $run_env"_"$asset_fields_config  )
+if [ $? -eq 0 ]; then
+    echo "Asset Field Definitions update ran successfully"
+else
+    echo FAIL
+    $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Did not update the Asset Field Definitions" -d $path_to_main_dir
+    exit 1
+fi
+( exec $run_job_cmd -d $path_to_main_dir -j $data_dictionary_attachments_defs_job  -p $python_path -c $run_env"_"$data_dictionary_attachments_defs_config  )
+if [ $? -eq 0 ]; then
+   echo "Data Dictionary Attachment Definitions Update Ran Successfully"
+else
+    echo FAIL
+    $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Did not update the Data Dictionary Attachment Definitions" -d $path_to_main_dir
+    exit 1
+fi
+(  exec $run_job_cmd -d $path_to_main_dir -j $upload_screendoor_defs_job  -p $python_path -c $run_env"_"$upload_screendoor_defs_config  )
+if [ $? -eq 0 ]; then
+    echo "Screendoor Definitions Update Ran Successfully "
+else
+    echo FAIL
+    $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Could NOT Screendoor Definitions" -d $path_to_main_dir
+    exit 1
+fi
+
+(  exec $run_job_cmd -d $path_to_main_dir -j $push_public_version_of_master_dd_job  -p $python_path -c $run_env"_"$push_public_version_of_master_dd_config  )
+if [ $? -eq 0 ]; then
+   echo "Pushed Public Version of the Master Dataset to the Data Portal"
+else
+   echo FAIL
+   $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Could NOT Push Public Version of the Master Dataset to the Data Portal" -d $path_to_main_dir
+   exit 1
+fi
+
+'''
 
