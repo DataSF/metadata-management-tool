@@ -97,11 +97,11 @@ fi
 
 if [ $? -eq 0 ]; then
     echo "Uploaded the asset fields successfully to the master dd"
-else
-    echo FAIL
-    $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Could NOT upload the asset fields to the master dd" -d $path_to_main_dir
-    exit 1
-fi
+#else
+#    echo FAIL
+#    $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Could NOT upload the asset fields to the master dd" -d $path_to_main_dir
+#    exit 1
+#fi
 '''
 (  exec $run_job_cmd -d $path_to_main_dir -j $update_master_dd_job -p $python_path -c $run_env"_"$update_master_dd_config )
 if [ $? -eq 0 ]; then
