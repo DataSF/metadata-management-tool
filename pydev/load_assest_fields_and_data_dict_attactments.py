@@ -71,8 +71,9 @@ def main():
   q2 = "?$select=systemid, dataset_name group by systemid, dataset_name"
   results_json2 =  sqry.getQry('skzx-6gkn', q2)
   df_asset_fields = BuildDatasets.makeDf(results_json)
-  df_merged = df_asset_inventory.merge(df_asset_fields, how='left', on='datasetid')
-  print df_merged
+  print df_asset_fields.head(10)
+  #df_merged = df_asset_inventory.merge(df_asset_fields, how='left', on='datasetid')
+  #print df_merged
 
   #logger.info(finshed_datasets)
   #dsse = JobStatusEmailerComposer(configItems, logger)

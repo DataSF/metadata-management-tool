@@ -238,7 +238,7 @@ class SocrataQueries:
 
     def getQry(self, fourXFour, qry):
          qry = self.full_url +fourXFour+ ".json" + qry
-         print qry
+         #print qry
          r = requests.get( qry , auth=( self.username, base64.b64decode(self.passwd)))
          return r.json()
 
