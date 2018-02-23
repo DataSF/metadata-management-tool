@@ -83,7 +83,6 @@ fail_notification_job=$path_to_main_dir"pydev/"$fail_notification_job
 
 
 #first part - get the data
-#'''
 $npm_path run --prefix $path_to_main_dir output_csvs
 if [ $? -eq 0 ]; then
     echo "Grabbed the asset fields successfully "
