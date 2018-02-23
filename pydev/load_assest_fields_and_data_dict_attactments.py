@@ -64,7 +64,7 @@ def main():
   #  finshed_datasets.append(dataset)
   #print finshed_datasets
 
-  q1 = "?$select=u_id, dataset_name where type = 'public' and publication_stage = 'public and derived_view = False"
+  q1 = "?$select=u_id as datasetid, name where type = 'dataset'  and publication_stage = 'published' and public = 'true' and derived_view = 'false'"
   results_json =   sqry.getQry('g9d8-sczp', q1)
   df_asset_inventory = BuildDatasets.makeDf(results_json)
   print df_asset_inventory
