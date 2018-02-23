@@ -64,11 +64,11 @@ def main():
   #  finshed_datasets.append(dataset)
   #print finshed_datasets
 
-  q1 = "select=u_id, dataset_name where type='public' and publication_stage='public and derived_view=False"
+  q1 = "$?select=u_id, dataset_name where type='public' and publication_stage='public and derived_view=False"
   results_json =   sqry.getQry('g9d8-sczp', q1)
   df_asset_inventory = BuildDatasets.makeDf(results_json)
   print df_asset_inventory
-  q2='select=systemid, dataset name group by systemid, dataset_name'
+  q2='$?select=systemid, dataset name group by systemid, dataset_name'
   results_json2 =  sqry.getQry('skzx-6gkn', q2)
   df_asset_fields = BuildDatasets.makeDf(results_json)
 
