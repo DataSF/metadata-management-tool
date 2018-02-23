@@ -68,7 +68,7 @@ def main():
   results_json =   sqry.getQry('g9d8-sczp', q1)
   df_asset_inventory = BuildDatasets.makeDf(results_json)
   print df_asset_inventory
-  q2 = "?$select=systemid, dataset_name group by systemid, dataset_name"
+  q2 = "?$select=systemid as datasetid, dataset_name group by systemid, dataset_name"
   results_json2 =  sqry.getQry('skzx-6gkn', q2)
   df_asset_fields = BuildDatasets.makeDf(results_json2)
   print df_asset_fields.head(10)
