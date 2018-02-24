@@ -88,7 +88,6 @@ def main():
     public_master_dictList = PublicMetadata.set_master_df_public_list(public_dd_json)
     
     dataset_info = metadatasets.set_public_dd_updt_info(public_master_dictList)
-    print dataset_info
     #replace the dataset on the portal rather than upserting
     dataset_info['row_id'] = ''
     #push to socrata
