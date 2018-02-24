@@ -10,6 +10,20 @@ from JobStatusEmailerComposer import *
 from PyLogger import *
 from MasterDataset import *
 
+
+def getColInfo(col, row):
+  row['internalcolumnid'] = col['id']
+  row.columnid = row.systemid + "_" + col['fieldName']
+  row.field_name = col['name']
+  row['field_type'] = col['dataTypeName']
+  row['field_render_type'] = col['renderTypeName']
+  row['field_api_name'] = col['fieldName']
+  if 'description' in col.keys():
+    row['field_description'] = col['description']
+  #row['rowsupdatedat'] = row['rowsupdatedat'].strftime('%Y-%m-%d')
+  return row
+
+
 def parse_opts():
   helpmsgConfigFile = 'Use the -c to add a config yaml file. EX: fieldConfig.yaml'
   parser = OptionParser(usage='usage: %prog [options] ')
@@ -58,25 +72,51 @@ def main():
   sqry = SocrataQueries(clientItems, configItems, logger)
   datasets = socrataLoadUtils.make_datasets()
   finshed_datasets = []
+
   for dataset in datasets:
     insertDataSet, dataset = socrataLoadUtils.makeInsertDataSet(dataset)
     dataset = scrud.postDataToSocrata(dataset, insertDataSet )
     finshed_datasets.append(dataset)
-  '''
-  q1 = "?$select=u_id as datasetid, name where type = 'dataset'  and publication_stage = 'published' and public = 'true' and derived_view = 'false'"
-  results_json =   sqry.getQry('g9d8-sczp', q1)
+
+  q_asset_inventory = "?$select=u_id as systemid, name as dataset_name, creation_date as createdat, last_update_date_data as rowsupdatedat, publishing_department as department  where type = 'dataset' and publication_stage = 'published' and public = 'true' and derived_view = 'false' and publishing_department is not null and publishing_department != 'other' "
+  results_json =   sqry.getQry('g9d8-sczp', q_asset_inventory)
   df_asset_inventory = BuildDatasets.makeDf(results_json)
-  print df_asset_inventory
-  q2 = "?$select=systemid as datasetid, dataset_name group by systemid, dataset_name"
-  results_json2 =  sqry.getQry('skzx-6gkn', q2)
+  q_asset_fields = "?$select=systemid as datasetid, dataset_name as asset_field_dataset_name group by systemid, dataset_name"
+  results_json2 =  sqry.getQry('skzx-6gkn', q_asset_fields)
   df_asset_fields = BuildDatasets.makeDf(results_json2)
-  df_merged = df_asset_inventory.merge(df_asset_fields, how='left', on='datasetid')
-  df_merged_missing = df_merged[df_merged['dataset_name'] == '']]
-  print df_merged_missing
-  '''
+  asset_field_datasetids = list(df_asset_fields['datasetid'])
+  missing_datasets_orig = df_asset_inventory[~df_asset_inventory.systemid.isin(asset_field_datasetids) ].reset_index()
+  missing_datasets = missing_datasets_orig.copy()
+  print missing_datasets 
+  missing_datasets['createdat'] =  (pd.to_datetime(missing_datasets['createdat'],unit='ms'))
+  missing_datasets['rowsupdatedat'] =  (pd.to_datetime(missing_datasets['rowsupdatedat'],unit='ms'))
+  missing_datasets['rowsupdatedat'] = missing_datasets['rowsupdatedat'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
+  missing_datasets['createdat'] = missing_datasets['createdat'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
+  extra_cols = ['columnid', 'internalcolumnid', 'data_type', 'field_name', 'field_type', 'field_render_type', 'field_api_name', 'field_description']
+  for col in extra_cols:
+    missing_datasets[col] =  ''
+  missing_datasets['data_type'] = 'tabular'
+  base_qry = 'https://data.sfgov.org/api/views/'
+  all_rows = []
+  for index, row in missing_datasets.iterrows():
+    qry = base_qry + row['systemid'] + '.json'
+    print qry
+    results = sqry.getQryGeneric(qry)
+    cols = results['columns']
+    for col in cols:
+      new_row = getColInfo(col, row)
+      all_rows.append(new_row.to_dict())
+  
+  dataset_extra = datasets[1]
+  dataset_extra['row_id'] = 'columnid'
+  #print all_rows
+  dataset2 = scrud.postDataToSocrata(dataset_extra, all_rows )
+
   logger.info(finshed_datasets)
   dsse = JobStatusEmailerComposer(configItems, logger)
   dsse.sendJobStatusEmail(finshed_datasets)
+
+
 
 if __name__ == "__main__":
     main()

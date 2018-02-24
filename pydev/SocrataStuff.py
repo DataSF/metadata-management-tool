@@ -73,7 +73,7 @@ class SocrataCRUD:
         self.src_records_cnt_field = configItems['src_records_cnt_field']
         self._logger = logger
 
-    @retry( tries=5, delay=1, backoff=2)
+    #@retry( tries=5, delay=1, backoff=2)
     def insertDataSet(self, dataset, insertDataSet):
         insertChunks = self.makeChunks(insertDataSet)
         #overwrite the dataset on the first insert chunk[0] if there is no row id
@@ -90,6 +90,7 @@ class SocrataCRUD:
             print msg
             self._logger.info(msg)
             for chunk in insertChunks:
+                print chunk
                 rejectedChunk = self.insertData(dataset, chunk)
         return dataset
 
@@ -107,7 +108,7 @@ class SocrataCRUD:
         time.sleep(0.25)
 
 
-    @retry( tries=10, delay=1, backoff=2)
+    #@retry( tries=10, delay=1, backoff=2)
     def insertData(self, dataset, chunk):
         result = self.client.upsert(dataset[self.fourXFour], chunk)
         #print result
@@ -187,6 +188,7 @@ class SocrataLoadUtils:
         self.row_id = configItems['row_id_field']
 
     def make_datasets(self):
+        print self.inputConfigDir+self.datasets_to_load_fn
         datasets = PandasUtils.loadCsv(self.inputConfigDir+self.datasets_to_load_fn)
         #print self.inputConfigDir+self.datasets_to_load_fn
         datasets = datasets.fillna('')

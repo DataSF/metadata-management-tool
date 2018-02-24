@@ -72,6 +72,9 @@ request({
     })
       .map(function (result, index, arr) {
         if (result.view.viewType === 'tabular') {
+          //console.log("**********")
+          //console.log(result.view.id)
+          //console.log("**********")
           var columns = result.view.columns.map(function (column, index, arr) {
             var col = {
               'columnID': result.view.id + '_' + column.fieldName,

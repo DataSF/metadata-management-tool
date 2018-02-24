@@ -1,12 +1,12 @@
 
 
 #dir configs
-pickle_dir: /Users/j9/Desktop/metadata-mgmt-tool/pickled/
-log_dir: /Users/j9/Desktop/metadata-mgmt-tool/logs/
-config_dir: /Users/j9/Desktop/metadata-mgmt-tool/configs/
-documented_fields_dir: /Users/j9/Desktop/metadata-mgmt-tool/documented_fields/
-wkbk_uploads_dir: /Users/j9/Desktop/metadata-mgmt-tool/wkbk_uploads/
-pickle_data_dir: /Users/j9/Desktop/metadata-mgmt-tool/pickled/datasets/
+pickle_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/pickled/
+log_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/logs/
+config_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/configs/
+documented_fields_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/documented_fields/
+wkbk_uploads_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/wkbk_uploads/
+pickle_data_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/pickled/datasets/
 
 #other yaml configs
 socrata_client_config_fname: socrata_config.yaml
