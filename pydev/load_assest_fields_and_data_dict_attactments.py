@@ -112,6 +112,7 @@ def main():
   #print all_rows
   dataset2 = scrud.postDataToSocrata(dataset_extra, all_rows )
 
+  print datasets[1].keys()
   logger.info(finshed_datasets)
   dsse = JobStatusEmailerComposer(configItems, logger)
   dsse.sendJobStatusEmail(finshed_datasets)
