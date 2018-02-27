@@ -87,7 +87,6 @@ def main():
   asset_field_datasetids = list(df_asset_fields['datasetid'])
   missing_datasets_orig = df_asset_inventory[~df_asset_inventory.systemid.isin(asset_field_datasetids) ].reset_index()
   missing_datasets = missing_datasets_orig.copy()
-  print missing_datasets 
   missing_datasets['createdat'] =  (pd.to_datetime(missing_datasets['createdat'],unit='ms'))
   missing_datasets['rowsupdatedat'] =  (pd.to_datetime(missing_datasets['rowsupdatedat'],unit='ms'))
   missing_datasets['rowsupdatedat'] = missing_datasets['rowsupdatedat'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
@@ -110,9 +109,10 @@ def main():
   dataset_extra['row_id'] = 'columnid'
   #print all_rows
   dataset2 = scrud.postDataToSocrata(dataset_extra, all_rows )
-
-  print datasets[1]
+  print "****8"
+  print finshed_datasets 
   logger.info(finshed_datasets)
+  print
   dsse = JobStatusEmailerComposer(configItems, logger)
   dsse.sendJobStatusEmail(finshed_datasets)
 
