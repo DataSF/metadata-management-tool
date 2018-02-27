@@ -108,6 +108,7 @@ def main():
   dataset_extra['row_id'] = 'columnid'
   #print all_rows
   dataset2 = scrud.postDataToSocrata(dataset_extra, all_rows )
+  finshed_datasets[1]['SrcRecordsCnt'] = finshed_datasets[1]['SrcRecordsCnt'] + len(all_rows)
   print "****"
   print finshed_datasets 
   print "*******"
