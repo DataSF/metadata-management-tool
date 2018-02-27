@@ -100,7 +100,6 @@ def main():
   all_rows = []
   for index, row in missing_datasets.iterrows():
     qry = base_qry + row['systemid'] + '.json'
-    print qry
     results = sqry.getQryGeneric(qry)
     cols = results['columns']
     for col in cols:
@@ -112,7 +111,7 @@ def main():
   #print all_rows
   dataset2 = scrud.postDataToSocrata(dataset_extra, all_rows )
 
-  print datasets[1].keys()
+  print datasets[1]
   logger.info(finshed_datasets)
   dsse = JobStatusEmailerComposer(configItems, logger)
   dsse.sendJobStatusEmail(finshed_datasets)
