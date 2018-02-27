@@ -77,10 +77,7 @@ def main():
     dataset = scrud.postDataToSocrata(dataset, insertDataSet )
     finshed_datasets.append(dataset)
 
-  print "******* finished  heeeere*"
-  print finshed_datasets 
-  print "*********"
-  print 
+  
   q_asset_inventory = "?$select=u_id as systemid, name as dataset_name, creation_date as createdat, last_update_date_data as rowsupdatedat, publishing_department as department  where type = 'dataset' and publication_stage = 'published' and public = 'true' and derived_view = 'false' and publishing_department is not null and publishing_department != 'other' "
   results_json =   sqry.getQry('g9d8-sczp', q_asset_inventory)
   df_asset_inventory = BuildDatasets.makeDf(results_json)
@@ -112,10 +109,7 @@ def main():
   dataset_extra['row_id'] = 'columnid'
   #print all_rows
   extra = scrud.postDataToSocrata(dataset_extra, all_rows )
-  #finshed_datasets[1]['SrcRecordsCnt'] = finshed_datasets[1]['SrcRecordsCnt'] + len(all_rows)
-  print "******* finished  2x*"
-  print finshed_datasets 
-  print "*******"
+  
   logger.info(finshed_datasets)
   print
   dsse = JobStatusEmailerComposer(configItems, logger)
