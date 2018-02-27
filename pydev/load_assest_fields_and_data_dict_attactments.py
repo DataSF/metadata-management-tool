@@ -20,7 +20,6 @@ def getColInfo(col, row):
   row['field_api_name'] = col['fieldName']
   if 'description' in col.keys():
     row['field_description'] = col['description']
-  #row['rowsupdatedat'] = row['rowsupdatedat'].strftime('%Y-%m-%d')
   return row
 
 

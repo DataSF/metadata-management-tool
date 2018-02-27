@@ -60,6 +60,7 @@ class JobStatusEmailerComposer:
         for i in range(len(finishedDataSets)):
             #remove the column definitions, check if records where inserted
             dataset = self.sucessStatus( DictUtils.removeKeys(finishedDataSets[i], self.keysToRemove))
+            print dataset
             msg = self.makeJobStatusMsg( finishedDataSets[i]  )
             msgBody  = msgBody  + msg
             print dataset

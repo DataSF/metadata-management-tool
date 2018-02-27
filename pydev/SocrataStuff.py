@@ -90,7 +90,6 @@ class SocrataCRUD:
             print msg
             self._logger.info(msg)
             for chunk in insertChunks:
-                print chunk
                 rejectedChunk = self.insertData(dataset, chunk)
         return dataset
 
