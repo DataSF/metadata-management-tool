@@ -92,7 +92,7 @@ else
     $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Could NOT grab the asset fields" -d $path_to_main_dir
     exit 1
 fi
-
+'''
 (  exec $run_job_cmd -d $path_to_main_dir -j $load_asset_fields_job -p $python_path -c $run_env"_"$load_asset_fields_config )
 
 if [ $? -eq 0 ]; then
@@ -111,7 +111,6 @@ else
     $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Could not update the master dd" -d $path_to_main_dir
     exit 1
 fi
-'''
 (  exec $run_job_cmd -d $path_to_main_dir -j $get_nbeids_job -p $python_path -c $run_env"_"$get_nbeids_config  )
 if [ $? -eq 0 ]; then
     echo "Updated the nbeids successfully"
