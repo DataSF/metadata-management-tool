@@ -109,8 +109,9 @@ def main():
   dataset_extra['row_id'] = 'columnid'
   #print all_rows
   dataset2 = scrud.postDataToSocrata(dataset_extra, all_rows )
-  print "****8"
+  print "****"
   print finshed_datasets 
+  print "*******"
   logger.info(finshed_datasets)
   print
   dsse = JobStatusEmailerComposer(configItems, logger)
