@@ -108,11 +108,11 @@ def main():
       new_row = getColInfo(col, row)
       all_rows.append(new_row.to_dict())
   
-  dataset_extra = datasets[1]
+  dataset_extra = datasets[1].copy()
   dataset_extra['row_id'] = 'columnid'
   #print all_rows
-  dataset2 = scrud.postDataToSocrata(dataset_extra, all_rows )
-  finshed_datasets[1]['SrcRecordsCnt'] = finshed_datasets[1]['SrcRecordsCnt'] + len(all_rows)
+  extra = scrud.postDataToSocrata(dataset_extra, all_rows )
+  #finshed_datasets[1]['SrcRecordsCnt'] = finshed_datasets[1]['SrcRecordsCnt'] + len(all_rows)
   print "******* finished  2x*"
   print finshed_datasets 
   print "*******"
