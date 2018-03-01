@@ -72,26 +72,41 @@ def main():
   datasets = socrataLoadUtils.make_datasets()
   finshed_datasets = []
 
+  #grab the asset fields and data dictionary attachment csv files, and then upload them socrata
+  # asset fields: https://data.sfgov.org/City-Management-and-Ethics/Asset-Fields/skzx-6gkn
+  # data dictionary attachments: https://data.sfgov.org/City-Infrastructure/Data-Dictionary-Attachments/a2hm-yzs6
   for dataset in datasets:
     insertDataSet, dataset = socrataLoadUtils.makeInsertDataSet(dataset)
     dataset = scrud.postDataToSocrata(dataset, insertDataSet )
     finshed_datasets.append(dataset)
 
   
+  #grab the asset inventory at https://data.sfgov.org/City-Management-and-Ethics/Asset-Fields/g9d8-sczp
   q_asset_inventory = "?$select=u_id as systemid, name as dataset_name, creation_date as createdat, last_update_date_data as rowsupdatedat, publishing_department as department  where type = 'dataset' and publication_stage = 'published' and public = 'true' and derived_view = 'false' and publishing_department is not null and publishing_department != 'other' "
   results_json =   sqry.getQry('g9d8-sczp', q_asset_inventory)
   df_asset_inventory = BuildDatasets.makeDf(results_json)
+
+  #grab datasetids for all the datasets in asset fields (should have all the datasets that are in views.json)
   q_asset_fields = "?$select=systemid as datasetid, dataset_name as asset_field_dataset_name group by systemid, dataset_name"
   results_json2 =  sqry.getQry('skzx-6gkn', q_asset_fields)
   df_asset_fields = BuildDatasets.makeDf(results_json2)
+
+  #make a list of the datasetids in the asset fields 
   asset_field_datasetids = list(df_asset_fields['datasetid'])
+
+  #find all the datasets that are in the asset inventory BUT NOT IN the asset inventory
   missing_datasets_orig = df_asset_inventory[~df_asset_inventory.systemid.isin(asset_field_datasetids) ].reset_index()
+ 
+  #build a column object up
   missing_datasets = missing_datasets_orig.copy()
   missing_datasets['createdat'] =  (pd.to_datetime(missing_datasets['createdat'],unit='ms'))
   missing_datasets['rowsupdatedat'] =  (pd.to_datetime(missing_datasets['rowsupdatedat'],unit='ms'))
   missing_datasets['rowsupdatedat'] = missing_datasets['rowsupdatedat'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
   missing_datasets['createdat'] = missing_datasets['createdat'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
   extra_cols = ['columnid', 'internalcolumnid', 'data_type', 'field_name', 'field_type', 'field_render_type', 'field_api_name', 'field_description']
+  
+
+  #for each dataset that we find in the asset inventory that's missing from the asset fields dataset, grab all the fields associated with the dataset:
   for col in extra_cols:
     missing_datasets[col] =  ''
   missing_datasets['data_type'] = 'tabular'
@@ -101,17 +116,19 @@ def main():
     qry = base_qry + row['systemid'] + '.json'
     results = sqry.getQryGeneric(qry)
     cols = results['columns']
+    #build up a col obj for each field that we find
     for col in cols:
       new_row = getColInfo(col, row)
       all_rows.append(new_row.to_dict())
   
   dataset_extra = datasets[1].copy()
   dataset_extra['row_id'] = 'columnid'
-  #print all_rows
+  
+  #post all the missing fields from the asset inventory into the asset fields dataset so that we have a complete list of all the fields on the opendata portal 
   extra = scrud.postDataToSocrata(dataset_extra, all_rows )
   
   logger.info(finshed_datasets)
-  print
+  #send out email notifications now that we are done
   dsse = JobStatusEmailerComposer(configItems, logger)
   dsse.sendJobStatusEmail(finshed_datasets)
 
