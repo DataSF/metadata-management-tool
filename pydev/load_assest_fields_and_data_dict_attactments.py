@@ -115,11 +115,12 @@ def main():
   for index, row in missing_datasets.iterrows():
     qry = base_qry + row['systemid'] + '.json'
     results = sqry.getQryGeneric(qry)
-    cols = results['columns']
-    #build up a col obj for each field that we find
-    for col in cols:
-      new_row = getColInfo(col, row)
-      all_rows.append(new_row.to_dict())
+    if columns in results.keys()
+      cols = results['columns']
+      #build up a col obj for each field that we find
+      for col in cols:
+        new_row = getColInfo(col, row)
+        all_rows.append(new_row.to_dict())
   
   dataset_extra = datasets[1].copy()
   dataset_extra['row_id'] = 'columnid'
