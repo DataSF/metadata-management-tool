@@ -115,7 +115,7 @@ def main():
   for index, row in missing_datasets.iterrows():
     qry = base_qry + row['systemid'] + '.json'
     results = sqry.getQryGeneric(qry)
-    if columns in results.keys()
+    if 'columns' in results.keys()
       cols = results['columns']
       #build up a col obj for each field that we find
       for col in cols:
