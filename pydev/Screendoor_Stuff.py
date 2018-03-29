@@ -1,12 +1,13 @@
-
-
 # coding: utf-8
+from __future__ import division
 from ConfigUtils import *
 from Utils import *
 import pycurl
+import requests
 from io import BytesIO
 import json
 from Wkbk_Json import *
+
 
 
 class ScreenDoorStuff:
@@ -35,17 +36,16 @@ class ScreenDoorStuff:
 
     def set_reponses(self):
         responses = ""
+        # set the per page for screendoor, max is 100
+        per_page = 100
         try:
-            buffer = BytesIO()
-            c = pycurl.Curl()
-            c.setopt(c.URL, self._responses_url)
-            c.setopt(c.WRITEDATA, buffer)
-            responses = c.perform()
-            c.close()
-            body = buffer.getvalue()
-            # Body is a byte string.
-            # We have to know the encoding in order to print it to a text file such as standard output.
-            responses = json.loads(body.decode('iso-8859-1'))
+            r = requests.get(self._responses_url + '&per_page=' + str(per_page))
+            num_records = int(r.headers['total'])
+            num_pages = math.ceil(num_records/per_page)
+            responses = r.json()
+            for page in range(2, num_pages + 1):
+                r = requests.get(self._responses_url + '&per_page=' + str(per_page) + '&page=' + str(page))
+                responses = responses + r.json()
         except Exception, e:
             print str(e)
         return responses
