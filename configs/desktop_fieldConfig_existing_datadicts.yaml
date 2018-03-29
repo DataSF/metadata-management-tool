@@ -1,7 +1,7 @@
 
 
-pickle_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/pickled/
-pickle_data_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/pickled/datasets/
+pickle_dir: /Users/jasonlally/workspace/metadata-management-tool/pickled/
+pickle_data_dir: /Users/jasonlally/workspace/metadata-management-tool/pickled/datasets/
 
 #socrata configs
 socrata_client_config_fname: socrata_config.yaml
@@ -19,16 +19,16 @@ job_name: Upload DataDictionary Attachments
 
 metadataset_config: metadatasets.yaml
 
-client_key: /Users/j9/Desktop/repos/metadata-mgmt-tool/configs/metadata-mgmt-tool-31c31a0f34b6.json
+client_key: /Users/jasonlally/workspace/metadata-management-tool/configs/metadata-mgmt-tool-31c31a0f34b6.json
 
-config_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/configs/
+config_dir: /Users/jasonlally/workspace/metadata-management-tool/configs/
 email_config_file: email_config_gmail.yaml
 
 screendoor_config_file: screendoor_configs.yaml
 
-pickle_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/pickled/
+pickle_dir: /Users/jasonlally/workspace/metadata-management-tool/pickled/
 
-wkbk_output_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/output_wkbks/
+wkbk_output_dir: /Users/jasonlally/workspace/metadata-management-tool/output_wkbks/
 wkbk_output_json: workbooks_info.json
 
 
@@ -45,7 +45,7 @@ field_types:
     sht_name: field_types
     pickle_name: field_types
 
-log_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/logs/
+log_dir: /Users/jasonlally/workspace/metadata-management-tool/logs/
 email_config_fname: email_config.yaml
 exception_logfile: exception_log.txt
 
@@ -85,11 +85,11 @@ update_info:
         complete: complete
 
 updt_fields_json_fn: metadata_updt_fields.json
-wkbk_uploads_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/wkbk_uploads/
+wkbk_uploads_dir: /Users/jasonlally/workspace/metadata-management-tool/wkbk_uploads/
 
 
 fieldType_flag: ["Category", "Unique"]
-documented_fields_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/documented_fields/
+documented_fields_dir: /Users/jasonlally/workspace/metadata-management-tool/documented_fields/
 document_fields_outputfile_fn: documented_field_definitions.csv
 
 wkbk_formats:

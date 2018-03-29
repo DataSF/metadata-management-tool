@@ -23,3 +23,6 @@
 
 
 ## Datasf's internal tool to manage the city's metadata
+
+1. Need to fix local dev dependencies and create clear instructions to run/develop locally
+2. OpenSSL local versions can cause headaches, virtualenv and pip install requests[security]

@@ -1,11 +1,11 @@
 
 
 #dir configs
-pickle_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/pickled/
-log_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/logs/
-config_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/configs/
-pickle_data_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/pickled/datasets/
-wkbk_uploads_dir: /Users/j9/Desktop/repos/metadata-mgmt-tool/wkbk_uploads/
+pickle_dir: /Users/jasonlally/workspace/metadata-management-tool/pickled/
+log_dir: /Users/jasonlally/workspace/metadata-management-tool/logs/
+config_dir: /Users/jasonlally/workspace/metadata-management-tool/configs/
+pickle_data_dir: /Users/jasonlally/workspace/metadata-management-tool/pickled/datasets/
+wkbk_uploads_dir: /Users/jasonlally/workspace/metadata-management-tool/wkbk_uploads/
 
 
 #other yaml configs

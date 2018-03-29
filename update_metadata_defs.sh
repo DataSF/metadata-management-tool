@@ -154,3 +154,6 @@ else
    $python_path $fail_notification_job -c $fail_notication_config -m "FAILED: Could NOT Push Public Version of the Master Dataset to the Data Portal" -d $path_to_main_dir
    exit 1
 fi
+
+# To run just the screendoor portion
+# python /Users/jasonlally/workspace/metadata-management-tool/pydev/upload_screendoor_responses.py -d /Users/jasonlally/workspace/metadata-management-tool/configs/ -c server_fieldConfig_import_wkbks.yaml
